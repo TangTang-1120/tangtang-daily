@@ -4,8 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TangTang">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>汤汤的每日打卡</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>TangTang Daily</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -37,13 +41,19 @@
     font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
     min-height: 100vh;
     padding: 0 0 120px;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Header */
   .header {
     background: var(--card);
-    padding: 56px 20px 24px;
-    border-bottom: 0.5px solid var(--border);
+    background-image: url('header-bg.png');
+    background-size: cover;
+    background-position: center top;
+    padding: 48px 16px 20px;
+    border-bottom: none;
   }
   .header-top {
     display: flex;
@@ -75,62 +85,554 @@
   }
   .progress-text { font-size: 13px; font-weight: 500; color: var(--purple); min-width: 36px; text-align: right; }
 
-  /* Calendar strip */
+  /* ===== 卡片式月历 ===== */
   .cal-section { margin-top: 18px; }
+  .cal-card {
+    background: linear-gradient(165deg, #F5F3FF 0%, #FFFFFF 50%, #EEEDFE 100%);
+    border-radius: var(--radius-card);
+    padding: 8px 6px 6px;
+    border: 0.5px solid rgba(127,119,221,0.12);
+    box-shadow: 0 4px 20px rgba(127,119,221,0.08);
+  }
   .cal-nav {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+    padding: 0 2px;
   }
-  .cal-month-label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .cal-month-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
   .cal-nav-btn {
     background: none; border: none; cursor: pointer;
-    width: 28px; height: 28px; border-radius: 8px;
+    width: 26px; height: 26px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-secondary); font-size: 16px;
+    color: var(--text-secondary); font-size: 15px;
     transition: background 0.15s;
   }
   .cal-nav-btn:active { background: var(--bg); }
+  /* 展开/收起按钮 - 圆角方框+箭头样式 */
+  .cal-toggle-btn {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: #fff;
+    border: 1.8px solid var(--purple);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .cal-toggle-btn svg {
+    color: var(--purple);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  }
+  .cal-toggle-btn:active {
+    transform: scale(0.92);
+    background: var(--purple-light);
+  }
+  .cal-toggle-btn.collapsed svg {
+    transform: rotate(180deg);
+  }
+  /* 日历内容区（可折叠） */
+  .cal-body {
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    max-height: 600px;
+    opacity: 1;
+  }
+  .cal-body.collapsed {
+    max-height: 0 !important;
+    opacity: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  /* 收起时的单周日期行 */
+  .cal-today-bar {
+    display: none;
+    padding: 0 2px;
+    overflow: hidden;
+  }
+  .cal-today-bar.show { display: block; }
+  .cal-today-row {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .cal-today-day {
+    aspect-ratio: 1; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 500;
+    background: var(--card); color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.18s;
+    cursor: pointer;
+  }
+  .cal-today-day:active { transform: scale(.92); }
+  /* 今日 - 紫色实心 */
+  .cal-today-day.is-today {
+    background: linear-gradient(145deg, #7F77DD, #5B52B8);
+    color: #fff; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(127,119,221,.45), 0 2px 4px rgba(0,0,0,0.08);
+  }
+  /* 过去日期 - 浅灰 */
+  .cal-today-day.is-past { color: var(--text-hint); }
   .cal-weekdays {
     display: grid; grid-template-columns: repeat(7, 1fr);
     text-align: center; margin-bottom: 4px;
   }
   .cal-wd {
     font-size: 10px; font-weight: 500; color: var(--text-hint);
-    padding: 2px 0;
+    padding: 1px 0 4px;
+  }
+  /* 当前列高亮下划线 */
+  .cal-wd.today-col {
+    color: var(--purple);
+    position: relative;
+  }
+  .cal-wd.today-col::after {
+    content: '';
+    position: absolute; bottom: 2px; left: 50%;
+    transform: translateX(-50%);
+    width: 16px; height: 2.5px; border-radius: 2px;
+    background: var(--purple);
   }
   .cal-grid {
     display: grid; grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
+    gap: 2px;
   }
   .cal-day {
-    aspect-ratio: 1; border-radius: 10px;
+    height: 60px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 2px;
-    font-size: 13px; font-weight: 500; color: var(--text-secondary);
+    font-size: 12px; font-weight: 500; color: var(--text-secondary);
     cursor: pointer; position: relative;
-    transition: background 0.15s;
+    transition: all 0.18s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
-  .cal-day:active { background: rgba(0,0,0,0.04); }
-  .cal-day.empty { pointer-events: none; }
+  .cal-day:active { transform: scale(.92); }
+  .cal-day.empty { pointer-events: none; box-shadow: none; }
+
+  /* 今日 - 紫色实心圆角块 */
   .cal-day.today {
-    background: var(--purple);
+    background: linear-gradient(145deg, #7F77DD, #5B52B8);
     color: #fff;
-    font-weight: 600;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(127,119,221,.45), 0 2px 4px rgba(0,0,0,0.08);
   }
-  .cal-day.checked:not(.today) {
+
+  /* 有打卡记录（非今日）- 浅紫色背景 */
+  .cal-day.has-check:not(.today):not(.empty) {
     background: var(--purple-light);
     color: var(--purple);
+    font-weight: 600;
+    box-shadow: 0 3px 10px rgba(127,119,2,.18);
   }
-  .cal-day.checked.today { background: var(--purple); color: #fff; }
-  .cal-dot {
-    width: 4px; height: 4px; border-radius: 50%;
-    background: currentColor; opacity: 0.5;
-    display: none;
-  }
-  .cal-day.checked .cal-dot { display: block; }
-  .cal-day.today .cal-dot { opacity: 0.7; }
 
-  /* Tabs */
+  /* 未来日期 / 无记录 - 黑色字体 */
+  .cal-day.no-data:not(.today):not(.empty) {
+    color: var(--text-primary);
+  }
+
+  /* 过去无记录 - 更灰 */
+  .cal-day.past-empty:not(.today):not(.empty) {
+    color: var(--text-hint);
+    opacity: 0.5;
+  }
+
+  /* 有消费记录 - 右下角红点 */
+  .cal-day.has-expense { position: relative; }
+  .cal-exp-dot {
+    position: absolute; bottom: 3px; right: 3px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--coral);
+    box-shadow: 0 1px 2px rgba(216,90,48,0.4);
+  }
+  .cal-day.today .cal-exp-dot { background: #fff; opacity: 0.85; }
+
+  /* ===== 快捷打卡卡片（独立项） ===== */
+  .quick-check-section { padding: 12px 14px 0; }
+  .quick-check-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .quick-card {
+    background: var(--card); border-radius: var(--radius-card);
+    padding: 16px 12px 14px;
+    border: 1.5px solid transparent;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+    transition: all .2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .quick-card-header {
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+    width: 100%;
+  }
+  .quick-card-left {
+    display: flex; align-items: center; gap: 10px;
+    justify-content: center;
+    flex: 1;
+  }
+  .quick-card-icon-wrap {
+    width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .quick-card-name {
+    font-size: 15px; font-weight: 600; color: var(--text-primary);
+  }
+  .quick-card-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2.5px solid #E8E6E0;
+    background: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .quick-card-btn svg {
+    opacity: 0; transform: scale(.5);
+    transition: all .2s cubic-bezier(.34,1.56,.64,1);
+    fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .quick-card-btn.checked {
+    border-color: transparent;
+  }
+  .quick-card-btn.checked svg {
+    opacity: 1; transform: scale(1);
+  }
+  /* 大提琴 - 紫色系 */
+  .quick-card--violin .quick-card-icon-wrap { background: linear-gradient(135deg,#DDD6FF,#EEEDFE); }
+  .quick-card--violin .quick-card-btn:not(.checked) { border-color: rgba(127,119,221,.35); }
+  .quick-card--violin .quick-card-btn.checked { background: linear-gradient(145deg, #7F77DD, #5B52B8); box-shadow: 0 3px 12px rgba(127,119,221,.4); }
+  /* 健身 - 青绿色系 */
+  .quick-card--fitness .quick-card-icon-wrap { background: linear-gradient(135deg,#CFF0E3,#E1F5EE); }
+  .quick-card--fitness .quick-card-btn:not(.checked) { border-color: rgba(29,158,117,.35); }
+  .quick-card--fitness .quick-card-btn.checked { background: linear-gradient(145deg, #1D9E75, #168A66); box-shadow: 0 3px 12px rgba(29,158,117,.4); }
+
+  .quick-card-streak {
+    font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .quick-card-label {
+    font-size: 12px; color: var(--text-hint); margin-top: 2px;
+  }
+  .quick-card-duration {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--border);
+    width: 100%;
+  }
+  .quick-card-duration-icon { font-size: 14px; }
+  .quick-card-duration-text {
+    font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  }
+
+  /* 时长设置行 */
+  .quick-timer-row {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-top: 8px; width: 100%;
+  }
+  .timer-min-input {
+    width: 52px; height: 32px; border-radius: 8px;
+    border: 1.5px solid rgba(0,0,0,.14); background: var(--bg);
+    text-align: center; font-size: 16px; font-weight: 600;
+    color: var(--text-primary); padding: 0; outline: none;
+    -moz-appearance: textfield;
+  }
+  .timer-min-input::-webkit-inner-spin-button,
+  .timer-min-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .timer-unit {
+    font-size: 13px; color: var(--text-hint); font-weight: 500;
+  }
+  .timer-start-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #fff;
+    transition: all .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .timer-start-btn:active { transform: scale(.88); }
+  .quick-card--violin .timer-start-btn { background: linear-gradient(145deg, #7F77DD, #5B52B8); box-shadow: 0 2px 10px rgba(127,119,2,.35); }
+  .quick-card--fitness .timer-start-btn { background: linear-gradient(145deg, #1D9E75, #168A66); box-shadow: 0 2px 10px rgba(29,158,117,.35); }
+
+  /* 倒计时显示 */
+  .quick-countdown {
+    display: none; /* 默认隐藏，开始计时后显示 */
+    flex-direction: column; align-items: center; justify-content: center;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 0.5px solid var(--border); width: 100%;
+  }
+  .quick-countdown.active { display: flex; }
+  .countdown-time {
+    font-size: 28px; font-weight: 700; color: var(--text-primary);
+    letter-spacing: -0.5px; line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown-label { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
+  .countdown-controls { display: flex; gap: 8px; margin-top: 8px; }
+  .countdown-ctrl-btn {
+    border: 1px solid rgba(0,0,0,.14); border-radius: 20px;
+    padding: 5px 16px; background: #fff; cursor: pointer;
+    font-size: 13px; font-weight: 500; color: var(--text-primary);
+    transition: all .15s;
+  }
+  .countdown-ctrl-btn:active { background: var(--bg); transform: scale(.95); }
+  .countdown-ctrl-btn--stop { border-color: rgba(216,90,48,.35); color: var(--coral); }
+  .countdown-ctrl-btn--cancel { border-color: rgba(0,0,0,.1); color: var(--text-hint); }
+
+  /* ===== 记账长条卡片 ===== */
+  .expense-section { padding: 12px 14px 0; }
+  .expense-card {
+    background: var(--card); border-radius: var(--radius-card);
+    padding: 14px 14px 12px;
+    border: 1.5px solid transparent;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  }
+  .expense-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .expense-left {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .expense-icon-wrap {
+    width: 34px; height: 34px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    background: linear-gradient(135deg, #FAECE7, #FBEAF0);
+  }
+  .expense-title {
+    font-size: 15px; font-weight: 600; color: var(--text-primary);
+  }
+  .expense-total {
+    font-size: 20px; font-weight: 700; color: var(--coral);
+    letter-spacing: -0.5px;
+  }
+
+  .expense-input-row {
+    display: flex; gap: 6px; margin-bottom: 8px;
+  }
+  .exp-amount-input {
+    flex: 0 0 80px; height: 38px; border-radius: 11px;
+    border: 1.5px solid rgba(0,0,0,.1); background: var(--bg);
+    text-align: left; font-size: 15px; font-weight: 600;
+    color: var(--text-primary); padding: 0 10px; outline: none;
+    -moz-appearance: textfield;
+  }
+  .exp-amount-input::-webkit-inner-spin-button,
+  .exp-amount-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .exp-amount-input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(216,90,48,.08); }
+  .exp-note-input {
+    flex: 1; height: 38px; border-radius: 11px;
+    border: 1.5px solid rgba(0,0,0,.1); background: var(--bg);
+    text-align: left; font-size: 13px;
+    color: var(--text-primary); padding: 0 10px; outline: none;
+    min-width: 0;
+  }
+  .exp-note-input::placeholder { color: var(--text-hint); }
+  .exp-note-input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(216,90,48,.08); }
+  .exp-add-btn {
+    width: 38px; height: 38px; border-radius: 11px;
+    border: none; cursor: pointer;
+    background: linear-gradient(145deg, var(--coral), #c24a20);
+    color: #fff; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 3px 10px rgba(216,90,48,.25);
+    flex-shrink: 0;
+  }
+  .exp-add-btn:active { transform: scale(.9); }
+
+  .expense-list { max-height: 280px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .expense-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 0; border-bottom: 0.5px solid rgba(0,0,0,.04);
+    animation: expIn .25s ease-out;
+  }
+  .expense-item:last-child { border-bottom: none; }
+  @keyframes expIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  .exp-item-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .exp-item-note {
+    font-size: 14px; font-weight: 500; color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .exp-item-time { font-size: 11px; color: var(--text-hint); }
+  .exp-item-amt {
+    font-size: 15px; font-weight: 600; color: var(--coral);
+    flex-shrink: 0; margin-left: 8px;
+  }
+  .exp-del-btn {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: none; background: none; cursor: pointer;
+    color: var(--text-hint); font-size: 14px; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+    margin-left: 4px; transition: color .15s;
+  }
+  .exp-del-btn:active { color: var(--coral); background: rgba(216,90,48,.06); }
+  .expense-empty {
+    text-align: center; padding: 16px 0 4px;
+    font-size: 13px; color: var(--text-hint);
+  }
+
+  /* ===== 卡片网格（分类概览） ===== */
+  .cards-section { padding: 12px 14px 0; }
+  .cards-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .cat-card {
+    background: var(--card); border-radius: var(--radius-card);
+    padding: 12px 8px 10px; cursor: pointer;
+    transition: all .2s; position: relative;
+    border: 1.5px solid transparent;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  }
+  .cat-card:active { transform: scale(.97); }
+
+  .cat-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .cat-card-left {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .cat-card-icon {
+    width: 28px; height: 28px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .cat-card-name {
+    font-size: 13px; font-weight: 600; color: var(--text-primary);
+  }
+
+  /* 右侧圆环 SVG */
+  .cat-card-ring {
+    width: 24px; height: 24px; flex-shrink: 0;
+  }
+  .cat-card-ring circle {
+    fill: none; stroke-width: 3; stroke-linecap: round;
+    transform: rotate(-90deg); transform-origin: center;
+    transition: stroke-dashoffset .5s cubic-bezier(.4,0,.2,1);
+  }
+  .cat-card-ring .ring-bg { stroke: #E8E6E0; }
+  .cat-card-ring .ring-fg { stroke-dasharray: 72; transition: stroke .3s; }
+
+  .cat-card-value {
+    font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .cat-card-value small {
+    font-size: 12px; font-weight: 500; color: var(--text-hint);
+  }
+  .cat-card-sub {
+    font-size: 12px; color: var(--text-hint); margin-top: 2px;
+  }
+
+  /* 全部完成态 */
+  .cat-card.all-done .cat-card-ring .ring-fg { stroke: var(--teal); }
+
+  /* 类目卡片完成 ✓ 图标覆盖 */
+  .cat-card-done-badge {
+    position: absolute; top: 8px; right: 8px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(145deg, #7F77DD, #5B52B8);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(127,119,221,0.45);
+    opacity: 0; transform: scale(.5);
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    z-index: 2; pointer-events: none;
+  }
+  .cat-card-done-badge svg { opacity: 1 !important; transform: scale(1) !important; }
+  .cat-card.has-done .cat-card-done-badge {
+    opacity: 1; transform: scale(1);
+  }
+  /* 全完成时放大一点 */
+  .cat-card.all-done .cat-card-done-badge {
+    width: 24px; height: 24px;
+    box-shadow: 0 3px 12px rgba(127,119,221,0.5);
+  }
+
+  /* ===== 分类详情面板（点击卡片后展开） ===== */
+  .cat-detail-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(0,0,0,0.35);
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .cat-detail-overlay.show { opacity: 1; pointer-events: auto; }
+  .cat-detail-sheet {
+    width: 100%; max-width: 480px;
+    max-height: 80vh; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    padding: 20px 20px 40px;
+    transform: translateY(100%);
+    transition: transform .32s cubic-bezier(.32,.72,0,1);
+  }
+  .cat-detail-overlay.show .cat-detail-sheet { transform: translateY(0); }
+  .cat-detail-handle {
+    width: 38px; height: 4px; border-radius: 2px;
+    background: var(--border); margin: 0 auto 18px;
+  }
+  .cat-detail-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cat-detail-title {
+    font-size: 19px; font-weight: 600; color: var(--text-primary);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cat-detail-close {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--bg); border: none; cursor: pointer;
+    font-size: 16px; color: var(--text-secondary);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* 详情内任务列表 */
+  .detail-task-list {}
+  .detail-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 4px;
+    cursor: pointer;
+    transition: background .15s;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .detail-item:last-child { border-bottom: none; }
+  .detail-item:active { background: var(--bg); }
+  .detail-item.done .detail-title { text-decoration: line-through; color: var(--text-hint); }
+  .detail-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .detail-info { flex: 1; min-width: 0; }
+  .detail-title {
+    font-size: 15px; font-weight: 500; color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .detail-sub { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+  .detail-check {
+    width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+    transition: all .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .detail-check svg { opacity: 0; transform: scale(.5); transition: all .2s; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .detail-item.done .detail-check {
+    border-color: transparent;
+    background: linear-gradient(145deg, #7F77DD, #5B52B8);
+    box-shadow: 0 2px 10px rgba(127,119,221,0.4);
+  }
+  .detail-item.done .detail-check svg { opacity: 1; transform: scale(1); }
+
+  /* Tabs (保留用于切换视图模式) */
   .tabs {
     display: flex; gap: 8px;
     padding: 14px 20px 0;
@@ -151,7 +653,7 @@
   }
 
   /* Section */
-  .section { padding: 18px 16px 0; }
+  .section { padding: 14px 14px 0; }
   .section-label {
     font-size: 11px; font-weight: 500;
     color: var(--text-hint); text-transform: uppercase; letter-spacing: 0.08em;
@@ -258,16 +760,58 @@
 
   /* Motivational footer card */
   .motive-card {
-    margin: 18px 16px 0;
+    margin: 14px 14px 0;
     background: var(--purple);
     border-radius: var(--radius-card);
-    padding: 20px;
-    display: flex; align-items: center; gap: 16px;
+    padding: 16px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; transition: background .4s ease, transform .15s;
+    user-select: none; position: relative;
+    -webkit-tap-highlight-color: transparent;
   }
-  .motive-emoji { font-size: 36px; }
-  .motive-text { color: #fff; }
+  .motive-left {
+    display: flex; align-items: center; gap: 16px;
+    flex: 1; min-width: 0;
+  }
+  .motive-card:active { transform: scale(.98); }
+  .motive-emoji { font-size: 36px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); flex-shrink: 0; }
+  .motive-text { color: #fff; min-width: 0; flex: 1; }
   .motive-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
   .motive-sub { font-size: 12px; opacity: 0.75; }
+
+  /* Edit button */
+  .motive-edit-btn {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: none; background: rgba(255,255,255,.2); color: #fff;
+    font-size: 14px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .2s;
+  }
+  .motive-edit-btn:active { background: rgba(255,255,255,.35); transform: scale(.9); }
+
+  /* Edit inputs (inline) */
+  .motive-edit {
+    display: none; flex-direction: column; gap: 8px;
+    width: 100%; padding-top: 10px;
+  }
+  .motive-edit.active { display: flex; }
+  .mot-edit-in {
+    height: 36px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,.35);
+    background: rgba(255,255,255,.15); color: #fff;
+    font-size: 13px; padding: 0 12px; outline: none; width: 100%;
+  }
+  .mot-edit-in::placeholder { color: rgba(255,255,255,.5); }
+  .mot-edit-in:focus { border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.22); }
+  .mot-edit-sub { font-size: 12px; height: 32px; }
+  .mot-save-btn {
+    align-self: flex-end; width: 32px; height: 32px; border-radius: 50%;
+    border: none; background: #fff; color: var(--purple);
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15); margin-top: 2px;
+    transition: transform .15s;
+  }
+  .mot-save-btn:active { transform: scale(.88); }
 
   /* Reset & Manage btns */
   .bottom-actions {
@@ -320,6 +864,9 @@
     padding: 28px 24px 40px;
     transform: translateY(100%);
     transition: transform 0.32s cubic-bezier(.32,.72,0,1);
+    max-height: 92vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .modal-overlay.show .modal-sheet { transform: translateY(0); }
 
@@ -406,6 +953,39 @@
     flex: 0 0 auto; width: 80px;
   }
   .modal-btn:active { opacity: 0.8; }
+
+  /* ===== 移动端适配 ===== */
+  @media (max-width: 400px) {
+    .header { padding: 44px 12px 18px; }
+    .date-title { font-size: 20px; }
+    .cal-card { padding: 6px 4px 4px; }
+    .cal-day { height: 50px; font-size: 11px; border-radius: 6px; }
+    .quick-check-section { padding: 10px 12px 0; }
+    .quick-check-grid { gap: 8px; }
+    .quick-card { padding: 14px 10px 12px; }
+    .quick-card-icon-wrap { width: 34px; height: 34px; font-size: 20px; }
+    .quick-card-name { font-size: 14px; }
+    .quick-card-streak { font-size: 24px; }
+    .expense-section { padding: 10px 12px 0; }
+    .expense-card { padding: 12px 12px 10px; }
+    .exp-amount-input { flex: 0 0 70px; height: 36px; font-size: 14px; }
+    .exp-note-input { height: 36px; font-size: 12px; }
+    .exp-add-btn { width: 36px; height: 36px; font-size: 16px; }
+    .cards-section { padding: 10px 12px 0; }
+    .cards-grid { gap: 6px; }
+    .cat-card { padding: 10px 6px 8px; }
+    .cat-card-value { font-size: 18px; }
+    .cat-card-value small { font-size: 11px; }
+    .motive-card { margin: 12px 12px 0; padding: 14px; }
+    .section { padding: 12px 12px 0; }
+    .bottom-actions { gap: 14px; }
+    .tabs { padding: 12px 14px 0; }
+  }
+
+  /* 确保所有滚动容器在iOS上流畅 */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
 </style>
 </head>
 <body>
@@ -421,17 +1001,29 @@
 
   <!-- 日历打卡 -->
   <div class="cal-section">
-    <div class="cal-nav">
-      <button class="cal-nav-btn" onclick="calPrev()">‹</button>
-      <div class="cal-month-label" id="cal-month-label"></div>
-      <button class="cal-nav-btn" onclick="calNext()">›</button>
+    <div class="cal-card">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+        <div class="cal-month-label" id="cal-month-label"></div>
+        <div style="display:flex;align-items:center;gap:2px;">
+          <button class="cal-toggle-btn collapsed" id="cal-toggle-btn" onclick="toggleCal()" title="展开日历">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 10 12 16 18 10"/></svg>
+          </button>
+          <button class="cal-nav-btn" onclick="calNext()">›</button>
+        </div>
+      </div>
+      <div class="cal-body collapsed" id="cal-body">
+      <div class="cal-weekdays" id="cal-weekdays">
+        <div class="cal-wd">Su</div><div class="cal-wd">Mo</div><div class="cal-wd">Tu</div>
+        <div class="cal-wd">We</div><div class="cal-wd">Th</div><div class="cal-wd">Fr</div>
+        <div class="cal-wd">Sa</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      </div>
+      <div class="cal-today-bar show" id="cal-today-bar">
+        <div class="cal-today-row" id="cal-today-row"></div>
+      </div>
     </div>
-    <div class="cal-weekdays">
-      <div class="cal-wd">日</div><div class="cal-wd">一</div><div class="cal-wd">二</div>
-      <div class="cal-wd">三</div><div class="cal-wd">四</div><div class="cal-wd">五</div>
-      <div class="cal-wd">六</div>
-    </div>
-    <div class="cal-grid" id="cal-grid"></div>
   </div>
 
   <div class="progress-summary">
@@ -442,41 +1034,102 @@
   </div>
 </div>
 
-<div class="tabs" id="tabs-bar">
-  <div class="tab active" onclick="switchTab('all', this)">全部</div>
-  <div class="tab" onclick="switchTab('morning', this)">晨间</div>
-  <div class="tab" onclick="switchTab('work', this)">工作</div>
-  <div class="tab" onclick="switchTab('health', this)">健康</div>
-  <div class="tab" onclick="switchTab('evening', this)">晚间</div>
-</div>
+<!-- 快捷打卡卡片 -->
+<div class="quick-check-section">
+  <div class="quick-check-grid">
+    <div class="quick-card quick-card--violin" id="quick-violin">
+      <div class="quick-card-header">
+        <div class="quick-card-left">
+          <div class="quick-card-icon-wrap">🎻</div>
+          <div class="quick-card-name">Cello</div>
+        </div>
+        <button class="quick-card-btn" id="btn-violin" onclick="toggleQuickCheck('violin')">
+          <svg width="16" height="12" viewBox="0 0 14 11" fill="none"><path d="M1.8 5.5L6 9.2L12.2 1.8" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="quick-card-streak" id="streak-violin">0</div>
+      <div class="quick-card-label">days streak</div>
+      <!-- 时长设置（未开始时显示） -->
+      <div class="quick-timer-row" id="timer-set-violin">
+        <input type="number" class="timer-min-input" id="timer-input-violin"
+               min="1" max="180" value="30" placeholder="min" inputmode="numeric">
+        <span class="timer-unit">min</span>
+        <button class="timer-start-btn" onclick="startCustomTimer('violin')">▶</button>
+      </div>
+      <!-- 倒计时（运行中显示） -->
+      <div class="quick-countdown" id="countdown-violin">
+        <div class="countdown-time" id="cd-time-violin">00:00</div>
+        <div class="countdown-label">remaining</div>
+        <div class="countdown-controls">
+          <button class="countdown-ctrl-btn countdown-ctrl-btn--stop" onclick="stopTimer('violin')">Stop</button>
+          <button class="countdown-ctrl-btn countdown-ctrl-btn--cancel" onclick="cancelTimer('violin')">Cancel</button>
+        </div>
+      </div>
+    </div>
 
-<div id="all-done-banner" class="all-done-banner" style="margin-top:18px;">
-  ✦ 今日全部完成！你太棒了 🎉
-</div>
-
-<!-- 全部 -->
-<div id="tab-all" class="tab-content active">
-  <div class="section"><div class="section-label"><span>🌅 晨间</span></div><div class="card-group" id="group-morning-all"></div></div>
-  <div class="section"><div class="section-label"><span>💼 工作</span></div><div class="card-group" id="group-work-all"></div></div>
-  <div class="section"><div class="section-label"><span>🏃 健康</span></div><div class="card-group" id="group-health-all"></div></div>
-  <div class="section"><div class="section-label"><span>🌙 晚间</span></div><div class="card-group" id="group-evening-all"></div></div>
-</div>
-
-<!-- 晨间 -->
-<div id="tab-morning" class="tab-content"><div class="section"><div class="card-group" id="group-morning-tab"></div></div></div>
-<!-- 工作 -->
-<div id="tab-work" class="tab-content"><div class="section"><div class="card-group" id="group-work-tab"></div></div></div>
-<!-- 健康 -->
-<div id="tab-health" class="tab-content"><div class="section"><div class="card-group" id="group-health-tab"></div></div></div>
-<!-- 晚间 -->
-<div id="tab-evening" class="tab-content"><div class="section"><div class="card-group" id="group-evening-tab"></div></div></div>
-
-<div class="motive-card" id="motive-card">
-  <div class="motive-emoji" id="motive-emoji">🌿</div>
-  <div class="motive-text">
-    <div class="motive-title" id="motive-title">今天也要好好的</div>
-    <div class="motive-sub" id="motive-sub">一项一项来，不慌不忙</div>
+    <div class="quick-card quick-card--fitness" id="quick-fitness">
+      <div class="quick-card-header">
+        <div class="quick-card-left">
+          <div class="quick-card-icon-wrap">💪</div>
+          <div class="quick-card-name">Workout</div>
+        </div>
+        <button class="quick-card-btn" id="btn-fitness" onclick="toggleQuickCheck('fitness')">
+          <svg width="16" height="12" viewBox="0 0 14 11" fill="none"><path d="M1.8 5.5L6 9.2L12.2 1.8" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="quick-card-streak" id="streak-fitness">0</div>
+      <div class="quick-card-label">days streak</div>
+      <!-- 时长设置（未开始时显示） -->
+      <div class="quick-timer-row" id="timer-set-fitness">
+        <input type="number" class="timer-min-input" id="timer-input-fitness"
+               min="1" max="180" value="30" placeholder="min" inputmode="numeric">
+        <span class="timer-unit">min</span>
+        <button class="timer-start-btn" onclick="startCustomTimer('fitness')">▶</button>
+      </div>
+      <!-- 倒计时（运行中显示） -->
+      <div class="quick-countdown" id="countdown-fitness">
+        <div class="countdown-time" id="cd-time-fitness">00:00</div>
+        <div class="countdown-label">remaining</div>
+        <div class="countdown-controls">
+          <button class="countdown-ctrl-btn countdown-ctrl-btn--stop" onclick="stopTimer('fitness')">Stop</button>
+          <button class="countdown-ctrl-btn countdown-ctrl-btn--cancel" onclick="cancelTimer('fitness')">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
+
+<!-- 记账长条卡片 -->
+<div class="expense-section">
+  <div class="expense-card" id="expense-card">
+    <div class="expense-header">
+      <div class="expense-left">
+        <div class="expense-icon-wrap">💰</div>
+        <div class="expense-title">Expense</div>
+      </div>
+      <div class="expense-total" id="expense-total">¥0.00</div>
+    </div>
+    <div class="expense-input-row">
+      <input type="number" class="exp-amount-input" id="exp-amount"
+             min="0" step="0.01" placeholder="¥ 0.00"
+             inputmode="decimal">
+      <input type="text" class="exp-note-input" id="exp-note"
+             placeholder="What did you buy?" maxlength="30">
+      <button class="exp-add-btn" onclick="addExpense()">+</button>
+    </div>
+    <div class="expense-list" id="expense-list">
+      <div class="expense-empty">No records today ~</div>
+    </div>
+  </div>
+</div>
+
+<!-- 分类卡片网格 -->
+<div class="cards-section">
+  <div class="cards-grid" id="cards-grid"></div>
+</div>
+
+<div id="all-done-banner" class="all-done-banner" style="margin:18px 16px 0;">
+  ✦ 今日全部完成！你太棒了 🎉
 </div>
 
 <div class="bottom-actions">
@@ -485,6 +1138,30 @@
 </div>
 
 <canvas class="confetti-wrap" id="confetti"></canvas>
+
+<!-- 日期历史记录面板 -->
+<div class="cat-detail-overlay" id="day-detail" onclick="closeDayDetailOnBg(event)">
+  <div class="cat-detail-sheet" style="max-height:75vh;">
+    <div class="cat-detail-handle"></div>
+    <div class="cat-detail-header">
+      <div class="cat-detail-title" id="day-detail-title">📅 5月15日 周四</div>
+      <button class="cat-detail-close" onclick="closeDayDetail()">✕</button>
+    </div>
+    <div id="day-detail-body"></div>
+  </div>
+</div>
+
+<!-- 分类详情面板 -->
+<div class="cat-detail-overlay" id="cat-detail" onclick="closeCatDetailOnBg(event)">
+  <div class="cat-detail-sheet">
+    <div class="cat-detail-handle"></div>
+    <div class="cat-detail-header">
+      <div class="cat-detail-title" id="detail-cat-title">🌅 晨间</div>
+      <button class="cat-detail-close" onclick="closeCatDetail()">✕</button>
+    </div>
+    <div class="detail-task-list" id="detail-task-list"></div>
+  </div>
+</div>
 
 <!-- Add/Edit Modal -->
 <div class="modal-overlay" id="modal" onclick="closeModalOnBg(event)">
@@ -550,7 +1227,19 @@ const DEFAULT_TASKS = [
   { id: 'd4', cat: 'evening', emoji: '🌙', bg: '#E1F5EE', title: '准时入睡', sub: '23:30 前上床', color: '#1D9E75' },
 ];
 
-const EMOJIS = ['💧','🧘','📓','🪥','🎨','📬','📎','🔍','🥗','🚶','👁️','📖','✏️','📵','🌙','☕','🎧','🍵','✨','🌸','🐾','💪','📝','🎯','💤','🧹','🏋️','🎵','📸','🛁'];
+const EMOJIS = [
+  // 🐾 可爱动物们
+  '🐱','🐶','🐰','🦊','🐻','🐼','🐨','🐯',
+  '🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🦆',
+  '🦉','🐺','🐗','🐴','🦄','🐝','🦋',
+  '🐢','🦖','🦕','🐙','🦑','🦐','🦀',
+  '🐡','🐠','🐟','🐬','🐳','🦈','🐊','🐅','🐆','🦓',
+  '🦩','🦚','🦜','🐓','🦃','🏇','🐿️','🦔',
+  // ✨ 可爱杂项
+  '💧','🧘','📓','🪥','🎨','📬','📎','🔍','🥗','🚶',
+  '👁️','📖','✏️','📵','🌙','☕','🎧','🍵','✨','🌸',
+  '🐾','💪','📝','🎯','💤','🧹','🏋️','🎵','📸','🛁'
+];
 const COLORS = [
   { c:'#7F77DD', b:'#EEEDFE' }, { c:'#378ADD', b:'#E6F1FB' },
   { c:'#1D9E75', b:'#E1F5EE' }, { c:'#3B6D11', b:'#EAF3DE' },
@@ -559,12 +1248,39 @@ const COLORS = [
 ];
 
 const MOTIVES = [
-  { emoji: '🌿', title: '今天也要好好的', sub: '一项一项来，不慌不忙' },
-  { emoji: '🔥', title: '状态来了！', sub: '趁热打铁，继续冲！' },
-  { emoji: '🎯', title: '已经完成一半了', sub: '剩下的，慢慢来' },
-  { emoji: '🏆', title: '今日全部搞定！', sub: '给自己一个奖励吧' },
-  { emoji: '☁️', title: '休息也是一种成就', sub: '不要对自己太苛刻' },
+  { emoji: '🌿', title: '今天也要好好的', sub: '一项一项来，不慌不忙', color: '#7F77DD' },
+  { emoji: '🔥', title: '状态来了！', sub: '趁热打铁，继续冲！', color: '#D85A30' },
+  { emoji: '🎯', title: '已经完成一半了', sub: '剩下的，慢慢来', color: '#378ADD' },
+  { emoji: '🏆', title: '今日全部搞定！', sub: '给自己一个奖励吧', color: '#1D9E75' },
+  { emoji: '☁️', title: '休息也是一种成就', sub: '不要对自己太苛刻', color: '#888780' },
+  { emoji: '🌸', title: '慢慢来比较快', sub: '允许自己今天只做一件事', color: '#D4537E' },
+  { emoji: '✨', title: '你比自己想象的更棒', sub: '每一步都算数', color: '#BA7517' },
+  { emoji: '🌊', title: '保持节奏就好', sub: '稳住就是胜利', color: '#534AB7' },
+  { emoji: '💫', title: '今天也要发光哦', sub: '你的努力会被看见的', color: '#D4537E' },
+  { emoji: '🎪', title: '生活就是游乐场', sub: '别那么严肃嘛~', color: '#3B6D11' },
 ];
+
+const MOTIVES_KEY = 'custom_motives_v1';
+
+function loadCustomMotives() {
+  try { return JSON.parse(localStorage.getItem(MOTIVES_KEY) || 'null'); }
+  catch(e) { return null; }
+}
+function saveCustomMotives(m) { localStorage.setItem(MOTIVES_KEY, JSON.stringify(m)); }
+
+let motiveIdx = -1; // current displayed index, -1 means auto
+let motiveEditing = false;
+
+// Load custom motives if saved
+const savedMotives = loadCustomMotives();
+if (savedMotives && Array.isArray(savedMotives)) {
+  // Merge: keep original structure, update title/sub/color from saved
+  savedMotives.forEach((sm, i) => {
+    if (MOTIVES[i]) {
+      MOTIVES[i] = { ...MOTIVES[i], ...sm };
+    }
+  });
+}
 
 const TASKS_KEY = 'my_tasks_v2';
 const TODAY = new Date();
@@ -573,6 +1289,306 @@ const TODAY_KEY = 'checklist_' + new Date().toISOString().slice(0, 10);
 let state = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}');
 let manageMode = false;
 let editingTaskId = null;
+
+/* ---- Quick check (Cello / Workout) with timer ---- */
+const QUICK_KEY = 'quick_check_v1';
+const TIMER_KEY = 'quick_timer_v1';
+
+function loadQuickState() { return JSON.parse(localStorage.getItem(QUICK_KEY) || '{}'); }
+function saveQuickState(s) { localStorage.setItem(QUICK_KEY, JSON.stringify(s)); }
+
+/* Timer state: { violin: { targetSec, remainingSec, running }, fitness: {...} } */
+function loadTimerState() {
+  try { return JSON.parse(localStorage.getItem(TIMER_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+function saveTimerState(s) { localStorage.setItem(TIMER_KEY, JSON.stringify(s)); }
+
+// Active timer intervals per key
+let timerIntervals = {};
+
+function formatTime(sec) {
+  sec = Math.max(0, Math.floor(sec));
+  const m = String(Math.floor(sec / 60)).padStart(2, '0');
+  const s = String(sec % 60).padStart(2, '0');
+  return m + ':' + s;
+}
+
+function startCustomTimer(key) {
+  const input = document.getElementById('timer-input-' + key);
+  let minutes = parseInt(input.value, 10);
+  if (!minutes || isNaN(minutes)) { input.value = 30; minutes = 30; }
+  minutes = Math.max(1, Math.min(180, minutes)); // clamp 1~180 min
+  const target = minutes * 60;
+  const ts = loadTimerState();
+  ts[key] = { targetSec: target, remainingSec: target, running: true };
+  saveTimerState(ts);
+  // show countdown, hide set row
+  document.getElementById('timer-set-' + key).style.display = 'none';
+  const cd = document.getElementById('countdown-' + key);
+  cd.classList.add('active');
+  document.getElementById('cd-time-' + key).textContent = formatTime(target);
+  startTimerTick(key);
+}
+
+function startTimerTick(key) {
+  // clear existing
+  if (timerIntervals[key]) clearInterval(timerIntervals[key]);
+  timerIntervals[key] = setInterval(() => {
+    const ts = loadTimerState();
+    const t = ts[key];
+    if (!t || !t.running) {
+      clearInterval(timerIntervals[key]); delete timerIntervals[key]; return;
+    }
+    if (t.remainingSec <= 1) {
+      // Timer complete! Auto-check
+      clearInterval(timerIntervals[key]); delete timerIntervals[key];
+      t.remainingSec = 0; t.running = false;
+      saveTimerState(ts);
+      document.getElementById('cd-time-' + key).textContent = '00:00';
+      autoCompleteTimer(key);
+    } else {
+      t.remainingSec--;
+      saveTimerState(ts);
+      document.getElementById('cd-time-' + key).textContent = formatTime(t.remainingSec);
+    }
+  }, 1000);
+}
+
+function stopTimer(key) {
+  const ts = loadTimerState();
+  if (ts[key]) {
+    ts[key].running = false;
+    saveTimerState(ts);
+  }
+  if (timerIntervals[key]) { clearInterval(timerIntervals[key]); delete timerIntervals[key]; }
+  autoCompleteTimer(key); // stop = complete early
+}
+
+function cancelTimer(key) {
+  const ts = loadTimerState();
+  if (ts[key]) { delete ts[key]; saveTimerState(ts); }
+  if (timerIntervals[key]) { clearInterval(timerIntervals[key]); delete timerIntervals[key]; }
+  // reset UI to set buttons
+  document.getElementById('countdown-' + key).classList.remove('active');
+  document.getElementById('cd-time-' + key).textContent = '00:00';
+  document.getElementById('timer-set-' + key).style.display = '';
+}
+
+function autoCompleteTimer(key) {
+  // Mark as checked automatically
+  const s = loadQuickState();
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (!(s[key] || []).includes(todayStr)) {
+    s[key] = [...(s[key]||[]), todayStr];
+    saveQuickState(s);
+  }
+  // Update UI
+  const btn = document.getElementById('btn-' + key);
+  btn.classList.add('checked');
+  document.getElementById('streak-' + key).textContent = getQuickStreak(key);
+  popEffect(); // confetti!
+  // Show completed state - swap countdown for done indicator
+  const cd = document.getElementById('countdown-' + key);
+  cd.classList.remove('active');
+  cd.innerHTML =
+    '<div style="font-size:22px; font-weight:700; color:' +
+    (key==='violin'?'var(--purple)':'var(--teal)') +
+    '">✓ Done!</div>' +
+    '<div class="countdown-label" id="cd-done-' + key + '">Great job!</div>';
+}
+
+function restoreTimersOnLoad() {
+  ['violin', 'fitness'].forEach(key => {
+    const ts = loadTimerState();
+    const t = ts[key];
+    if (t && t.running && t.remainingSec > 0) {
+      // Timer was running, restore it
+      document.getElementById('timer-set-' + key).style.display = 'none';
+      const cd = document.getElementById('countdown-' + key);
+      cd.classList.add('active');
+      document.getElementById('cd-time-' + key).textContent = formatTime(t.remainingSec);
+      startTimerTick(key);
+    }
+  });
+}
+
+function getQuickStreak(key) {
+  const s = loadQuickState();
+  const dates = s[key] || [];
+  if (dates.length === 0) return 0;
+  let streak = 0;
+  const today = new Date().toISOString().slice(0, 10);
+  for (let i = 1; i <= 365; i++) {
+    const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+    if (dates.includes(d)) streak++;
+    else break;
+  }
+  if (dates.includes(today)) streak++;
+  return streak;
+}
+
+function renderQuickCards() {
+  ['violin', 'fitness'].forEach(key => {
+    const s = loadQuickState();
+    const dates = s[key] || [];
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const isChecked = dates.includes(todayStr);
+    document.getElementById('btn-' + key).classList.toggle('checked', isChecked);
+    document.getElementById('streak-' + key).textContent = getQuickStreak(key);
+
+    // If already checked today, hide timer-set and show "Done"
+    if (isChecked) {
+      const ts = loadTimerState();
+      if (!ts[key] || !ts[key].running) {
+        document.getElementById('timer-set-' + key).style.display = 'none';
+        const cd = document.getElementById('countdown-' + key);
+        cd.classList.add('active');
+        cd.innerHTML =
+          '<div style="font-size:22px; font-weight:700; color:' +
+          (key==='violin'?'var(--purple)':'var(--teal)') +
+          '">✓ Done!</div>' +
+          '<div class="countdown-label">Great job!</div>';
+      }
+    }
+  });
+}
+
+function toggleQuickCheck(key) {
+  // If timer is running, don't allow manual uncheck via button
+  const ts = loadTimerState();
+  if (ts[key] && ts[key].running) return;
+
+  const s = loadQuickState();
+  const dates = s[key] || [];
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const btn = document.getElementById('btn-' + key);
+
+  if (dates.includes(todayStr)) {
+    // uncheck — reset timer UI too
+    s[key] = dates.filter(d => d !== todayStr);
+    btn.classList.remove('checked');
+    // reset to initial HTML state
+    document.getElementById('countdown-' + key).classList.remove('active');
+    document.getElementById('timer-set-' + key).style.display = '';
+    resetCountdownHTML(key);
+  } else {
+    s[key] = [...dates, todayStr];
+    btn.classList.add('checked');
+    popEffect();
+  }
+  saveQuickState(s);
+  document.getElementById('streak-' + key).textContent = getQuickStreak(key);
+  renderCalendar(); // 刷新日历打卡状态
+}
+
+function resetCountdownHTML(key) {
+  const isViolin = key === 'violin';
+  const colorClass = isViolin ? 'quick-card--violin' : 'quick-card--fitness';
+  const name = isViolin ? 'Cello' : 'Workout';
+  const icon = isViolin ? '🎻' : '💪';
+  document.getElementById('countdown-' + key).innerHTML =
+    '<div class="countdown-time" id="cd-time-' + key + '">00:00</div>' +
+    '<div class="countdown-label">remaining</div>' +
+    '<div class="countdown-controls">' +
+    '  <button class="countdown-ctrl-btn countdown-ctrl-btn--stop" onclick="stopTimer(\''+key+'\')">Stop</button>' +
+    '  <button class="countdown-ctrl-btn countdown-ctrl-btn--cancel" onclick="cancelTimer(\''+key+'\')">Cancel</button>' +
+    '</div>';
+}
+
+/* ---- Expense Tracker ---- */
+const EXPENSE_KEY = 'expense_tracker_v1';
+function loadExpenses() {
+  try { return JSON.parse(localStorage.getItem(EXPENSE_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveExpenses(arr) { localStorage.setItem(EXPENSE_KEY, JSON.stringify(arr)); }
+
+// Get today's expenses only
+function todayExpenses() {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  return loadExpenses().filter(e => e.date === todayStr);
+}
+
+function formatAmt(n) { return '¥' + Number(n).toFixed(2); }
+
+function renderExpenses() {
+  const items = todayExpenses();
+  const list = document.getElementById('expense-list');
+  if (items.length === 0) {
+    list.innerHTML = '<div class="expense-empty">No records today ~</div>';
+    document.getElementById('expense-total').textContent = '¥0.00';
+    return;
+  }
+
+  let total = 0;
+  let html = '';
+  // Show newest first
+  items.slice().reverse().forEach((e, i) => {
+    total += parseFloat(e.amount);
+    html += '<div class="expense-item" id="exp-item-' + i + '">' +
+      '<div class="exp-item-info">' +
+        '<div class="exp-item-note">' + escapeHTML(e.note || '-') + '</div>' +
+        '<div class="exp-item-time">' + e.time + '</div>' +
+      '</div>' +
+      '<span class="exp-item-amt">' + formatAmt(e.amount) + '</span>' +
+      '<button class="exp-del-btn" onclick="delExpense(' + i + ')">✕</button>' +
+    '</div>';
+  });
+  list.innerHTML = html;
+  document.getElementById('expense-total').textContent = formatAmt(total);
+}
+
+function addExpense() {
+  const amountEl = document.getElementById('exp-amount');
+  const noteEl = document.getElementById('exp-note');
+  const amount = parseFloat(amountEl.value);
+  const note = (noteEl.value || '').trim();
+
+  if (!amount || amount <= 0) {
+    amountEl.focus(); return;
+  }
+
+  const now = new Date();
+  const time = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+  const expenses = loadExpenses();
+  expenses.push({
+    date: now.toISOString().slice(0, 10),
+    time: time,
+    amount: amount,
+    note: note,
+    ts: Date.now()
+  });
+  saveExpenses(expenses);
+
+  // clear inputs & re-render
+  amountEl.value = ''; noteEl.value = '';
+  renderExpenses();
+  renderCalendar(); // 刷新日历消费红点
+  popEffect(); // small celebration!
+}
+
+function delExpense(idx) {
+  // idx is from reversed today list, need to find the actual index
+  const items = todayExpenses();
+  const targetItem = items[items.length - 1 - idx];
+  if (!targetItem) return;
+
+  const all = loadExpenses();
+  const realIdx = all.findIndex(e => e.ts === targetItem.ts && e.amount === targetItem.amount && e.note === targetItem.note);
+  if (realIdx >= 0) {
+    all.splice(realIdx, 1);
+    saveExpenses(all);
+    renderExpenses();
+    renderCalendar(); // 刷新日历消费红点
+  }
+}
+
+function escapeHTML(s) {
+  const d = document.createElement('div');
+  d.textContent = s; return d.innerHTML;
+}
 
 function loadTasks() {
   const raw = localStorage.getItem(TASKS_KEY);
@@ -603,110 +1619,334 @@ function isDayPartial(y, m, d) {
 
 function renderCalendar() {
   const grid = document.getElementById('cal-grid');
+  const weekdaysEl = document.getElementById('cal-weekdays');
   document.getElementById('cal-month-label').textContent = calYear + '年 ' + (calMonth + 1) + '月';
   grid.innerHTML = '';
+
+  // 星期头 - 高亮今日列
+  const wdNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  weekdaysEl.innerHTML = wdNames.map((name, i) => {
+    const isTodayCol = (i === TODAY.getDay()) && (calMonth === TODAY.getMonth()) && (calYear === TODAY.getFullYear());
+    return `<div class="cal-wd${isTodayCol ? ' today-col' : ''}">${name}</div>`;
+  }).join('');
+
   const firstDay = new Date(calYear, calMonth, 1).getDay();
   const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayMs = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()).getTime();
 
   for (let i = 0; i < firstDay; i++) {
     const blank = document.createElement('div'); blank.className = 'cal-day empty'; grid.appendChild(blank);
   }
   for (let d = 1; d <= daysInMonth; d++) {
     const isToday = d === TODAY.getDate() && calMonth === TODAY.getMonth() && calYear === TODAY.getFullYear();
-    const partial = isDayPartial(calYear, calMonth, d);
+    const dateMs = new Date(calYear, calMonth, d).getTime();
+    const hasCheck = isDayPartial(calYear, calMonth, d);
+    const isPast = dateMs < todayMs;
+    // 检查当天是否有消费记录
+    const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const dayExpenses = loadExpenses().filter(e => e.date === dateStr);
+    const hasExpense = dayExpenses.length > 0;
     const el = document.createElement('div');
-    el.className = 'cal-day' + (isToday ? ' today' : '') + (partial ? ' checked' : '');
-    el.innerHTML = `<span>${d}</span><div class="cal-dot"></div>`;
-    el.title = isDayDone(calYear, calMonth, d) ? '全部完成' : partial ? '部分完成' : '';
-    el.onclick = () => calJumpTo(calYear, calMonth, d);
+
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    else if (hasCheck) cls += ' has-check';
+    else if (isPast) cls += ' past-empty';
+    else cls += ' no-data';
+    if (hasExpense) cls += ' has-expense';
+
+    el.className = cls;
+    el.innerHTML = d + (hasExpense ? '<span class="cal-exp-dot"></span>' : '');
+    el.onclick = () => openDayDetail(calYear, calMonth, d);
     grid.appendChild(el);
+  }
+
+  // 填充收起时的单行（跟随 calYear/calMonth，显示该月包含今日的那周）
+  const todayRow = document.getElementById('cal-today-row');
+  todayRow.innerHTML = '';
+
+  // 找到当前月份中包含今天日期的那一周的周一
+  // 如果当前月不是今天所在的月，则取该月的第一周
+  const isCurrentMonth = (calMonth === TODAY.getMonth() && calYear === TODAY.getFullYear());
+  let anchorDay;
+  if (isCurrentMonth) {
+    anchorDay = new Date(TODAY);
+  } else {
+    // 取该月的1号
+    anchorDay = new Date(calYear, calMonth, 1);
+  }
+  const anchorWd = anchorDay.getDay();
+  const monday = new Date(anchorDay);
+  monday.setDate(anchorDay.getDate() - anchorWd + (anchorWd === 0 ? -6 : 1));
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const isToday = d.getDate() === TODAY.getDate() && d.getMonth() === TODAY.getMonth() && d.getFullYear() === TODAY.getFullYear();
+    const isPast = d < TODAY;
+    const isOtherMonth = d.getMonth() !== calMonth;
+    const el = document.createElement('div');
+    let cls = 'cal-today-day';
+    if (isToday) cls += ' is-today';
+    else if (isPast && !isToday) cls += ' is-past';
+    if (isOtherMonth && !isToday) el.style.opacity = '0.35';
+    el.className = cls;
+    el.textContent = d.getDate();
+    el.onclick = () => toggleCal();
+    todayRow.appendChild(el);
   }
 }
 
-function calJumpTo(y, m, d) {
-  const isToday = d === TODAY.getDate() && m === TODAY.getMonth() && y === TODAY.getFullYear();
-  if (!isToday) {
-    const s = JSON.parse(localStorage.getItem(calKey(y,m,d))||'{}');
-    alert(`${y}年${m+1}月${d}日\n完成 ${TASKS.filter(t=>s[t.id]).length} / ${TASKS.length} 项`);
+function openDayDetail(y, m, d) {
+  const overlay = document.getElementById('day-detail');
+  const days = ['周日','周一','周二','周三','周四','周五','周六'];
+  const dayDate = new Date(y, m, d);
+  document.getElementById('day-detail-title').textContent = `📅 ${m+1}月${d}日 ${days[dayDate.getDay()]}`;
+
+  const body = document.getElementById('day-detail-body');
+  const s = JSON.parse(localStorage.getItem(calKey(y,m,d)) || '{}');
+  const doneCount = TASKS.filter(t => s[t.id]).length;
+  const total = TASKS.length;
+
+  let html = '';
+
+  // 完成统计
+  if (total > 0) {
+    const pct = Math.round(doneCount / total * 100);
+    html += `
+      <div style="text-align:center;padding:16px 0 12px;">
+        <div style="font-size:36px;font-weight:700;color:${pct>=100?'var(--teal)':'var(--purple)'};">${doneCount}<small style="font-size:18px;font-weight:400;color:var(--text-hint)">/${total}</small></div>
+        <div style="font-size:13px;color:var(--text-hint);margin-top:4px;">完成率 ${pct}%</div>
+      </div>
+      <div style="height:0.5px;background:var(--border);margin:4px 0 8px;"></div>`;
   }
+
+  // 任务列表
+  if (total > 0) {
+    TASKS.forEach(task => {
+      const done = !!s[task.id];
+      html += `
+        <div class="detail-item${done?' done':''}" style="cursor:default;">
+          <div class="detail-icon" style="background:${task.bg}">${task.emoji}</div>
+          <div class="detail-info">
+            <div class="detail-title">${task.title}</div>
+            <div class="detail-sub">${task.sub}</div>
+          </div>
+          <div class="detail-check" style="${done?`background:${task.color};border-color:transparent;`:'background:none;border-color:var(--border);'}">
+            ${done?'<svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+          </div>
+        </div>`;
+    });
+  } else {
+    html += '<div style="text-align:center;padding:20px;color:var(--text-hint);font-size:14px;">暂无计划</div>';
+  }
+
+  // 消费记录
+  const dateStr = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+  const dayExpenses = loadExpenses().filter(e => e.date === dateStr);
+  if (dayExpenses.length > 0) {
+    let expTotal = 0;
+    let expHTML = '<div style="margin-top:8px;padding-top:10px;border-top:0.5px solid var(--border);">' +
+      '<div style="font-size:13px;font-weight:600;color:var(--coral);margin-bottom:8px;">💰 消费记录</div>';
+    dayExpenses.slice().reverse().forEach(e => {
+      expTotal += parseFloat(e.amount);
+      expHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;">' +
+        '<div>' +
+          '<span style="color:var(--text-primary);">' + escapeHTML(e.note || '-') + '</span>' +
+          '<span style="color:var(--text-hint);font-size:11px;margin-left:6px;">' + e.time + '</span>' +
+        '</div>' +
+        '<span style="color:var(--coral);font-weight:600;">' + formatAmt(e.amount) + '</span>' +
+        '</div>';
+    });
+    expHTML += '<div style="display:flex;justify-content:flex-end;padding-top:6px;margin-top:4px;border-top:0.5px solid var(--border);font-size:14px;font-weight:700;color:var(--coral);">合计 ' + formatAmt(expTotal) + '</div>';
+    expHTML += '</div>';
+    html += expHTML;
+  }
+
+  body.innerHTML = html;
+  overlay.classList.add('show');
 }
+
+function closeDayDetail() { document.getElementById('day-detail').classList.remove('show'); }
+function closeDayDetailOnBg(e) { if (e.target === document.getElementById('day-detail')) closeDayDetail(); }
+
 function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
 function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
 
+function toggleCal() {
+  const body = document.getElementById('cal-body');
+  const btn = document.getElementById('cal-toggle-btn');
+  const todayBar = document.getElementById('cal-today-bar');
+  const isCollapsed = body.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed', isCollapsed);
+  btn.title = isCollapsed ? '展开日历' : '收起日历';
+  todayBar.classList.toggle('show', isCollapsed);
+}
+
 function saveState() { localStorage.setItem(TODAY_KEY, JSON.stringify(state)); }
 
-/* ---- Render ---- */
-function renderGroup(containerId, tasks, showAddBtn) {
-  const el = document.getElementById(containerId);
-  if (!el) return;
-  el.innerHTML = '';
-  tasks.forEach(task => {
-    const done = !!state[task.id];
-    const item = document.createElement('div');
-    item.className = 'check-item' + (done ? ' done' : '') + (manageMode && !done ? ' show-del' : '');
-    item.id = 'item-' + task.id + '-' + containerId;
-    item.innerHTML = `
-      <div class="item-icon" style="background:${task.bg}">${task.emoji}</div>
-      <div class="item-content">
-        <div class="item-title-row">
-          <div class="item-title">${task.title}</div>
-          <button class="item-edit-btn ${manageMode?'visible':''}" onclick="event.stopPropagation();openEditModal('${task.id}')">✏️</button>
-        </div>
-        <div class="item-sub">${task.sub}</div>
-      </div>
-      <button class="item-delete-btn" onclick="event.stopPropagation();quickDelete('${task.id}')">✕</button>
-      <div class="checkbox" style="--border-check:${task.color}40;--check-color:${task.color}">
+/* ---- Render cards grid ---- */
+const CAT_META = [
+  { key: 'morning', icon: '⚡', name: '目标', color: '#7F77DD', bg: '#EEEDFE' },
+  { key: 'evening', icon: '🌙', name: '睡眠', color: '#534AB7', bg: '#EEEDFE' },
+  { key: 'work',    icon: '💼', name: '工作', color: '#378ADD', bg: '#E6F1FB' },
+  { key: 'health',  icon: '🏃', name: '健康', color: '#1D9E75', bg: '#E1F5EE' },
+];
+
+function renderCardsGrid() {
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = '';
+  CAT_META.forEach(meta => {
+    const tasks = TASKS.filter(t => t.cat === meta.key);
+    const done = tasks.filter(t => state[t.id]).length;
+    const total = tasks.length;
+    const pct = total > 0 ? Math.round(done / total * 100) : 0;
+    const allDone = total > 0 && done === total;
+
+    // 计算圆环周长和偏移
+    const circumference = 72; // r * 2π ≈ 22.9 * π
+    const offset = circumference - (circumference * pct / 100);
+
+    const card = document.createElement('div');
+    card.className = 'cat-card' + (allDone ? ' has-done all-done' : '');
+    card.dataset.cat = meta.key;
+    card.innerHTML = `
+      <div class="cat-card-done-badge">
         <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
           <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-      </div>`;
-    item.onclick = () => toggle(task.id);
-    // long press to edit on mobile
-    let timer;
-    item.addEventListener('touchstart', e => {
-      timer = setTimeout(() => { openEditModal(task.id); }, 500);
-    }, { passive: true });
-    item.addEventListener('touchend', () => clearTimeout(timer));
-    item.addEventListener('touchmove', () => clearTimeout(timer));
-    el.appendChild(item);
+      </div>
+      <div class="cat-card-header">
+        <div class="cat-card-left">
+          <div class="cat-card-icon" style="background:${meta.bg}">${meta.icon}</div>
+          <div class="cat-card-name">${meta.name}</div>
+        </div>
+        <svg class="cat-card-ring" viewBox="0 0 28 28">
+          <circle class="ring-bg" cx="14" cy="14" r="11.45"/>
+          <circle class="ring-fg" cx="14" cy="14" r="11.45"
+            style="stroke:${meta.color};stroke-dashoffset:${offset}"/>
+        </svg>
+      </div>
+      <div class="cat-card-value">${done}<small>/${total}</small></div>`;
+    card.onclick = () => openCatDetail(meta);
+    grid.appendChild(card);
   });
-  if (showAddBtn) {
-    const btn = document.createElement('button');
-    btn.className = 'add-btn';
-    btn.innerHTML = '<span class="add-btn-icon">+</span> 添加新计划';
-    btn.onclick = (e) => { e.stopPropagation(); openAddModal(getCatFromContainer(containerId)); };
-    el.appendChild(btn);
-  }
 }
 
-function getCatFromContainer(id) {
-  if (id.includes('morning')) return 'morning';
-  if (id.includes('work')) return 'work';
-  if (id.includes('health')) return 'health';
-  return 'evening';
+function openCatDetail(meta) {
+  const overlay = document.getElementById('cat-detail');
+  document.getElementById('detail-cat-title').textContent = meta.icon + ' ' + meta.name;
+  const list = document.getElementById('detail-task-list');
+  list.innerHTML = '';
+
+  const tasks = TASKS.filter(t => t.cat === meta.key);
+  if (tasks.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-hint);font-size:14px;">暂无计划，点击下方按钮添加</div>';
+  } else {
+    tasks.forEach(task => {
+      const done = !!state[task.id];
+      const item = document.createElement('div');
+      item.className = 'detail-item' + (done ? ' done' : '');
+      item.innerHTML = `
+        <div class="detail-icon" style="background:${task.bg}">${task.emoji}</div>
+        <div class="detail-info">
+          <div class="detail-title">${task.title}</div>
+          <div class="detail-sub">${task.sub}</div>
+        </div>
+        <div class="detail-check" style="--border:${task.color}40;--check-color:${task.color}">
+          <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
+            <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>`;
+      item.onclick = () => toggle(task.id);
+      // long press to edit
+      let timer;
+      item.addEventListener('touchstart', e => { timer = setTimeout(() => openEditModal(task.id), 500); }, { passive: true });
+      item.addEventListener('touchend', () => clearTimeout(timer));
+      item.addEventListener('touchmove', () => clearTimeout(timer));
+      list.appendChild(item);
+    });
+  }
+
+  // 添加按钮
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-btn';
+  addBtn.innerHTML = '<span class="add-btn-icon">+</span> 添加新计划';
+  addBtn.style.marginTop = '12px';
+  addBtn.onclick = (e) => { e.stopPropagation(); closeCatDetail(); openAddModal(meta.key); };
+  list.appendChild(addBtn);
+
+  overlay.classList.add('show');
+}
+
+function closeCatDetail() {
+  document.getElementById('cat-detail').classList.remove('show');
+}
+
+function closeCatDetailOnBg(e) {
+  if (e.target === document.getElementById('cat-detail')) closeCatDetail();
 }
 
 function renderAll() {
-  const cats = ['morning','work','health','evening'];
-  cats.forEach(cat => {
-    const tasks = TASKS.filter(t => t.cat === cat);
-    renderGroup('group-' + cat + '-all', tasks, true);
-    renderGroup('group-' + cat + '-tab', tasks, true);
-    // update section label in "all" tab
-    const labelEl = document.querySelector('#group-' + cat + '-all').previousElementSibling;
-    if (labelEl) labelEl.querySelector('span').textContent = CAT_LABELS[cat];
-  });
+  renderCardsGrid();
   updateProgress();
 }
 
 function toggle(id) {
   state[id] = !state[id];
   saveState();
-  document.querySelectorAll('[id^="item-' + id + '-"]').forEach(el => {
-    el.classList.toggle('done', !!state[id]);
-    if (manageMode && !state[id]) el.classList.add('show-del'); else el.classList.remove('show-del');
-  });
+  // 立即更新类目卡片的 ✓ 图标（不重新渲染整个网格）
+  const task = TASKS.find(t => t.id === id);
+  if (task) {
+    const catCard = document.querySelector('.cat-card[data-cat="' + task.cat + '"]');
+    if (catCard) {
+      const catTasks = TASKS.filter(t => t.cat === task.cat);
+      const catDone = catTasks.filter(t => state[t.id]).length;
+      const catTotal = catTasks.length;
+      const allDone = catTotal > 0 && catDone === catTotal;
+
+      // 更新数字
+      const valEl = catCard.querySelector('.cat-card-value');
+      if (valEl) valEl.innerHTML = catDone + '<small>/' + catTotal + '</small>';
+
+      // 更新圆环进度
+      const ringFg = catCard.querySelector('.ring-fg');
+      if (ringFg) {
+        const pct = Math.round(catDone / catTotal * 100);
+        const offset = 72 - (72 * pct / 100);
+        ringFg.style.strokeDashoffset = offset;
+      }
+
+      // 只有全部完成才显示 ✓ 图标
+      if (allDone) {
+        catCard.classList.add('has-done', 'all-done');
+      } else {
+        catCard.classList.remove('has-done', 'all-done');
+      }
+    }
+  }
   updateProgress();
+  // 同步更新详情面板
+  const detailList = document.getElementById('detail-task-list');
+  if (detailList && detailList.children.length) {
+    // 找到对应 task 并切换 done 状态
+    Array.from(detailList.querySelectorAll('.detail-item')).forEach(el => {
+      const task = TASKS.find(t => el.querySelector('.detail-title')?.textContent === t.title);
+      if (task && task.id === id) {
+        el.classList.toggle('done', !!state[id]);
+        const check = el.querySelector('.detail-check');
+        if (state[id]) {
+          check.style.borderColor = 'transparent';
+          check.style.background = 'linear-gradient(145deg, #7F77DD, #5B52B8)';
+          check.style.boxShadow = '0 2px 10px rgba(127,119,221,0.4)';
+        } else {
+          check.style.borderColor = '';
+          check.style.background = '';
+          check.style.boxShadow = '';
+        }
+      }
+    });
+  }
   if (state[id]) popEffect();
   renderCalendar();
 }
@@ -722,13 +1962,90 @@ function updateProgress() {
   if (pct >= 100) mi = 3;
   else if (pct >= 50) mi = 2;
   else if (pct >= 25) mi = 1;
-  const m = MOTIVES[mi];
+  // If user hasn't manually picked, use auto; otherwise keep their pick
+  if (motiveIdx < 0) {
+    applyMotive(mi);
+    autoMotiveIdx = mi;
+  } else {
+    applyMotive(motiveIdx);
+  }
+
+function applyMotive(idx) {
+  const m = MOTIVES[idx];
   document.getElementById('motive-emoji').textContent = m.emoji;
   document.getElementById('motive-title').textContent = m.title;
   document.getElementById('motive-sub').textContent = m.sub;
 
+  // Color the card background
+  const card = document.getElementById('motive-card');
+  card.style.background = m.color || 'var(--purple)';
+}
+
+let autoMotiveIdx = -1;
+function cycleMotive() {
+  // cycle to next
+  motiveIdx = (motiveIdx + 1) % MOTIVES.length;
+  applyMotive(motiveIdx);
+  // emoji bounce animation
+  const em = document.getElementById('motive-emoji');
+  em.style.transform = 'scale(1.3) rotate(10deg)';
+  setTimeout(() => { em.style.transform = ''; }, 300);
+}
+
+function toggleMotiveEdit() {
+  const edit = document.getElementById('motive-edit');
+  const btn = document.getElementById('motive-edit-btn');
+  const display = document.getElementById('motive-text-display');
+  const titleIn = document.getElementById('mot-edit-title');
+  const subIn = document.getElementById('mot-edit-sub');
+
+  if (motiveEditing) {
+    // save and close
+    saveMotiveEdit();
+    return;
+  }
+
+  // open edit mode
+  motiveEditing = true;
+  const m = MOTIVES[motiveIdx >= 0 ? motiveIdx : autoMotiveIdx >= 0 ? autoMotiveIdx : 0];
+  titleIn.value = m.title || '';
+  subIn.value = m.sub || '';
+  display.style.display = 'none';
+  edit.style.display = 'flex';
+  edit.classList.add('active');
+  btn.textContent = '✕';
+  titleIn.focus();
+}
+
+function saveMotiveEdit() {
+  const titleIn = document.getElementById('mot-edit-title');
+  const subIn = document.getElementById('mot-edit-sub');
+  const newTitle = (titleIn.value || '').trim() || MOTIVES[0].title;
+  const newSub = (subIn.value || '').trim() || MOTIVES[0].sub;
+
+  // Update the current motive entry in MOTIVES
+  if (motiveIdx < 0) motiveIdx = autoMotiveIdx >= 0 ? autoMotiveIdx : 0;
+
+  const currentColor = MOTIVES[motiveIdx].color;
+  const currentEmoji = MOTIVES[motiveIdx].emoji;
+  MOTIVES[motiveIdx] = { emoji: currentEmoji, title: newTitle, sub: newSub, color: currentColor };
+
+  // Persist custom motives
+  saveCustomMotives(MOTIVES);
+
+  applyMotive(motiveIdx);
+
+  // close edit mode
+  document.getElementById('motive-text-display').style.display = '';
+  const edit = document.getElementById('motive-edit');
+  edit.style.display = 'none';
+  edit.classList.remove('active');
+  document.getElementById('motive-edit-btn').textContent = '✏️';
+  motiveEditing = false;
+}
+
   const banner = document.getElementById('all-done-banner');
-  banner.style.display = (total > 0 && pct >= 100) ? 'flex' : 'none';
+  if (banner) banner.style.display = (total > 0 && pct >= 100) ? 'flex' : 'none';
   if (total > 0 && pct >= 100) launchConfetti();
 }
 
@@ -940,7 +2257,7 @@ function launchConfetti(){
 function setGreeting(){
   const h=new Date().getHours();
   let g=h<6?'夜深了 🌙':h<10?'早上好 ☀️':h<13?'上午好 🌤️':h<18?'下午好 🍵':'晚上好 🌙';
-  document.getElementById('greeting-text').textContent=g;
+  document.getElementById('greeting-text').textContent=g + ' · 汤汤 TangTang';
   const d=new Date(), days=['日','一','二','三','四','五','六'];
   document.getElementById('date-title').textContent=`${d.getMonth()+1}月${d.getDate()}日 周${days[d.getDay()]}`;
 }
@@ -948,6 +2265,9 @@ function setGreeting(){
 setGreeting();
 renderAll();
 renderCalendar();
+renderQuickCards();
+restoreTimersOnLoad();
+renderExpenses();
 </script>
 </body>
 </html>
