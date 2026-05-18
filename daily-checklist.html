@@ -961,7 +961,15 @@
     <div class="avatar">🐱</div>
   </div>
 
-  <!-- 日历打卡 -->
+    <!-- Tab 导航 -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('checkin', this)">打卡</button>
+    <button class="tab" onclick="switchTab('expense', this)">记账</button>
+    <button class="tab" onclick="switchTab('plan', this)">计划</button>
+  </div>
+
+  <div class="tab-content active" id="tab-checkin">
+<!-- 日历打卡 -->
   <div class="cal-section">
     <div class="cal-card">
       <div class="cal-nav">
@@ -982,13 +990,15 @@
     </div>
   </div>
 
-  <div class="progress-summary">
+  
+<div class="progress-summary">
     <div class="progress-bar-wrap">
       <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
     </div>
     <div class="progress-text" id="progress-text">0%</div>
   </div>
 </div>
+
 
 <!-- 快捷打卡卡片 -->
 <div class="quick-check-section">
@@ -1055,6 +1065,19 @@
   </div>
 </div>
 
+
+<!-- 分类卡片网格 -->
+<div class="cards-section">
+  <div class="cards-grid" id="cards-grid"></div>
+</div>
+
+
+<div id="all-done-banner" class="all-done-banner" style="margin:18px 16px 0;">
+  ✦ 今日全部完成！你太棒了 🎉
+</div>
+  </div><!-- /tab-checkin -->
+
+  <div class="tab-content" id="tab-expense">
 <!-- 记账长条卡片 -->
 <div class="expense-section">
   <div class="expense-card" id="expense-card">
@@ -1079,19 +1102,15 @@
   </div>
 </div>
 
-<!-- 分类卡片网格 -->
-<div class="cards-section">
-  <div class="cards-grid" id="cards-grid"></div>
-</div>
 
-<div id="all-done-banner" class="all-done-banner" style="margin:18px 16px 0;">
-  ✦ 今日全部完成！你太棒了 🎉
-</div>
+  </div><!-- /tab-expense -->
 
+  <div class="tab-content" id="tab-plan">
 <div class="bottom-actions">
   <button class="manage-btn" id="manage-btn" onclick="toggleManageMode()">✏️ 管理计划</button>
   <button class="reset-btn" onclick="resetAll()">↺ 重置今日打卡</button>
 </div>
+  </div><!-- /tab-plan -->
 
 <canvas class="confetti-wrap" id="confetti"></canvas>
 
@@ -1636,68 +1655,53 @@ function getDayInfo(year, month, day) {
 }
 
 function renderCalendar() {
-  var grid = document.getElementById('cal-grid');
-  var weekdaysEl = document.getElementById('cal-weekdays');
-  var monthLabel = document.getElementById('cal-month-label');
-  if (!grid || !weekdaysEl || !monthLabel) return;
-  monthLabel.textContent = calYear + '年 ' + (calMonth + 1) + '月';
+  const grid = document.getElementById('cal-grid');
+  const weekdaysEl = document.getElementById('cal-weekdays');
+  document.getElementById('cal-month-label').textContent = calYear + '年 ' + (calMonth + 1) + '月';
   grid.innerHTML = '';
 
   // 星期头 - 高亮今日列
-  var wdNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-  weekdaysEl.innerHTML = wdNames.map(function(name, i) {
-    var isTodayCol = (i === TODAY.getDay()) && (calMonth === TODAY.getMonth()) && (calYear === TODAY.getFullYear());
-    return '<div class="cal-wd' + (isTodayCol ? ' today-col' : '') + '">' + name + '</div>';
+  const wdNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  weekdaysEl.innerHTML = wdNames.map((name, i) => {
+    const isTodayCol = (i === TODAY.getDay()) && (calMonth === TODAY.getMonth()) && (calYear === TODAY.getFullYear());
+    return `<div class="cal-wd${isTodayCol ? ' today-col' : ''}">${name}</div>`;
   }).join('');
 
-  var firstDay = new Date(calYear, calMonth, 1).getDay();
-  var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  var todayMs = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()).getTime();
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayMs = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()).getTime();
 
-  // 空白填充格
-  for (var i = 0; i < firstDay; i++) {
-    var blank = document.createElement('div');
-    blank.className = 'cal-day empty';
-    grid.appendChild(blank);
+  for (let i = 0; i < firstDay; i++) {
+    const blank = document.createElement('div'); blank.className = 'cal-day empty'; grid.appendChild(blank);
   }
-  // 日期格子
-  for (var d = 1; d <= daysInMonth; d++) {
-    try {
-      var isToday = d === TODAY.getDate() && calMonth === TODAY.getMonth() && calYear === TODAY.getFullYear();
-      var dateMs = new Date(calYear, calMonth, d).getTime();
-      var hasCheck = false;
-      try { hasCheck = isDayPartial(calYear, calMonth, d); } catch(e) {}
-      var isPast = dateMs < todayMs;
-      var hasExpense = false;
-      try {
-        var dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-        var dayExpenses = loadExpenses().filter(function(e) { return e.date === dateStr; });
-        hasExpense = dayExpenses.length > 0;
-      } catch(e) {}
-      var di = { solarTerm:null, festival:null, holiday:null };
-      try { di = getDayInfo(calYear, calMonth, d); } catch(e) {}
-      var tagHTML = '';
-      if (di.solarTerm) tagHTML += '<span class="cal-day-tag term">' + di.solarTerm + '</span>';
-      else if (di.festival) tagHTML += '<span class="cal-day-tag fest">' + di.festival + '</span>';
-      else if (di.holiday) tagHTML += '<span class="cal-day-tag holi">休</span>';
-      var el = document.createElement('div');
-      var cls = 'cal-day';
-      if (isToday) cls += ' today';
-      else if (hasCheck) cls += ' has-check';
-      else if (isPast) cls += ' past-empty';
-      else cls += ' no-data';
-      if (hasExpense) cls += ' has-expense';
-      el.className = cls;
-      el.innerHTML = String(d) + (hasExpense ? '<span class="cal-exp-dot"></span>' : '') + tagHTML;
-      el.onclick = (function(y, m, day) { return function() { openDayDetail(y, m, day); }; })(calYear, calMonth, d);
-      grid.appendChild(el);
-    } catch(err) {
-      // 单个日期出错时不影响其他日期
-      var fallback = document.createElement('div');
-      fallback.className = 'cal-day no-data';
-      fallback.textContent = String(d);
-      grid.appendChild(fallback);
-    }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = d === TODAY.getDate() && calMonth === TODAY.getMonth() && calYear === TODAY.getFullYear();
+    const dateMs = new Date(calYear, calMonth, d).getTime();
+    const hasCheck = isDayPartial(calYear, calMonth, d);
+    const isPast = dateMs < todayMs;
+    // 检查当天是否有消费记录
+    const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const dayExpenses = loadExpenses().filter(e => e.date === dateStr);
+    const hasExpense = dayExpenses.length > 0;
+    // 万年历信息
+    const di = getDayInfo(calYear, calMonth, d);
+    let tagHTML = '';
+    if (di.solarTerm) tagHTML += `<span class="cal-day-tag term">${di.solarTerm}</span>`;
+    else if (di.festival) tagHTML += `<span class="cal-day-tag fest">${di.festival}</span>`;
+    else if (di.holiday) tagHTML += `<span class="cal-day-tag holi">休</span>`;
+    const el = document.createElement('div');
+
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    else if (hasCheck) cls += ' has-check';
+    else if (isPast) cls += ' past-empty';
+    else cls += ' no-data';
+    if (hasExpense) cls += ' has-expense';
+
+    el.className = cls;
+    el.innerHTML = d + (hasExpense ? '<span class="cal-exp-dot"></span>' : '') + tagHTML;
+    el.onclick = () => openDayDetail(calYear, calMonth, d);
+    grid.appendChild(el);
   }
 }
 
