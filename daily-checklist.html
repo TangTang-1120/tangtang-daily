@@ -1093,6 +1093,23 @@
   <button class="reset-btn" onclick="resetAll()">↺ 重置今日打卡</button>
 </div>
 
+<!-- 激励卡片 -->
+<div class="motive-card" id="motive-card" onclick="cycleMotive()">
+  <div class="motive-left">
+    <div class="motive-emoji" id="motive-emoji">🌿</div>
+    <div class="motive-text" id="motive-text-display">
+      <div class="motive-title" id="motive-title">今天也要好好的</div>
+      <div class="motive-sub" id="motive-sub">一项一项来，不慌不忙</div>
+    </div>
+  </div>
+  <button class="motive-edit-btn" id="motive-edit-btn" onclick="event.stopPropagation();toggleMotiveEdit()">✏️</button>
+</div>
+<div class="motive-edit" id="motive-edit">
+  <input class="mot-edit-in" id="mot-edit-title" placeholder="标题">
+  <input class="mot-edit-in mot-edit-sub" id="mot-edit-sub" placeholder="副标题">
+  <button class="mot-save-btn" onclick="saveMotiveEdit()">✓</button>
+</div>
+
 <canvas class="confetti-wrap" id="confetti"></canvas>
 
 <!-- 日期历史记录面板 -->
@@ -1984,6 +2001,11 @@ function updateProgress() {
     applyMotive(motiveIdx);
   }
 
+  const banner = document.getElementById('all-done-banner');
+  if (banner) banner.style.display = (total > 0 && pct >= 100) ? 'flex' : 'none';
+  if (total > 0 && pct >= 100) launchConfetti();
+}
+
 function applyMotive(idx) {
   const m = MOTIVES[idx];
   document.getElementById('motive-emoji').textContent = m.emoji;
@@ -2056,11 +2078,6 @@ function saveMotiveEdit() {
   edit.classList.remove('active');
   document.getElementById('motive-edit-btn').textContent = '✏️';
   motiveEditing = false;
-}
-
-  const banner = document.getElementById('all-done-banner');
-  if (banner) banner.style.display = (total > 0 && pct >= 100) ? 'flex' : 'none';
-  if (total > 0 && pct >= 100) launchConfetti();
 }
 
 function switchTab(tab, el) {
