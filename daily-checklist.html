@@ -1351,14 +1351,7 @@ function autoCompleteTimer(key) {
   btn.classList.add('checked');
   document.getElementById('streak-' + key).textContent = getQuickStreak(key);
   popEffect(); // confetti!
-  // Show completed state - swap countdown for done indicator
-  const cd = document.getElementById('countdown-' + key);
-  cd.classList.remove('active');
-  cd.innerHTML =
-    '<div style="font-size:22px; font-weight:700; color:' +
-    (key==='violin'?'var(--purple)':'var(--teal)') +
-    '">✓ Done!</div>' +
-    '<div class="countdown-label" id="cd-done-' + key + '">Great job!</div>';
+  showDoneUI(key);
 }
 
 function restoreTimersOnLoad() {
@@ -1411,17 +1404,21 @@ function renderQuickCards() {
           delete ts[key];
           saveTimerState(ts);
         }
-        document.getElementById('timer-set-' + key).style.display = 'none';
-        const cd = document.getElementById('countdown-' + key);
-        cd.classList.add('active');
-        cd.innerHTML =
-          '<div style="font-size:22px; font-weight:700; color:' +
-          (key==='violin'?'var(--purple)':'var(--teal)') +
-          '">✓ Done!</div>' +
-          '<div class="countdown-label">Great job!</div>';
+        showDoneUI(key);
       }
     }
   });
+}
+
+function showDoneUI(key) {
+  document.getElementById('timer-set-' + key).style.display = 'none';
+  const cd = document.getElementById('countdown-' + key);
+  cd.classList.add('active');
+  cd.innerHTML =
+    '<div style="font-size:22px; font-weight:700; color:' +
+    (key==='violin'?'var(--purple)':'var(--teal)') +
+    '">✓ Done!</div>' +
+    '<div class="countdown-label">Great job!</div>';
 }
 
 function toggleQuickCheck(key) {
@@ -1445,6 +1442,7 @@ function toggleQuickCheck(key) {
   } else {
     s[key] = [...dates, todayStr];
     btn.classList.add('checked');
+    showDoneUI(key);  // 打卡成功后立即切换到 Done 状态
     popEffect();
   }
   saveQuickState(s);
