@@ -2239,6 +2239,7 @@ function completeStudySession(subjectId, completed) {
       var endMin = startM + durationMinutes;
       var endH = startH + Math.floor(endMin / 60);
       endM = endMin % 60;
+      var records = loadStudyRecords(); // ← 缺失！导致记录无法持久化
       records.push({
         id: 'rec_' + Date.now() + '_' + Math.floor(Math.random() * 999),
         subjectId: subjectId,
