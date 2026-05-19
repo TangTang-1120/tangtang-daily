@@ -1087,6 +1087,61 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* ===== Study/Expense Tab 切换 ===== */
+  .se-tab-bar {
+    display: flex;
+    padding: 0 14px;
+    margin-top: 4px;
+    gap: 0;
+    background: var(--bg);
+    border-radius: var(--radius-card);
+    padding: 4px;
+    margin-bottom: 0;
+  }
+  .se-tab {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 0;
+    border-radius: calc(var(--radius-card) - 4px);
+    cursor: pointer;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+    z-index: 1;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .se-tab:active { transform: scale(0.96); }
+  .se-tab.active {
+    background: #fff;
+    color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .se-tab--study.active {
+    color: var(--blue);
+  }
+  .se-tab--expense.active {
+    color: var(--coral);
+  }
+  .se-tab--schedule.active {
+    color: var(--purple);
+  }
+
+  /* Tab content panels */
+  .se-panel { display: none; }
+  .se-panel.active { display: block; }
+
+  @media (max-width: 400px) {
+    .se-tab { font-size: 13px; padding: 9px 0; }
+  }
+
   /* ===== 学习计时卡片 Study ===== */
   .study-section { padding: 12px 14px 0; }
   .study-card {
@@ -1397,8 +1452,21 @@
   </div>
 </div>
 
-<!-- 学习计时卡片 Study -->
-<div class="study-section" id="study-section">
+<!-- Study / Expense / Schedule Tab 切换 -->
+<div class="se-tab-bar">
+  <button class="se-tab se-tab--study active" id="se-tab-study" onclick="switchSETab('study')">
+    <span>📚</span> Study
+  </button>
+  <button class="se-tab se-tab--expense" id="se-tab-expense" onclick="switchSETab('expense')">
+    <span>💰</span> Expense
+  </button>
+  <button class="se-tab se-tab--schedule" id="se-tab-schedule" onclick="switchSETab('schedule')">
+    <span>📋</span> Schedule
+  </button>
+</div>
+
+<!-- 学习计时卡片 Study (默认显示) -->
+<div class="se-panel active" id="se-panel-study">
   <div class="study-card" id="study-card">
     <div class="study-header">
       <div class="study-left">
@@ -1425,9 +1493,10 @@
       <span class="study-add-icon">+</span> 添加科目
     </button>
   </div>
-</div>
+</div><!-- /se-panel-study -->
 
-<!-- 记账长条卡片 -->
+<!-- 记账长条卡片 (Expense tab) -->
+<div class="se-panel" id="se-panel-expense">
 <div class="expense-section">
   <div class="expense-card" id="expense-card">
     <div class="expense-header">
@@ -1449,7 +1518,7 @@
       <div class="expense-empty">No records today ~</div>
     </div>
   </div>
-</div>
+</div><!-- /se-panel-expense -->
 
 <!-- 学习历史记录面板 -->
 <div class="cat-detail-overlay" id="study-history-overlay" onclick="closeStudyHistoryOnBg(event)">
@@ -1484,6 +1553,8 @@
   </div>
 </div>
 
+<!-- Schedule tab (打卡计划) -->
+<div class="se-panel" id="se-panel-schedule">
 <!-- 分类卡片网格 -->
 <div class="cards-section">
   <div class="cards-grid" id="cards-grid"></div>
@@ -1497,6 +1568,7 @@
   <button class="manage-btn" id="manage-btn" onclick="toggleManageMode()">✏️ 管理计划</button>
   <button class="reset-btn" onclick="resetAll()">↺ 重置今日打卡</button>
 </div>
+</div><!-- /se-panel-schedule -->
 
 <!-- 激励卡片 -->
 <div class="motive-card" id="motive-card" onclick="cycleMotive()">
@@ -3087,6 +3159,25 @@ function saveMotiveEdit() {
   edit.classList.remove('active');
   document.getElementById('motive-edit-btn').textContent = '✏️';
   motiveEditing = false;
+}
+
+function switchSETab(tab) {
+  // 切换 tab 按钮
+  document.getElementById('se-tab-study').classList.toggle('active', tab === 'study');
+  document.getElementById('se-tab-expense').classList.toggle('active', tab === 'expense');
+  document.getElementById('se-tab-schedule').classList.toggle('active', tab === 'schedule');
+  // 切换面板（双重保障：class + inline style）
+  var panels = ['study', 'expense', 'schedule'];
+  panels.forEach(function(p) {
+    var el = document.getElementById('se-panel-' + p);
+    if (tab === p) {
+      el.classList.add('active');
+      el.style.display = 'block';
+    } else {
+      el.classList.remove('active');
+      el.style.display = 'none';
+    }
+  });
 }
 
 function switchTab(tab, el) {
