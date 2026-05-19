@@ -32,6 +32,8 @@
     --coral-light: #FAECE7;
     --blue: #378ADD;
     --blue-light: #E6F1FB;
+    --mint: #42A882;
+    --mint-light: #DEF5EE;
     --cyan: #2CB5A0;
     --cyan-light: #D4F3ED;
     --pink: #D4537E;
@@ -113,9 +115,9 @@
     background: linear-gradient(165deg, #FFFDF5, #fff);
   }
   .daily-stat-card--study {
-    border: 0.5px solid rgba(55,138,221,0.15);
-    box-shadow: 0 2px 10px rgba(55,138,221,0.06);
-    background: linear-gradient(165deg, #F6FAFE, #fff);
+    border: 0.5px solid rgba(127,119,221,0.15);
+    box-shadow: 0 2px 10px rgba(127,119,221,0.06);
+    background: linear-gradient(165deg, #F8F7FF, #fff);
   }
   .daily-stat-icon {
     width: 36px; height: 36px; border-radius: 12px;
@@ -124,14 +126,14 @@
   }
   .daily-stat-icon--checkin { background: linear-gradient(135deg,#EDE9FD,#DDD6FE); }
   .daily-stat-icon--expense { background: linear-gradient(135deg,#FEF3C7,#FDE68A); }
-  .daily-stat-icon--study { background: linear-gradient(135deg,#A8EAD9,#7DDCC5); }
+  .daily-stat-icon--study { background: linear-gradient(135deg,#EDE9FD,#DDD6FE); }
   .daily-stat-value {
     font-size: 22px; font-weight: 800; line-height: 1.1;
     letter-spacing: -0.5px;
   }
   .daily-stat-value--checkin { color: var(--purple); }
-  .daily-stat-value--expense { color: var(--gold); }
-  .daily-stat-value--study { color: var(--cyan); }
+  .daily-stat-value--expense { color: var(--coral); }
+  .daily-stat-value--study { color: var(--purple); }
   .daily-stat-sub {
     font-size: 11px; color: var(--text-hint); margin-top: 3px;
     line-height: 1.2;
@@ -173,10 +175,12 @@
   }
   .cal-toggle-btn {
     background: none; border: none; cursor: pointer;
-    width: 26px; height: 26px; border-radius: 8px;
+    width: 32px; height: 32px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     color: var(--text-hint); font-size: 13px; transition: all 0.15s;
+    position: relative;
   }
+  .cal-toggle-btn::before { content: ''; position: absolute; inset: -6px; }
   .cal-toggle-btn:active { background: var(--bg); }
 
   /* 7天迷你行 */
@@ -225,11 +229,13 @@
   .cal-month-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
   .cal-nav-btn {
     background: none; border: none; cursor: pointer;
-    width: 26px; height: 26px; border-radius: 8px;
+    width: 32px; height: 32px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-secondary); font-size: 15px;
+    color: var(--text-secondary); font-size: 16px;
     transition: background 0.15s;
+    position: relative;
   }
+  .cal-nav-btn::before { content: ''; position: absolute; inset: -6px; }
   .cal-nav-btn:active { background: var(--bg); }
   /* 日历内容区（始终展开） */
   .cal-body { }
@@ -367,14 +373,16 @@
     font-size: 15px; font-weight: 600; color: var(--text-primary);
   }
   .quick-card-btn {
-    width: 36px; height: 36px; border-radius: 50%;
+    width: 38px; height: 38px; border-radius: 50%;
     border: 2.5px solid #E8E6E0;
     background: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all .3s cubic-bezier(.34,1.56,.64,1);
     flex-shrink: 0;
     padding: 0;
+    position: relative;
   }
+  .quick-card-btn::before { content: ''; position: absolute; inset: -6px; }
   .quick-card-btn svg {
     opacity: 0; transform: scale(.5);
     transition: all .2s cubic-bezier(.34,1.56,.64,1);
@@ -391,9 +399,9 @@
   .quick-card--violin .quick-card-btn:not(.checked) { border-color: rgba(127,119,221,.35); }
   .quick-card--violin .quick-card-btn.checked { background: linear-gradient(145deg, #7F77DD, #5B52B8); box-shadow: 0 3px 12px rgba(127,119,221,.4); }
   /* 健身 - 青绿色系 */
-  .quick-card--fitness .quick-card-icon-wrap { background: linear-gradient(135deg,#CFF0E3,#E1F5EE); }
-  .quick-card--fitness .quick-card-btn:not(.checked) { border-color: rgba(29,158,117,.35); }
-  .quick-card--fitness .quick-card-btn.checked { background: linear-gradient(145deg, #1D9E75, #168A66); box-shadow: 0 3px 12px rgba(29,158,117,.4); }
+  .quick-card--fitness .quick-card-icon-wrap { background: linear-gradient(135deg,#C2EDE1,#DEF5EE); }
+  .quick-card--fitness .quick-card-btn:not(.checked) { border-color: rgba(66,168,130,.35); }
+  .quick-card--fitness .quick-card-btn.checked { background: linear-gradient(145deg, #42A882, #369170); box-shadow: 0 3px 12px rgba(66,168,130,.4); }
 
   .quick-card-streak {
     font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
@@ -428,7 +436,7 @@
     display: flex; align-items: baseline; justify-content: center; gap: 6px;
   }
   .session-count-num {
-    font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
+    font-size: 22px; font-weight: 700; color: var(--mint); line-height: 1.2;
   }
   .session-count-label { font-size: 12px; color: var(--text-hint); }
   .session-total-row {
@@ -436,10 +444,14 @@
   }
   .session-total-text { font-size: 13px; font-weight: 600; }
   .quick-again-btn {
-    margin-top: 6px; padding: 5px 16px; border-radius: 20px;
+    margin-top: 6px; padding: 7px 18px; border-radius: 20px;
     border: 1.5px solid rgba(0,0,0,.12); background: transparent;
     font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-secondary);
+    position: relative;
+    min-height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
   }
+  .quick-again-btn::before { content: ''; position: absolute; inset: -6px; }
 
   /* 时长设置行 */
   .quick-timer-row {
@@ -459,15 +471,17 @@
     font-size: 13px; color: var(--text-hint); font-weight: 500;
   }
   .timer-start-btn {
-    width: 32px; height: 32px; border-radius: 50%;
+    width: 36px; height: 36px; border-radius: 50%;
     border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px; color: #fff;
+    font-size: 14px; color: #fff;
     transition: all .2s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
   }
+  .timer-start-btn::before { content: ''; position: absolute; inset: -6px; }
   .timer-start-btn:active { transform: scale(.88); }
   .quick-card--violin .timer-start-btn { background: linear-gradient(145deg, #7F77DD, #5B52B8); box-shadow: 0 2px 10px rgba(127,119,2,.35); }
-  .quick-card--fitness .timer-start-btn { background: linear-gradient(145deg, #1D9E75, #168A66); box-shadow: 0 2px 10px rgba(29,158,117,.35); }
+  .quick-card--fitness .timer-start-btn { background: linear-gradient(145deg, #42A882, #369170); box-shadow: 0 2px 10px rgba(66,168,130,.35); }
 
   /* 倒计时显示 */
   .quick-countdown {
@@ -486,10 +500,14 @@
   .countdown-controls { display: flex; gap: 8px; margin-top: 8px; }
   .countdown-ctrl-btn {
     border: 1px solid rgba(0,0,0,.14); border-radius: 20px;
-    padding: 5px 16px; background: #fff; cursor: pointer;
+    padding: 6px 16px; background: #fff; cursor: pointer;
     font-size: 13px; font-weight: 500; color: var(--text-primary);
     transition: all .15s;
+    position: relative;
+    min-height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
   }
+  .countdown-ctrl-btn::before { content: ''; position: absolute; inset: -6px; }
   .countdown-ctrl-btn:active { background: var(--bg); transform: scale(.95); }
   .countdown-ctrl-btn--stop { border-color: rgba(216,90,48,.35); color: var(--coral); }
   .countdown-ctrl-btn--cancel { border-color: rgba(0,0,0,.1); color: var(--text-hint); }
@@ -546,7 +564,7 @@
   .exp-note-input::placeholder { color: var(--text-hint); }
   .exp-note-input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(216,90,48,.08); }
   .exp-add-btn {
-    width: 38px; height: 38px; border-radius: 11px;
+    width: 40px; height: 40px; border-radius: 11px;
     border: none; cursor: pointer;
     background: linear-gradient(145deg, var(--coral), #c24a20);
     color: #fff; font-size: 18px;
@@ -554,7 +572,9 @@
     transition: all .2s cubic-bezier(.34,1.56,.64,1);
     box-shadow: 0 3px 10px rgba(216,90,48,.25);
     flex-shrink: 0;
+    position: relative;
   }
+  .exp-add-btn::before { content: ''; position: absolute; inset: -5px; }
   .exp-add-btn:active { transform: scale(.9); }
 
   .expense-list { max-height: 280px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
@@ -577,12 +597,14 @@
     flex-shrink: 0; margin-left: 8px;
   }
   .exp-del-btn {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     border: none; background: none; cursor: pointer;
     color: var(--text-hint); font-size: 14px; display: flex;
     align-items: center; justify-content: center; flex-shrink: 0;
     margin-left: 4px; transition: color .15s;
+    position: relative;
   }
+  .exp-del-btn::before { content: ''; position: absolute; inset: -6px; }
   .exp-del-btn:active { color: var(--coral); background: rgba(216,90,48,.06); }
   .expense-empty {
     text-align: center; padding: 16px 0 4px;
@@ -699,11 +721,13 @@
     display: flex; align-items: center; gap: 8px;
   }
   .cat-detail-close {
-    width: 30px; height: 30px; border-radius: 50%;
+    width: 34px; height: 34px; border-radius: 50%;
     background: var(--bg); border: none; cursor: pointer;
     font-size: 16px; color: var(--text-secondary);
     display: flex; align-items: center; justify-content: center;
+    position: relative;
   }
+  .cat-detail-close::before { content: ''; position: absolute; inset: -6px; }
 
   /* 详情内任务列表 */
   .detail-task-list {}
@@ -729,10 +753,12 @@
   }
   .detail-sub { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
   .detail-check {
-    width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
     border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
     transition: all .25s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
   }
+  .detail-check::before { content: ''; position: absolute; inset: -7px; }
   .detail-check svg { opacity: 0; transform: scale(.5); transition: all .2s; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
   .detail-item.done .detail-check {
     border-color: transparent;
@@ -750,12 +776,16 @@
   .tabs::-webkit-scrollbar { display: none; }
   .tab {
     white-space: nowrap; font-size: 13px; font-weight: 500;
-    padding: 6px 14px; border-radius: 99px; cursor: pointer;
+    padding: 8px 16px; border-radius: 99px; cursor: pointer;
     border: 1.5px solid transparent;
     color: var(--text-secondary);
     background: var(--card);
     transition: all 0.2s;
+    position: relative;
+    min-height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
   }
+  .tab::before { content: ''; position: absolute; inset: -5px; }
   .tab.active {
     background: var(--purple);
     color: #fff;
@@ -813,24 +843,28 @@
     font-size: 12px; color: var(--text-hint); margin-top: 2px;
   }
   .item-edit-btn {
-    width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     background: none; border: none; cursor: pointer;
     color: var(--text-hint); font-size: 13px; opacity: 0;
     transition: opacity 0.15s, background 0.15s;
+    position: relative;
   }
+  .item-edit-btn::before { content: ''; position: absolute; inset: -6px; }
   .check-item:hover .item-edit-btn,
   .check-item:has(.item-edit-btn:focus) .item-edit-btn,
   .item-edit-btn.visible { opacity: 1 !important; }
 
   /* Checkbox */
   .checkbox {
-    width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
     border: 2px solid var(--border-check, #D3D1C7);
     display: flex; align-items: center; justify-content: center;
     transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
     background: transparent;
+    position: relative;
   }
+  .checkbox::before { content: ''; position: absolute; inset: -7px; }
   .checkbox svg { opacity: 0; transform: scale(0.5); transition: all 0.2s cubic-bezier(.34,1.56,.64,1); }
 
   /* Checked state */
@@ -845,12 +879,15 @@
   /* Add button inside card group */
   .add-btn {
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; width: 100%; padding: 11px;
+    gap: 6px; width: 100%; padding: 13px;
     font-size: 13px; font-weight: 500; color: var(--text-hint);
     background: none; border: none; cursor: pointer;
     border-top: 0.5px dashed var(--border);
     transition: color 0.15s, background 0.15s;
+    position: relative;
+    min-height: 44px;
   }
+  .add-btn::before { content: ''; position: absolute; inset: -5px; }
   .add-btn:active { background: var(--bg); color: var(--purple); }
   .add-btn-icon { font-size: 17px; line-height: 1; }
 
@@ -858,13 +895,14 @@
   .item-delete-btn {
     position: absolute; right: 48px; top: 50%;
     transform: translateY(-50%);
-    width: 26px; height: 26px; border-radius: 50%;
+    width: 30px; height: 30px; border-radius: 50%;
     background: var(--coral-light); color: var(--coral);
     border: none; cursor: pointer; font-size: 13px;
     display: flex; align-items: center; justify-content: center;
     opacity: 0; pointer-events: none;
     transition: opacity 0.15s;
   }
+  .item-delete-btn::before { content: ''; position: absolute; inset: -6px; }
   .check-item.show-del .item-delete-btn { opacity: 1; pointer-events: auto; }
 
   /* Motivational footer card */
@@ -877,13 +915,20 @@
     cursor: pointer; transition: background .4s ease, transform .15s;
     user-select: none; position: relative;
     -webkit-tap-highlight-color: transparent;
+    /* 隐形扩展热区到边缘外 4px */
+  }
+  .motive-card::before {
+    content: ''; position: absolute;
+    inset: -4px;
+    border-radius: calc(var(--radius-card) + 4px);
+    z-index: -1;
   }
   .motive-left {
     display: flex; align-items: center; gap: 16px;
     flex: 1; min-width: 0;
   }
   .motive-card:active { transform: scale(.98); }
-  .motive-emoji { font-size: 36px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); flex-shrink: 0; cursor: pointer; position: relative; border-radius: 12px; padding: 2px; margin: -2px; }
+  .motive-emoji { font-size: 36px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); flex-shrink: 0; cursor: pointer; position: relative; border-radius: 12px; padding: 8px; margin: -8px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
   .motive-emoji:active { transform: scale(1.2); }
   .motive-emoji::after {
     content: ''; position: absolute; bottom: -2px; right: -2px;
@@ -894,39 +939,105 @@
   .motive-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
   .motive-sub { font-size: 12px; opacity: 0.75; }
 
-  /* Edit button */
+  /* Edit button — 扩大触摸热区 */
   .motive-edit-btn {
-    width: 30px; height: 30px; border-radius: 50%;
+    width: 40px; height: 40px; border-radius: 50%;
     border: none; background: rgba(255,255,255,.2); color: #fff;
-    font-size: 14px; cursor: pointer; display: flex;
+    font-size: 16px; cursor: pointer; display: flex;
     align-items: center; justify-content: center;
     flex-shrink: 0; transition: all .2s;
+    position: relative;
+    /* 隐形扩展热区到 48x48 */
+    --hit-area: 4px;
+  }
+  .motive-edit-btn::before {
+    content: ''; position: absolute;
+    inset: calc(var(--hit-area) * -1);
   }
   .motive-edit-btn:active { background: rgba(255,255,255,.35); transform: scale(.9); }
 
-  /* Edit inputs (inline) */
-  .motive-edit {
-    display: none; flex-direction: column; gap: 8px;
-    width: 100%; padding-top: 10px;
+  /* Motive Edit Modal (底部弹窗) */
+  .motive-edit-modal {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.35);
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
   }
-  .motive-edit.active { display: flex; }
-  .mot-edit-in {
-    height: 36px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,.35);
-    background: rgba(255,255,255,.15); color: #fff;
-    font-size: 13px; padding: 0 12px; outline: none; width: 100%;
+  .motive-edit-modal.show { opacity: 1; pointer-events: auto; }
+  .motive-edit-sheet {
+    width: 100%; max-width: 480px;
+    background: var(--card);
+    border-radius: 22px 22px 0 0;
+    padding: 28px 24px 40px;
+    transform: translateY(100%);
+    transition: transform .32s cubic-bezier(.32,.72,0,1);
   }
-  .mot-edit-in::placeholder { color: rgba(255,255,255,.5); }
-  .mot-edit-in:focus { border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.22); }
-  .mot-edit-sub { font-size: 12px; height: 32px; }
-  .mot-save-btn {
-    align-self: flex-end; width: 32px; height: 32px; border-radius: 50%;
-    border: none; background: #fff; color: var(--purple);
-    font-size: 16px; font-weight: 700; cursor: pointer;
+  .motive-edit-modal.show .motive-edit-sheet { transform: translateY(0); }
+  .motive-edit-handle {
+    width: 38px; height: 4px; border-radius: 2px;
+    background: var(--border); margin: 0 auto 22px;
+    /* 隐形扩展热区到 44x44 */
+    position: relative;
+  }
+  .motive-edit-handle::before {
+    content: ''; position: absolute;
+    inset: -20px -80px;
+  }
+  .motive-edit-title {
+    font-size: 19px; font-weight: 600; color: var(--text-primary);
+    margin-bottom: 22px; text-align: center;
+  }
+  .mot-modal-field { margin-bottom: 16px; }
+  .mot-modal-field label {
+    display: block; font-size: 12px; font-weight: 500;
+    color: var(--text-secondary); margin-bottom: 6px;
+  }
+  .mot-modal-input {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--border); border-radius: 14px;
+    font-size: 15px; color: var(--text-primary);
+    background: var(--bg); outline: none; font-family: inherit;
+    transition: border-color .2s;
+  }
+  .mot-modal-input:focus { border-color: var(--purple); }
+
+  /* 颜色选择器（Motivational Modal 内） */
+  .mot-color-grid {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .mot-color-opt {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2.5px solid transparent; cursor: pointer;
+    transition: transform .12s, border-color .12s;
+    position: relative;
+    /* 隐形扩展热区 */
+  }
+  .mot-color-opt::before {
+    content: ''; position: absolute; inset: -6px;
+  }
+  .mot-color-opt.selected { border-color: var(--text-primary); transform: scale(1.15); box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+
+  .motive-edit-actions {
+    display: flex; gap: 12px; margin-top: 26px;
+  }
+  .mot-btn-cancel {
+    flex: 1; padding: 14px; border-radius: 14px;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    border: none; background: var(--bg); color: var(--text-secondary);
+    font-family: inherit; transition: opacity .15s;
+    min-height: 48px;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,.15); margin-top: 2px;
-    transition: transform .15s;
   }
-  .mot-save-btn:active { transform: scale(.88); }
+  .mot-btn-save {
+    flex: 1; padding: 14px; border-radius: 14px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    border: none; background: var(--purple); color: #fff;
+    font-family: inherit; transition: opacity .15s;
+    min-height: 48px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mot-btn-cancel:active, .mot-btn-save:active { opacity: .7; }
 
   /* Reset & Manage btns */
   .bottom-actions {
@@ -936,8 +1047,10 @@
   .reset-btn, .manage-btn {
     font-size: 13px; color: var(--text-hint);
     background: none; border: none; cursor: pointer;
-    padding: 8px 16px;
+    padding: 10px 18px;
+    position: relative;
   }
+  .reset-btn::before, .manage-btn::before { content: ''; position: absolute; inset: -8px; }
   .manage-btn.active { color: var(--coral); }
 
   /* Confetti */
@@ -1014,12 +1127,15 @@
     gap: 8px;
   }
   .cat-option {
-    padding: 10px 4px; border-radius: 12px;
+    padding: 12px 4px; border-radius: 12px;
     border: 1.5px solid var(--border);
     background: var(--card); text-align: center;
     cursor: pointer; font-size: 13px;
     transition: all 0.15s; user-select: none;
+    position: relative; min-height: 44px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
+  .cat-option::before { content: ''; position: absolute; inset: -5px; }
   .cat-option.selected {
     border-color: var(--purple); background: var(--purple-light);
     color: var(--purple); font-weight: 500;
@@ -1031,31 +1147,37 @@
     display: flex; flex-wrap: wrap; gap: 6px;
   }
   .emoji-opt {
-    width: 40px; height: 40px; border-radius: 10px;
+    width: 44px; height: 44px; border-radius: 10px;
     border: 1.5px solid transparent; background: var(--bg);
     font-size: 20px; display: flex; align-items: center; justify-content: center;
     cursor: pointer; transition: all 0.12s;
+    position: relative;
   }
+  .emoji-opt::before { content: ''; position: absolute; inset: -5px; }
   .emoji-opt.selected { border-color: var(--purple); background: var(--purple-light); }
 
   .color-grid {
     display: flex; flex-wrap: wrap; gap: 8px;
   }
   .color-opt {
-    width: 30px; height: 30px; border-radius: 9px;
+    width: 34px; height: 34px; border-radius: 9px;
     border: 2.5px solid transparent; cursor: pointer;
     transition: transform 0.12s, border-color 0.12s;
+    position: relative;
   }
+  .color-opt::before { content: ''; position: absolute; inset: -6px; }
   .color-opt.selected { border-color: var(--text-primary); transform: scale(1.12); }
 
   .modal-actions {
     display: flex; gap: 12px; margin-top: 26px;
   }
   .modal-btn {
-    flex: 1; padding: 13px; border-radius: 14px;
+    flex: 1; padding: 14px; border-radius: 14px;
     font-size: 15px; font-weight: 500; cursor: pointer;
     border: none; transition: opacity 0.15s;
     font-family: inherit;
+    min-height: 48px;
+    display: flex; align-items: center; justify-content: center;
   }
   .modal-btn-cancel {
     background: var(--bg); color: var(--text-secondary);
@@ -1118,7 +1240,7 @@
     text-align: center;
     font-size: 14px;
     font-weight: 600;
-    padding: 10px 0;
+    padding: 12px 0;
     border-radius: calc(var(--radius-card) - 4px);
     cursor: pointer;
     color: var(--text-secondary);
@@ -1132,6 +1254,7 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
+    min-height: 44px;
   }
   .se-tab:active { transform: scale(0.96); }
   .se-tab.active {
@@ -1140,7 +1263,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,.08);
   }
   .se-tab--study.active {
-    color: var(--cyan);
+    color: var(--purple);
   }
   .se-tab--expense.active {
     color: var(--coral);
@@ -1171,14 +1294,14 @@
     width: 34px; height: 34px; border-radius: 11px;
     display: flex; align-items: center; justify-content: center;
     font-size: 18px;
-    background: linear-gradient(135deg, #A8EAD9, var(--cyan-light));
+    background: linear-gradient(135deg, #EDE9FD, var(--purple-light));
   }
   .study-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
   .study-right { display: flex; align-items: baseline; gap: 4px; }
-  .study-count { font-size: 18px; font-weight: 700; color: var(--cyan); }
+  .study-count { font-size: 18px; font-weight: 700; color: var(--purple); }
   .study-count-label { font-size: 12px; color: var(--text-hint); }
   .study-today-total { text-align: right; }
-  .study-today-time { font-size: 16px; font-weight: 700; color: var(--cyan); }
+  .study-today-time { font-size: 16px; font-weight: 700; color: var(--purple); }
   .study-today-label { font-size: 11px; color: var(--text-hint); }
 
   /* 科目网格 */
@@ -1196,7 +1319,7 @@
   }
   .study-subject-card:active { transform: scale(.97); }
   .study-subject-card.has-active {
-    border-color: var(--cyan); background: var(--cyan-light);
+    border-color: var(--purple); background: var(--purple-light);
   }
   .study-subject-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -1210,18 +1333,20 @@
   }
   .study-subject-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
   .study-subject-delete {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 30px; height: 30px; border-radius: 50%;
     border: none; background: none; cursor: pointer;
-    color: var(--text-hint); font-size: 12px;
+    color: var(--text-hint); font-size: 13px;
     display: flex; align-items: center; justify-content: center;
+    position: relative;
   }
+  .study-subject-delete::before { content: ''; position: absolute; inset: -6px; }
   .study-subject-delete:active { color: var(--coral); background: var(--coral-light); }
 
   .study-subject-stats {
     display: flex; justify-content: space-between;
     font-size: 11px; color: var(--text-hint); margin-bottom: 8px;
   }
-  .study-subject-today { color: var(--cyan); font-weight: 500; }
+  .study-subject-today { color: var(--purple); font-weight: 500; }
 
   .study-timer-row {
     display: flex; align-items: center; justify-content: center; gap: 4px;
@@ -1237,13 +1362,15 @@
   .study-timer-input::-webkit-outer-spin-button { -webkit-appearance: none; }
   .study-timer-unit { font-size: 11px; color: var(--text-hint); }
   .study-start-btn {
-    width: 28px; height: 28px; border-radius: 50%;
+    width: 34px; height: 34px; border-radius: 50%;
     border: none; cursor: pointer;
-    background: linear-gradient(145deg, var(--cyan), #239685);
-    color: #fff; font-size: 12px;
+    background: linear-gradient(145deg, var(--purple), #5B52B8);
+    color: #fff; font-size: 13px;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 8px rgba(55,138,221,.3);
+    box-shadow: 0 2px 8px rgba(127,119,221,.35);
+    position: relative;
   }
+  .study-start-btn::before { content: ''; position: absolute; inset: -6px; }
   .study-start-btn:active { transform: scale(.88); }
 
   /* 倒计时显示 */
@@ -1259,11 +1386,15 @@
   .study-cd-controls { display: flex; gap: 6px; margin-top: 6px; }
   .study-cd-btn {
     border: 1px solid rgba(0,0,0,.1); border-radius: 16px;
-    padding: 4px 12px; background: #fff; cursor: pointer;
-    font-size: 11px; font-weight: 500; color: var(--text-primary);
+    padding: 6px 14px; background: #fff; cursor: pointer;
+    font-size: 12px; font-weight: 500; color: var(--text-primary);
+    position: relative;
+    min-height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
   }
+  .study-cd-btn::before { content: ''; position: absolute; inset: -6px; }
   .study-cd-btn:active { background: var(--bg); }
-  .study-cd-btn--done { border-color: var(--cyan); color: var(--cyan); }
+  .study-cd-btn--done { border-color: var(--purple); color: var(--purple); }
   .study-cd-btn--cancel { color: var(--text-hint); }
 
   /* 空状态 */
@@ -1275,12 +1406,14 @@
   /* 添加按钮 */
   .study-add-btn {
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; width: 100%; padding: 10px;
-    font-size: 13px; font-weight: 500; color: var(--cyan);
-    background: var(--cyan-light); border: 1.5px dashed rgba(44,181,160,.3);
+    gap: 6px; width: 100%; padding: 12px;
+    font-size: 13px; font-weight: 500;     color: var(--purple);
+    background: var(--purple-light); border: 1.5px dashed rgba(127,119,221,.3);
     border-radius: var(--radius-item); cursor: pointer;
+    position: relative; min-height: 44px;
   }
-  .study-add-btn:active { background: #b5e8dc; }
+  .study-add-btn::before { content: ''; position: absolute; inset: -5px; }
+  .study-add-btn:active { background: #DDD6FE; }
   .study-add-icon { font-size: 16px; }
 
   /* 学习历史面板 */
@@ -1296,11 +1429,11 @@
   }
   .study-history-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
   .study-history-date { font-size: 11px; color: var(--text-hint); }
-  .study-history-duration { font-size: 14px; font-weight: 600; color: var(--cyan); }
+  .study-history-duration { font-size: 14px; font-weight: 600; color: var(--purple); }
 
   /* Study Modal 调整 */
-  #study-add-modal .modal-btn-confirm { background: var(--cyan) !important; }
-  #study-add-modal .modal-input:focus { border-color: var(--cyan) !important; }
+  #study-add-modal .modal-btn-confirm { background: var(--purple) !important; }
+  #study-add-modal .modal-input:focus { border-color: var(--purple) !important; }
 
   @media (max-width: 400px) {
     .study-section { padding: 10px 12px 0; }
@@ -1441,7 +1574,7 @@
           <span class="session-count-label">times today</span>
         </div>
         <div class="session-total-row">
-          <span class="session-total-text" id="session-total-fitness" style="color:var(--teal)">0 min</span>
+          <span class="session-total-text" id="session-total-fitness" style="color:var(--mint)">0 min</span>
         </div>
         <button class="quick-again-btn" onclick="resetForNextSession('fitness')" style="border-color:rgba(29,158,117,.3);color:var(--teal)">+ Again</button>
       </div>
@@ -1575,10 +1708,28 @@
   </div>
 </div>
 
-<div class="motive-edit" id="motive-edit">
-  <input class="mot-edit-in" id="mot-edit-title" placeholder="标题">
-  <input class="mot-edit-in mot-edit-sub" id="mot-edit-sub" placeholder="副标题">
-  <button class="mot-save-btn" onclick="saveMotiveEdit()">✓</button>
+<!-- 激励卡编辑弹窗 Modal -->
+<div class="motive-edit-modal" id="motive-edit-modal" onclick="closeMotiveEditModalOnBg(event)">
+  <div class="motive-edit-sheet">
+    <div class="motive-edit-handle"></div>
+    <div class="motive-edit-title">✏️ 编辑激励语</div>
+    <div class="mot-modal-field">
+      <label>标题</label>
+      <input class="mot-modal-input" id="mot-edit-title" placeholder="写一句鼓励自己的话" maxlength="30">
+    </div>
+    <div class="mot-modal-field">
+      <label>副标题</label>
+      <input class="mot-modal-input mot-modal-sub" id="mot-edit-sub" placeholder="简短描述（选填）" maxlength="40">
+    </div>
+    <div class="mot-modal-field">
+      <label>卡片背景色</label>
+      <div class="mot-color-grid" id="mot-color-grid"></div>
+    </div>
+    <div class="motive-edit-actions">
+      <button class="mot-btn-cancel" onclick="closeMotiveEditModal()">取消</button>
+      <button class="mot-btn-save" onclick="saveMotiveEdit()">保存</button>
+    </div>
+  </div>
 </div>
 
 <canvas class="confetti-wrap" id="confetti"></canvas>
@@ -2709,43 +2860,9 @@ function openDayDetail(y, m, d) {
   if (di.holiday) infoChips += `<span class="day-info-chip holi">🏖️ ${di.holiday}</span>`;
 
   const body = document.getElementById('day-detail-body');
-  const s = JSON.parse(localStorage.getItem(calKey(y,m,d)) || '{}');
-  const doneCount = TASKS.filter(t => s[t.id]).length;
-  const total = TASKS.length;
 
   let html = '';
   if (infoChips) html += `<div class="day-info-bar">${infoChips}</div>`;
-
-  // 完成统计
-  if (total > 0) {
-    const pct = Math.round(doneCount / total * 100);
-    html += `
-      <div style="text-align:center;padding:16px 0 12px;">
-        <div style="font-size:36px;font-weight:700;color:${pct>=100?'var(--teal)':'var(--purple)'};">${doneCount}<small style="font-size:18px;font-weight:400;color:var(--text-hint)">/${total}</small></div>
-        <div style="font-size:13px;color:var(--text-hint);margin-top:4px;">完成率 ${pct}%</div>
-      </div>
-      <div style="height:0.5px;background:var(--border);margin:4px 0 8px;"></div>`;
-  }
-
-  // 任务列表
-  if (total > 0) {
-    TASKS.forEach(task => {
-      const done = !!s[task.id];
-      html += `
-        <div class="detail-item${done?' done':''}" style="cursor:default;">
-          <div class="detail-icon" style="background:${task.bg}">${task.emoji}</div>
-          <div class="detail-info">
-            <div class="detail-title">${task.title}</div>
-            <div class="detail-sub">${task.sub}</div>
-          </div>
-          <div class="detail-check" style="${done?`background:${task.color};border-color:transparent;`:'background:none;border-color:var(--border);'}">
-            ${done?'<svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
-          </div>
-        </div>`;
-    });
-  } else {
-    html += '<div style="text-align:center;padding:20px;color:var(--text-hint);font-size:14px;">暂无计划</div>';
-  }
 
   // 消费记录
   const dateStr = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
@@ -2832,7 +2949,7 @@ function openDayDetail(y, m, d) {
   if (hasQuickData) html += quickHTML;
 
   // 空状态提示
-  if (doneCount === 0 && dayExpenses.length === 0 && dayStudyRecs.length === 0 && !hasQuickData) {
+  if (dayExpenses.length === 0 && dayStudyRecs.length === 0 && !hasQuickData) {
     html += '<div style="text-align:center;padding:24px 0;color:var(--text-hint);font-size:14px;">📭 这一天还没有任何记录</div>';
   }
 
@@ -2843,7 +2960,7 @@ function openDayDetail(y, m, d) {
 // 快速打卡项配置
 const QUICK_ITEMS = {
   violin: { name: 'Cello', emoji: '🎻', color: 'var(--purple)' },
-  fitness: { name: 'Workout', emoji: '💪', color: 'var(--teal)' },
+  fitness: { name: 'Workout', emoji: '💪', color: 'var(--mint)' },
 };
 
 function getDayQuickSessions(key, dateStr) {
@@ -3201,56 +3318,104 @@ function cycleMotiveEmoji() {
   setTimeout(() => { em.style.transform = ''; }, 350);
 }
 
+// Motive 编辑 Modal 颜色选项
+const MOTIVE_COLORS = [
+  '#7F77DD', '#D85A30', '#378ADD', '#1D9E75',
+  '#888780', '#D4537E', '#BA7517', '#534AB7', '#3B6D11'
+];
+let pickedMotiveColorIdx = -1; // -1 = 未改过，用当前motive的color
+
+// 初始化编辑弹窗颜色选择器
+(function buildMotiveColorPicker() {
+  const grid = document.getElementById('mot-color-grid');
+  if (!grid) return;
+  MOTIVE_COLORS.forEach(function(c, i) {
+    const opt = document.createElement('div');
+    opt.className = 'mot-color-opt';
+    opt.style.background = c;
+    opt.dataset.idx = String(i);
+    opt.dataset.color = c;
+    opt.onclick = function() {
+      document.querySelectorAll('.mot-color-opt').forEach(function(o) { o.classList.remove('selected'); });
+      opt.classList.add('selected');
+      pickedMotiveColorIdx = i;
+    };
+    grid.appendChild(opt);
+  });
+})();
+
 function toggleMotiveEdit() {
-  const edit = document.getElementById('motive-edit');
-  const btn = document.getElementById('motive-edit-btn');
-  const display = document.getElementById('motive-text-display');
+  const modal = document.getElementById('motive-edit-modal');
   const titleIn = document.getElementById('mot-edit-title');
   const subIn = document.getElementById('mot-edit-sub');
 
-  if (motiveEditing) {
-    // save and close
-    saveMotiveEdit();
-    return;
-  }
-
-  // open edit mode
-  motiveEditing = true;
-  const m = MOTIVES[motiveIdx >= 0 ? motiveIdx : autoMotiveIdx >= 0 ? autoMotiveIdx : 0];
+  // 填充当前数据
+  var currentIdx = motiveIdx >= 0 ? motiveIdx : (autoMotiveIdx >= 0 ? autoMotiveIdx : 0);
+  var m = MOTIVES[currentIdx] || MOTIVES[0];
   titleIn.value = m.title || '';
   subIn.value = m.sub || '';
-  display.style.display = 'none';
-  edit.style.display = 'flex';
-  edit.classList.add('active');
-  btn.textContent = '✕';
-  titleIn.focus();
+
+  // 重置颜色选中状态
+  pickedMotiveColorIdx = -1;
+  var currentColor = m.color || '#7F77DD';
+  document.querySelectorAll('.mot-color-opt').forEach(function(opt) {
+    opt.classList.toggle('selected', opt.dataset.color === currentColor);
+  });
+
+  // 显示弹窗
+  modal.classList.add('show');
+  setTimeout(function() { titleIn.focus(); }, 350);
+}
+
+function closeMotiveEditModal() {
+  var modal = document.getElementById('motive-edit-modal');
+  if (modal) modal.classList.remove('show');
+}
+
+function closeMotiveEditModalOnBg(e) {
+  if (e.target === document.getElementById('motive-edit-modal')) closeMotiveEditModal();
 }
 
 function saveMotiveEdit() {
   const titleIn = document.getElementById('mot-edit-title');
   const subIn = document.getElementById('mot-edit-sub');
-  const newTitle = (titleIn.value || '').trim() || MOTIVES[0].title;
-  const newSub = (subIn.value || '').trim() || MOTIVES[0].sub;
+  const newTitle = (titleIn.value || '').trim();
+  const newSub = (subIn.value || '').trim();
 
-  // Update the current motive entry in MOTIVES
+  if (!newTitle) {
+    titleIn.focus(); return;
+  }
+
+  // 确定 editing 的 motive index
   if (motiveIdx < 0) motiveIdx = autoMotiveIdx >= 0 ? autoMotiveIdx : 0;
 
-  const currentColor = MOTIVES[motiveIdx].color;
-  const currentEmoji = MOTIVES[motiveIdx].emoji;
-  MOTIVES[motiveIdx] = { emoji: currentEmoji, title: newTitle, sub: newSub, color: currentColor };
+  // 确定颜色：用户选了新色就用新的，否则保留原色
+  var newColor = (pickedMotiveColorIdx >= 0)
+    ? MOTIVE_COLORS[pickedMotiveColorIdx]
+    : (MOTIVES[motiveIdx].color || '#7F77DD');
 
-  // Persist custom motives
+  const currentEmoji = MOTIVES[motiveIdx].emoji;
+
+  MOTIVES[motiveIdx] = {
+    emoji: currentEmoji,
+    title: newTitle,
+    sub: newSub || '一项一项来，不慌不忙',
+    color: newColor
+  };
+
+  // 持久化
   saveCustomMotives(MOTIVES);
 
+  // 应用到卡片
   applyMotive(motiveIdx);
 
-  // close edit mode
-  document.getElementById('motive-text-display').style.display = '';
-  const edit = document.getElementById('motive-edit');
-  edit.style.display = 'none';
-  edit.classList.remove('active');
-  document.getElementById('motive-edit-btn').textContent = '✏️';
-  motiveEditing = false;
+  // 关闭弹窗
+  closeMotiveEditModal();
+
+  // emoji bounce
+  const em = document.getElementById('motive-emoji');
+  em.style.transform = 'scale(1.3) rotate(10deg)';
+  setTimeout(function() { em.style.transform = ''; }, 300);
 }
 
 function switchSETab(tab) {
