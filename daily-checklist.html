@@ -1240,7 +1240,14 @@ if (savedMotives && Array.isArray(savedMotives)) {
 
 const TASKS_KEY = 'my_tasks_v2';
 const TODAY = new Date();
-const TODAY_KEY = 'checklist_' + new Date().toISOString().slice(0, 10);
+
+// 使用本地时间生成日期字符串，避免 UTC 时区在凌晨0~8点导致日期错误
+function localDateStr(date) {
+  const d = date || new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+const TODAY_KEY = 'checklist_' + localDateStr();
 
 let state = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}');
 let manageMode = false;
@@ -1334,7 +1341,7 @@ function cancelTimer(key) {
 function autoCompleteTimer(key) {
   // Mark as checked automatically
   const s = loadQuickState();
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = localDateStr();
   if (!(s[key] || []).includes(todayStr)) {
     s[key] = [...(s[key]||[]), todayStr];
     saveQuickState(s);
@@ -1374,9 +1381,9 @@ function getQuickStreak(key) {
   const dates = s[key] || [];
   if (dates.length === 0) return 0;
   let streak = 0;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateStr();
   for (let i = 1; i <= 365; i++) {
-    const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+    const d = localDateStr(new Date(Date.now() - i * 86400000));
     if (dates.includes(d)) streak++;
     else break;
   }
@@ -1388,15 +1395,22 @@ function renderQuickCards() {
   ['violin', 'fitness'].forEach(key => {
     const s = loadQuickState();
     const dates = s[key] || [];
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = localDateStr();
     const isChecked = dates.includes(todayStr);
     document.getElementById('btn-' + key).classList.toggle('checked', isChecked);
     document.getElementById('streak-' + key).textContent = getQuickStreak(key);
 
-    // If already checked today, hide timer-set and show "Done"
+    // If already checked today, show "Done" (override any stale timer state)
     if (isChecked) {
       const ts = loadTimerState();
-      if (!ts[key] || !ts[key].running) {
+      const timerRunning = ts[key] && ts[key].running && (ts[key].remainingSec > 0);
+      if (!timerRunning) {
+        // 已打卡且计时器没有实际在运行：显示 Done 状态
+        // 同时清理可能残留的脏 timer state
+        if (ts[key] && !ts[key].running) {
+          delete ts[key];
+          saveTimerState(ts);
+        }
         document.getElementById('timer-set-' + key).style.display = 'none';
         const cd = document.getElementById('countdown-' + key);
         cd.classList.add('active');
@@ -1417,7 +1431,7 @@ function toggleQuickCheck(key) {
 
   const s = loadQuickState();
   const dates = s[key] || [];
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = localDateStr();
   const btn = document.getElementById('btn-' + key);
 
   if (dates.includes(todayStr)) {
@@ -1462,7 +1476,7 @@ function saveExpenses(arr) { localStorage.setItem(EXPENSE_KEY, JSON.stringify(ar
 
 // Get today's expenses only
 function todayExpenses() {
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = localDateStr();
   return loadExpenses().filter(e => e.date === todayStr);
 }
 
@@ -1510,7 +1524,7 @@ function addExpense() {
 
   const expenses = loadExpenses();
   expenses.push({
-    date: now.toISOString().slice(0, 10),
+    date: localDateStr(now),
     time: time,
     amount: amount,
     note: note,
