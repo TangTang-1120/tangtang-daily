@@ -85,6 +85,64 @@
   }
   .progress-text { font-size: 13px; font-weight: 500; color: var(--purple); min-width: 36px; text-align: right; }
 
+  /* ===== 每日数据总览 ===== */
+  .daily-summary { margin-top: 16px; }
+  .daily-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .daily-stat-card {
+    background: #fff;
+    border-radius: var(--radius-card);
+    padding: 12px 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .daily-stat-card--checkin {
+    border: 0.5px solid rgba(127,119,221,0.15);
+    box-shadow: 0 2px 10px rgba(127,119,221,0.06);
+    background: linear-gradient(165deg, #F8F7FF, #fff);
+  }
+  .daily-stat-card--expense {
+    border: 0.5px solid rgba(234,179,8,0.15);
+    box-shadow: 0 2px 10px rgba(234,179,8,0.06);
+    background: linear-gradient(165deg, #FFFDF5, #fff);
+  }
+  .daily-stat-card--study {
+    border: 0.5px solid rgba(55,138,221,0.15);
+    box-shadow: 0 2px 10px rgba(55,138,221,0.06);
+    background: linear-gradient(165deg, #F6FAFE, #fff);
+  }
+  .daily-stat-icon {
+    width: 36px; height: 36px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 6px; font-size: 18px;
+  }
+  .daily-stat-icon--checkin { background: linear-gradient(135deg,#EDE9FD,#DDD6FE); }
+  .daily-stat-icon--expense { background: linear-gradient(135deg,#FEF3C7,#FDE68A); }
+  .daily-stat-icon--study { background: linear-gradient(135deg,#DBEAFE,#BFDBFE); }
+  .daily-stat-value {
+    font-size: 22px; font-weight: 800; line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+  .daily-stat-value--checkin { color: var(--purple); }
+  .daily-stat-value--expense { color: var(--gold); }
+  .daily-stat-value--study { color: var(--blue); }
+  .daily-stat-sub {
+    font-size: 11px; color: var(--text-hint); margin-top: 3px;
+    line-height: 1.2;
+  }
+  .daily-stat-detail {
+    font-size: 11px; color: var(--text-secondary); margin-top: 4px;
+  }
+
+  @media (max-width: 380px) {
+    .daily-stat-value { font-size: 19px; }
+    .daily-stat-card { padding: 10px 8px; }
+  }
+
   /* ===== 卡片式月历 ===== */
   .cal-section { margin-top: 18px; }
   .cal-card {
@@ -1167,6 +1225,30 @@
     </div>
     <div class="progress-text" id="progress-text">0%</div>
   </div>
+
+  <!-- 每日数据总览 -->
+  <div class="daily-summary">
+    <div class="daily-summary-grid">
+      <div class="daily-stat-card daily-stat-card--checkin">
+        <div class="daily-stat-icon daily-stat-icon--checkin">🎯</div>
+        <div class="daily-stat-value daily-stat-value--checkin" id="ds-checkin-value">—</div>
+        <div class="daily-stat-sub">打卡次数</div>
+        <div class="daily-stat-detail" id="ds-checkin-detail"></div>
+      </div>
+      <div class="daily-stat-card daily-stat-card--expense">
+        <div class="daily-stat-icon daily-stat-icon--expense">💰</div>
+        <div class="daily-stat-value daily-stat-value--expense" id="ds-expense-value">¥0</div>
+        <div class="daily-stat-sub">今日支出</div>
+        <div class="daily-stat-detail" id="ds-expense-detail"></div>
+      </div>
+      <div class="daily-stat-card daily-stat-card--study">
+        <div class="daily-stat-icon daily-stat-icon--study">📚</div>
+        <div class="daily-stat-value daily-stat-value--study" id="ds-study-value">0m</div>
+        <div class="daily-stat-sub">学习时长</div>
+        <div class="daily-stat-detail" id="ds-study-detail"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- 快捷打卡卡片 -->
@@ -1678,6 +1760,7 @@ function recordQuickSession(key, durationMin) {
     });
     saveQuickSessions(all);
     updateSessionSummary(key); // refresh display
+    renderDailySummary(); // refresh daily overview
   } catch(e) { console.warn('recordQuickSession error:', e); }
 }
 
@@ -1906,6 +1989,7 @@ function addExpense() {
   renderExpenses();
   renderCalendar(); // 刷新日历消费红点
   popEffect(); // small celebration!
+  renderDailySummary(); // refresh daily overview
 }
 
 function delExpense(idx) {
@@ -2188,6 +2272,7 @@ function completeStudySession(subjectId, completed) {
       popEffect();
     }
     updateStudyTotal();
+    renderDailySummary(); // refresh daily overview
   } catch(e) { console.warn('completeStudySession error:', e); }
 }
 function updateStudyTotal() {
@@ -3060,6 +3145,68 @@ function setGreeting(){
   } catch(e) { console.warn('setGreeting error:', e); }
 }
 
+/* ---- 每日数据总览 ---- */
+function renderDailySummary() {
+  try {
+    // 1. 打卡统计
+    var checkinValue = document.getElementById('ds-checkin-value');
+    var checkinDetail = document.getElementById('ds-checkin-detail');
+    if (checkinValue) {
+      var violinSessions = getTodaySessions('violin');
+      var fitnessSessions = getTodaySessions('fitness');
+      var totalCount = violinSessions.length + fitnessSessions.length;
+      var totalMin = getTodaySessionTotal('violin') + getTodaySessionTotal('fitness');
+      checkinValue.textContent = totalCount > 0 ? String(totalCount) : '—';
+      if (checkinDetail) {
+        if (totalCount > 0) {
+          var parts = [];
+          if (violinSessions.length > 0) parts.push('🎻' + formatDuration(getTodaySessionTotal('violin')));
+          if (fitnessSessions.length > 0) parts.push('💪' + formatDuration(getTodaySessionTotal('fitness')));
+          checkinDetail.textContent = parts.join(' / ');
+        } else {
+          checkinDetail.textContent = '';
+        }
+      }
+    }
+
+    // 2. 账单统计
+    var expenseValue = document.getElementById('ds-expense-value');
+    var expenseDetail = document.getElementById('ds-expense-detail');
+    if (expenseValue) {
+      var expenses = todayExpenses();
+      var totalExp = expenses.reduce(function(s, e) { return s + (e.amount || 0); }, 0);
+      expenseValue.textContent = '¥' + totalExp.toFixed(2);
+      if (expenseDetail) {
+        expenseDetail.textContent = expenses.length > 0 ? expenses.length + ' 笔' : '';
+      }
+    }
+
+    // 3. 学习统计
+    var studyValue = document.getElementById('ds-study-value');
+    var studyDetail = document.getElementById('ds-study-detail');
+    if (studyValue) {
+      var studyTotalMin = getTodayTotalMinutes();
+      studyValue.textContent = formatDuration(studyTotalMin);
+      if (studyDetail) {
+        var subjects = loadStudySubjects();
+        var activeSubjects = loadStudyRecords().filter(function(r) { return r.date === localDateStr(); });
+        var uniqueSubs = {};
+        activeSubjects.forEach(function(r) { uniqueSubs[r.subjectId] = true; });
+        var subNames = Object.keys(uniqueSubs).map(function(sid) {
+          var sub = subjects.find(function(s) { return s.id === sid; });
+          return sub ? sub.emoji : '📖';
+        });
+        studyDetail.textContent = subNames.length > 0 ? subNames.join(' ') : '';
+      }
+    }
+  } catch(e) { console.warn('renderDailySummary error:', e); }
+}
+
+function todayExpenses() {
+  var all = loadExpenses();
+  return all.filter(function(e) { return e.date === localDateStr(); });
+}
+
 /* ---- 页面加载时恢复所有状态 ---- */
 function restoreAllOnLoad() {
   // 每步独立 try-catch，确保一步失败不阻塞其他步骤
@@ -3070,6 +3217,7 @@ function restoreAllOnLoad() {
   try { restoreTimersOnLoad(); } catch(e) { console.warn('init restoreTimers failed:', e); }
   try { renderExpenses(); } catch(e) { console.warn('init renderExpenses failed:', e); }
   try { initStudyModule(); } catch(e) { console.warn('init study module failed:', e); }
+  try { renderDailySummary(); } catch(e) { console.warn('init daily summary failed:', e); }
 }
 
 /* Study 模块初始化 */
