@@ -1660,7 +1660,7 @@ function startCustomTimer(key) {
   minutes = Math.max(1, Math.min(180, minutes)); // clamp 1~180 min
   const target = minutes * 60;
   const ts = loadTimerState();
-  ts[key] = { targetSec: target, remainingSec: target, running: true };
+  ts[key] = { targetSec: target, remainingSec: target, running: true, startTs: Date.now() };
   saveTimerState(ts);
   // show countdown, hide set row
   document.getElementById('timer-set-' + key).style.display = 'none';
@@ -3235,6 +3235,58 @@ function initStudyModule() {
     });
   }
   renderStudySubjects();
+}
+
+/* ---- 后台计时器校正（切回前台时修正时间漂移）---- */
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState !== 'visible') return;
+  try { correctTimerDrift(); } catch(e) { console.warn('visibility correct error:', e); }
+});
+
+function correctTimerDrift() {
+  var now = Date.now();
+
+  // 校正 Quick Check 计时器 (violin / fitness)
+  var qts = loadTimerState();
+  ['violin', 'fitness'].forEach(function(key) {
+    var t = qts[key];
+    if (!t || !t.running || !t.startTs) return;
+    var elapsed = Math.floor((now - t.startTs) / 1000);
+    if (elapsed <= 0) return; // clock skew, ignore
+    t.remainingSec = Math.max(0, t.targetSec - elapsed);
+    if (t.remainingSec <= 0) {
+      // Timer should have finished
+      delete qts[key]; saveTimerState(qts);
+      if (timerIntervals[key]) { clearInterval(timerIntervals[key]); delete timerIntervals[key]; }
+      document.getElementById('cd-time-' + key).textContent = '00:00';
+      autoCompleteTimer(key);
+    } else {
+      saveTimerState(qts);
+      document.getElementById('cd-time-' + key).textContent = formatTime(t.remainingSec);
+      // 重启 tick 以恢复正常倒数节奏
+      startTimerTick(key);
+    }
+  });
+
+  // 校正 Study 计时器
+  var sts = loadStudyTimerState();
+  Object.keys(sts).forEach(function(sid) {
+    var t = sts[sid];
+    if (!t || !t.running || !t.startTs) return;
+    var elapsed = Math.floor((now - t.startTs) / 1000);
+    if (elapsed <= 0) return;
+    t.remainingSec = Math.max(0, t.targetSec - elapsed);
+    if (t.remainingSec <= 0) {
+      delete sts[sid]; saveStudyTimerState(sts);
+      if (studyTimerIntervals[sid]) { clearInterval(studyTimerIntervals[sid]); delete studyTimerIntervals[sid]; }
+      completeStudySession(sid, true);
+    } else {
+      saveStudyTimerState(sts);
+      var cdtEl = document.getElementById('study-cd-time-' + sid);
+      if (cdtEl) cdtEl.textContent = formatTime(t.remainingSec);
+      startStudyTimerTick(sid);
+    }
+  });
 }
 
 // 启动
