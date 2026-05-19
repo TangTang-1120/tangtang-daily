@@ -2026,12 +2026,16 @@ function completeStudySession(subjectId, completed) {
 
     if (durationMinutes > 0) {
       var now = new Date();
-      var records = loadStudyRecords();
+      var startH = now.getHours(), startM = now.getMinutes();
+      var endMin = startM + durationMinutes;
+      var endH = startH + Math.floor(endMin / 60);
+      endM = endMin % 60;
       records.push({
         id: 'rec_' + Date.now() + '_' + Math.floor(Math.random() * 999),
         subjectId: subjectId,
         date: localDateStr(now),
-        startTime: String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0'),
+        startTime: String(startH).padStart(2,'0') + ':' + String(startM).padStart(2,'0'),
+        endTime: String(endH).padStart(2,'0') + ':' + String(endM).padStart(2,'0'),
         duration: durationMinutes,
         completed: !!completed,
         ts: Date.now()
@@ -2185,7 +2189,7 @@ function renderStudyHistory(subjectId) {
               '<div class="study-history-icon" style="background:var(--blue-light)">' + (rs.emoji || '📖') + '</div>' +
               '<div>' +
                 '<div class="study-history-name">' + escapeHTML(rs.name || '-') + '</div>' +
-                '<div class="study-history-date">' + r.startTime + (r.completed ? ' ✓' : '') + '</div>' +
+                '<div class="study-history-date">' + (r.startTime || '--:--') + ' – ' + (r.endTime || '--:--') + (r.completed ? ' ✓' : '') + '</div>' +
               '</div>' +
             '</div>' +
             '<span class="study-history-duration">' + formatDuration(r.duration) + '</span>' +
