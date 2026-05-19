@@ -2792,12 +2792,16 @@ const CAT_META = [
 ];
 
 function renderCardsGrid() {
-  const grid = document.getElementById('cards-grid');
+  var grid = document.getElementById('cards-grid');
   if (!grid) return;
+  // 防御：确保 state 有效（数据恢复）
+  if (!state || typeof state !== 'object') {
+    try { state = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}'); } catch(e) { state = {}; }
+  }
   grid.innerHTML = '';
-  CAT_META.forEach(meta => {
-    const tasks = TASKS.filter(t => t.cat === meta.key);
-    const done = tasks.filter(t => state[t.id]).length;
+  CAT_META.forEach(function(meta) {
+    var tasks = TASKS.filter(function(t) { return t.cat === meta.key; });
+    var done = tasks.filter(function(t) { return !!state[t.id]; }).length;
     const total = tasks.length;
     const pct = total > 0 ? Math.round(done / total * 100) : 0;
     const allDone = total > 0 && done === total;
@@ -2954,30 +2958,57 @@ function toggle(id) {
 
 function updateProgress() {
   try {
-  const total = TASKS.length;
-  const done = TASKS.filter(t => state[t.id]).length;
-  const pct = total > 0 ? Math.round(done / total * 100) : 0;
-  const pf = document.getElementById('progress-fill');
-  const pt = document.getElementById('progress-text');
-  if (pf) pf.style.width = pct + '%';
-  if (pt) pt.textContent = pct + '%';
+    // 防御：确保 state 是有效对象（数据恢复核心）
+    if (!state || typeof state !== 'object') {
+      state = {};
+      try { state = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}'); } catch(e) { state = {}; }
+    }
 
-  let mi = 0;
-  if (pct >= 100) mi = 3;
-  else if (pct >= 50) mi = 2;
-  else if (pct >= 25) mi = 1;
-  // If user hasn't manually picked, use auto; otherwise keep their pick
-  if (motiveIdx < 0) {
-    applyMotive(mi);
-    autoMotiveIdx = mi;
-  } else {
-    applyMotive(motiveIdx);
+    const total = TASKS.length;
+    const done = TASKS.filter(function(t) { return !!state[t.id]; }).length;
+    const pct = total > 0 ? Math.round(done / total * 100) : 0;
+
+    // 进度条更新
+    var pf = document.getElementById('progress-fill');
+    var pt = document.getElementById('progress-text');
+    if (pf) pf.style.width = pct + '%';
+    if (pt) pt.textContent = pct + '%';
+
+    // 励志语自动匹配
+    var mi = 0;
+    if (pct >= 100) mi = 3;
+    else if (pct >= 50) mi = 2;
+    else if (pct >= 25) mi = 1;
+
+    // 用户未手动选过 → 自动匹配；否则保留手动选择
+    if (motiveIdx < 0) {
+      applyMotive(mi);
+      autoMotiveIdx = mi;
+    } else {
+      applyMotive(motiveIdx);
+    }
+
+    // 完成横幅显示/隐藏
+    var banner = document.getElementById('all-done-banner');
+    if (banner) banner.style.display = (total > 0 && pct >= 100) ? 'flex' : 'none';
+
+    // 仅在首次达到100%时触发礼花（非刷新重入）
+    if (total > 0 && pct >= 100 && !window.__confettiFired) {
+      window.__confettiFired = true;
+      launchConfetti();
+    } else if (pct < 100) {
+      window.__confettiFired = false;
+    }
+  } catch(e) {
+    console.warn('[updateProgress] error:', e);
+    // 兜底：即使出错也尝试设置基础进度
+    try {
+      var _pf = document.getElementById('progress-fill');
+      var _pt = document.getElementById('progress-text');
+      if (_pf) _pf.style.width = '0%';
+      if (_pt) _pt.textContent = '0%';
+    } catch(_) {}
   }
-
-  const banner = document.getElementById('all-done-banner');
-  if (banner) banner.style.display = (total > 0 && pct >= 100) ? 'flex' : 'none';
-  if (total > 0 && pct >= 100) launchConfetti();
-  } catch(e) { console.warn('updateProgress error:', e); }
 }
 
 function applyMotive(idx) {
