@@ -294,6 +294,30 @@
     font-size: 13px; font-weight: 500; color: var(--text-secondary);
   }
 
+  /* 打卡次数+累计时长 */
+  .quick-session-summary {
+    display: none;
+    flex-direction: column; align-items: center; gap: 4px;
+    margin-top: 8px; width: 100%;
+  }
+  .quick-session-summary.show { display: flex; }
+  .session-count-row {
+    display: flex; align-items: baseline; justify-content: center; gap: 6px;
+  }
+  .session-count-num {
+    font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
+  }
+  .session-count-label { font-size: 12px; color: var(--text-hint); }
+  .session-total-row {
+    display: flex; align-items: center; gap: 4px; justify-content: center;
+  }
+  .session-total-text { font-size: 13px; font-weight: 600; }
+  .quick-again-btn {
+    margin-top: 6px; padding: 5px 16px; border-radius: 20px;
+    border: 1.5px solid rgba(0,0,0,.12); background: transparent;
+    font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-secondary);
+  }
+
   /* 时长设置行 */
   .quick-timer-row {
     display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -1160,6 +1184,17 @@
       </div>
       <div class="quick-card-streak" id="streak-violin">0</div>
       <div class="quick-card-label">days streak</div>
+      <!-- 打卡次数+累计时长 -->
+      <div class="quick-session-summary" id="session-summary-violin">
+        <div class="session-count-row">
+          <span class="session-count-num" id="session-count-violin">0</span>
+          <span class="session-count-label">times today</span>
+        </div>
+        <div class="session-total-row">
+          <span class="session-total-text" id="session-total-violin" style="color:var(--purple)">0 min</span>
+        </div>
+        <button class="quick-again-btn" onclick="resetForNextSession('violin')" style="border-color:rgba(127,119,221,.3);color:var(--purple)">+ Again</button>
+      </div>
       <!-- 时长设置（未开始时显示） -->
       <div class="quick-timer-row" id="timer-set-violin">
         <input type="number" class="timer-min-input" id="timer-input-violin"
@@ -1190,6 +1225,17 @@
       </div>
       <div class="quick-card-streak" id="streak-fitness">0</div>
       <div class="quick-card-label">days streak</div>
+      <!-- 打卡次数+累计时长 -->
+      <div class="quick-session-summary" id="session-summary-fitness">
+        <div class="session-count-row">
+          <span class="session-count-num" id="session-count-fitness">0</span>
+          <span class="session-count-label">times today</span>
+        </div>
+        <div class="session-total-row">
+          <span class="session-total-text" id="session-total-fitness" style="color:var(--teal)">0 min</span>
+        </div>
+        <button class="quick-again-btn" onclick="resetForNextSession('fitness')" style="border-color:rgba(29,158,117,.3);color:var(--teal)">+ Again</button>
+      </div>
       <!-- 时长设置（未开始时显示） -->
       <div class="quick-timer-row" id="timer-set-fitness">
         <input type="number" class="timer-min-input" id="timer-input-fitness"
@@ -1491,9 +1537,22 @@ let editingTaskId = null;
 /* ---- Quick check (Cello / Workout) with timer ---- */
 const QUICK_KEY = 'quick_check_v1';
 const TIMER_KEY = 'quick_timer_v1';
+const SESSIONS_KEY = 'quick_sessions_v1';
 
 function loadQuickState() { return JSON.parse(localStorage.getItem(QUICK_KEY) || '{}'); }
 function saveQuickState(s) { localStorage.setItem(QUICK_KEY, JSON.stringify(s)); }
+
+function loadQuickSessions() { try { return JSON.parse(localStorage.getItem(SESSIONS_KEY) || '{}'); } catch(e) { return {}; } }
+function saveQuickSessions(s) { localStorage.setItem(SESSIONS_KEY, JSON.stringify(s)); }
+
+function getTodaySessions(key) {
+  const all = loadQuickSessions();
+  const sessions = all[key] || [];
+  return sessions.filter(function(r) { return r.date === localDateStr(); });
+}
+function getTodaySessionTotal(key) {
+  return getTodaySessions(key).reduce(function(sum, r) { return sum + r.duration; }, 0);
+}
 
 /* Timer state: { violin: { targetSec, remainingSec, running }, fitness: {...} } */
 function loadTimerState() {
@@ -1574,7 +1633,18 @@ function cancelTimer(key) {
 }
 
 function autoCompleteTimer(key) {
-  // Mark as checked automatically
+  // Record this completed session
+  const ts = loadTimerState();
+  const t = ts[key];
+  var durationMin = 0;
+  if (t) {
+    durationMin = Math.ceil(Math.max(0, t.targetSec - (t.remainingSec || 0)) / 60);
+    delete ts[key]; saveTimerState(ts);
+  }
+  if (durationMin > 0 || true) {
+    recordQuickSession(key, Math.max(1, durationMin)); // at least 1 min
+  }
+  // Mark date for streak
   const s = loadQuickState();
   const todayStr = localDateStr();
   if (!(s[key] || []).includes(todayStr)) {
@@ -1587,6 +1657,28 @@ function autoCompleteTimer(key) {
   document.getElementById('streak-' + key).textContent = getQuickStreak(key);
   popEffect(); // confetti!
   showDoneUI(key);
+}
+
+function recordQuickSession(key, durationMin) {
+  try {
+    var now = new Date();
+    var startH = now.getHours(), startM = now.getMinutes();
+    var endM = startM + (durationMin || 0);
+    var endH = startH + Math.floor(endM / 60);
+    endM = endM % 60;
+    var all = loadQuickSessions();
+    if (!all[key]) all[key] = [];
+    all[key].push({
+      id: 'qs_' + Date.now() + '_' + Math.floor(Math.random() * 999),
+      date: localDateStr(now),
+      startTime: String(startH).padStart(2,'0') + ':' + String(startM).padStart(2,'0'),
+      endTime: String(endH).padStart(2,'0') + ':' + String(endM).padStart(2,'0'),
+      duration: Math.max(1, durationMin),
+      ts: Date.now()
+    });
+    saveQuickSessions(all);
+    updateSessionSummary(key); // refresh display
+  } catch(e) { console.warn('recordQuickSession error:', e); }
 }
 
 function restoreTimersOnLoad() {
@@ -1631,18 +1723,35 @@ function renderQuickCards() {
     document.getElementById('btn-' + key).classList.toggle('checked', isChecked);
     document.getElementById('streak-' + key).textContent = getQuickStreak(key);
 
-    // If already checked today, show "Done" (override any stale timer state)
-    if (isChecked) {
-      const ts = loadTimerState();
-      const timerRunning = ts[key] && ts[key].running && (ts[key].remainingSec > 0);
-      if (!timerRunning) {
-        // 已打卡且计时器没有实际在运行：显示 Done 状态
-        // 同时清理可能残留的脏 timer state
-        if (ts[key] && !ts[key].running) {
-          delete ts[key];
-          saveTimerState(ts);
-        }
-        showDoneUI(key);
+    // Restore today's sessions or timer state
+    var ts = loadTimerState();
+    var t = ts[key];
+    var hasTimerRunning = t && t.running && (t.remainingSec > 0);
+
+    if (hasTimerRunning) {
+      // Timer is actively running — restore it
+      document.getElementById('timer-set-' + key).style.display = 'none';
+      document.getElementById('session-summary-' + key).classList.remove('show');
+      const cd = document.getElementById('countdown-' + key);
+      cd.classList.add('active');
+      resetCountdownHTML(key); // restore original countdown HTML
+      document.getElementById('cd-time-' + key).textContent = formatTime(t.remainingSec);
+      startTimerTick(key);
+    } else {
+      // Clean up stale timer state
+      if (t && !t.running) { delete ts[key]; saveTimerState(ts); }
+      var todaySessions = getTodaySessions(key);
+      if (todaySessions.length > 0) {
+        // Has sessions today → show summary with count + total
+        updateSessionSummary(key);
+        document.getElementById('timer-set-' + key).style.display = 'none';
+        document.getElementById('countdown-' + key).classList.remove('active');
+      } else {
+        // No sessions today, no running timer → fresh state
+        document.getElementById('session-summary-' + key).classList.remove('show');
+        document.getElementById('timer-set-' + key).style.display = '';
+        document.getElementById('countdown-' + key).classList.remove('active');
+        resetCountdownHTML(key);
       }
     }
   });
@@ -1655,17 +1764,40 @@ function showDoneUI(key) {
     if (timerSet) timerSet.style.display = 'none';
     const cd = document.getElementById('countdown-' + key);
     if (!cd) return;
-    cd.classList.add('active');
-    cd.innerHTML =
-      '<div style="font-size:22px; font-weight:700; color:' +
-      (key==='violin'?'var(--purple)':'var(--teal)') +
-      '">✓ Done!</div>' +
-      '<div class="countdown-label">Great job!</div>';
+    cd.classList.remove('active'); // hide countdown area
+    updateSessionSummary(key); // show count + total + Again button
   } catch(e) { console.warn('showDoneUI error:', e); }
 }
 
+function updateSessionSummary(key) {
+  try {
+    const summaryEl = document.getElementById('session-summary-' + key);
+    if (!summaryEl) return;
+    var count = getTodaySessions(key).length;
+    var totalMin = getTodaySessionTotal(key);
+    var countEl = document.getElementById('session-count-' + key);
+    var totalEl = document.getElementById('session-total-' + key);
+    if (countEl) countEl.textContent = count;
+    if (totalEl) totalEl.textContent = formatDuration(totalMin);
+    summaryEl.classList.add('show');
+  } catch(e) { console.warn('updateSessionSummary error:', e); }
+}
+
+function resetForNextSession(key) {
+  try {
+    // Hide summary, show timer-set again
+    const summaryEl = document.getElementById('session-summary-' + key);
+    if (summaryEl) summaryEl.classList.remove('show');
+    const timerSet = document.getElementById('timer-set-' + key);
+    if (timerSet) timerSet.style.display = '';
+    // Reset countdown HTML
+    resetCountdownHTML(key);
+    document.getElementById('countdown-' + key).classList.remove('active');
+  } catch(e) { console.warn('resetForNextSession error:', e); }
+}
+
 function toggleQuickCheck(key) {
-  // If timer is running, don't allow manual uncheck via button
+  // If timer is running, ignore
   const ts = loadTimerState();
   if (ts[key] && ts[key].running) return;
 
@@ -1674,23 +1806,16 @@ function toggleQuickCheck(key) {
   const todayStr = localDateStr();
   const btn = document.getElementById('btn-' + key);
 
-  if (dates.includes(todayStr)) {
-    // uncheck — reset timer UI too
-    s[key] = dates.filter(d => d !== todayStr);
-    btn.classList.remove('checked');
-    // reset to initial HTML state
-    document.getElementById('countdown-' + key).classList.remove('active');
-    document.getElementById('timer-set-' + key).style.display = '';
-    resetCountdownHTML(key);
-  } else {
+  if (!dates.includes(todayStr)) {
+    // First check-in today → mark streak
     s[key] = [...dates, todayStr];
     btn.classList.add('checked');
-    showDoneUI(key);  // 打卡成功后立即切换到 Done 状态
+    saveQuickState(s);
+    document.getElementById('streak-' + key).textContent = getQuickStreak(key);
     popEffect();
+    renderCalendar(); // refresh calendar check state
   }
-  saveQuickState(s);
-  document.getElementById('streak-' + key).textContent = getQuickStreak(key);
-  renderCalendar(); // 刷新日历打卡状态
+  // If already checked: no-op (repeat mode — sessions recorded by timer)
 }
 
 function resetCountdownHTML(key) {
