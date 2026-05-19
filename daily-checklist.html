@@ -1210,30 +1210,6 @@
   </div>
 </div>
 
-<!-- 记账长条卡片 -->
-<div class="expense-section">
-  <div class="expense-card" id="expense-card">
-    <div class="expense-header">
-      <div class="expense-left">
-        <div class="expense-icon-wrap">💰</div>
-        <div class="expense-title">Expense</div>
-      </div>
-      <div class="expense-total" id="expense-total">¥0.00</div>
-    </div>
-    <div class="expense-input-row">
-      <input type="number" class="exp-amount-input" id="exp-amount"
-             min="0" step="0.01" placeholder="¥ 0.00"
-             inputmode="decimal">
-      <input type="text" class="exp-note-input" id="exp-note"
-             placeholder="What did you buy?" maxlength="30">
-      <button class="exp-add-btn" onclick="addExpense()">+</button>
-    </div>
-    <div class="expense-list" id="expense-list">
-      <div class="expense-empty">No records today ~</div>
-    </div>
-  </div>
-</div>
-
 <!-- 学习计时卡片 Study -->
 <div class="study-section" id="study-section">
   <div class="study-card" id="study-card">
@@ -1261,6 +1237,30 @@
     <button class="study-add-btn" onclick="openStudyAddModal()">
       <span class="study-add-icon">+</span> 添加科目
     </button>
+  </div>
+</div>
+
+<!-- 记账长条卡片 -->
+<div class="expense-section">
+  <div class="expense-card" id="expense-card">
+    <div class="expense-header">
+      <div class="expense-left">
+        <div class="expense-icon-wrap">💰</div>
+        <div class="expense-title">Expense</div>
+      </div>
+      <div class="expense-total" id="expense-total">¥0.00</div>
+    </div>
+    <div class="expense-input-row">
+      <input type="number" class="exp-amount-input" id="exp-amount"
+             min="0" step="0.01" placeholder="¥ 0.00"
+             inputmode="decimal">
+      <input type="text" class="exp-note-input" id="exp-note"
+             placeholder="What did you buy?" maxlength="30">
+      <button class="exp-add-btn" onclick="addExpense()">+</button>
+    </div>
+    <div class="expense-list" id="expense-list">
+      <div class="expense-empty">No records today ~</div>
+    </div>
   </div>
 </div>
 
