@@ -1134,6 +1134,9 @@
     color: var(--purple);
   }
 
+  /* DEBUG: Schedule panel diagnostic - remove after fixing */
+  #se-panel-schedule { min-height: 200px; background: rgba(127,119,221,0.08); border: 2px dashed #7F77DD; }
+
   /* Tab content panels */
   .se-panel { display: none; }
   .se-panel.active { display: block; }
@@ -3162,6 +3165,7 @@ function saveMotiveEdit() {
 }
 
 function switchSETab(tab) {
+  console.log('[DEBUG] switchSETab called with:', tab);
   // 切换 tab 按钮
   document.getElementById('se-tab-study').classList.toggle('active', tab === 'study');
   document.getElementById('se-tab-expense').classList.toggle('active', tab === 'expense');
@@ -3170,14 +3174,17 @@ function switchSETab(tab) {
   var panels = ['study', 'expense', 'schedule'];
   panels.forEach(function(p) {
     var el = document.getElementById('se-panel-' + p);
+    if (!el) { console.log('[DEBUG] panel NOT found:', p); return; }
     if (tab === p) {
       el.classList.add('active');
       el.style.display = 'block';
+      console.log('[DEBUG] panel', p, '→ display:block, class=', el.className, 'h=', el.offsetHeight);
     } else {
       el.classList.remove('active');
       el.style.display = 'none';
     }
   });
+}
 }
 
 function switchTab(tab, el) {
