@@ -151,6 +151,62 @@
     padding: 8px 6px 6px;
     border: 0.5px solid rgba(127,119,221,0.12);
     box-shadow: 0 4px 20px rgba(127,119,221,0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  /* 收起状态：隐藏月历网格，显示7天迷你行 */
+  .cal-card.cal-collapsed .cal-nav { display: none; }
+  .cal-card.cal-collapsed .cal-weekdays { display: none; }
+  .cal-card.cal-collapsed .cal-grid { display: none; }
+  .cal-card.cal-collapsed .cal-week-strip { display: grid; }
+  .cal-card:not(.cal-collapsed) .cal-week-strip { display: none; }
+
+  /* 收起/展开按钮 */
+  .cal-toggle-btn {
+    background: none; border: none; cursor: pointer;
+    width: 26px; height: 26px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-hint); font-size: 13px; transition: all 0.15s;
+  }
+  .cal-toggle-btn:active { background: var(--bg); }
+
+  /* 7天迷你行 */
+  .cal-week-strip {
+    display: none; grid-template-columns: repeat(7, 1fr);
+    gap: 4px; padding: 6px 4px 8px;
+  }
+  .cal-strip-day {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 1px; padding: 5px 2px 3px; border-radius: 10px;
+    cursor: pointer; position: relative; transition: all 0.18s;
+    min-height: 48px; justify-content: center;
+  }
+  .cal-strip-day:active { transform: scale(0.92); }
+  .cal-strip-wd { font-size: 9px; color: var(--text-hint); font-weight: 500; line-height: 1; }
+  .cal-strip-num { font-size: 14px; font-weight: 600; color: var(--text-primary); line-height: 1.2; }
+  .cal-strip-dot {
+    width: 5px; height: 5px; border-radius: 50%; margin-top: 2px;
+  }
+  .cal-strip-dot.check { background: var(--purple); opacity: 0.6; box-shadow: 0 1px 3px rgba(127,119,221,.3); }
+  .cal-strip-dot.expense { background: var(--coral); box-shadow: 0 1px 3px rgba(216,90,48,.3); }
+  /* 迷你行 - 今日 */
+  .cal-strip-day.is-today {
+    background: linear-gradient(145deg, #7F77DD, #5B52B8);
+    border-radius: 10px;
+  }
+  .cal-strip-day.is-today .cal-strip-wd { color: rgba(255,255,255,0.75); }
+  .cal-strip-day.is-today .cal-strip-num { color: #fff; font-weight: 700; }
+  .cal-strip-day.is-today .cal-strip-dot.check { background: #fff; opacity: 0.85; }
+  /* 迷你行 - 有打卡 */
+  .cal-strip-day.has-check:not(.is-today) { background: var(--purple-light); }
+  .cal-strip-day.has-check:not(.is-today) .cal-strip-num { color: var(--purple); }
+  /* 迷你行 - 过去无记录 */
+  .cal-strip-day.past-empty:not(.is-today) .cal-strip-num { color: var(--text-hint); opacity: 0.45; }
+
+  @media (max-width: 380px) {
+    .cal-strip-day { min-height: 42px; padding: 4px 1px 2px; }
+    .cal-strip-num { font-size: 13px; }
+    .cal-strip-dot { width: 4px; height: 4px; }
   }
   .cal-nav {
     display: flex; align-items: center; justify-content: space-between;
@@ -1205,6 +1261,7 @@
         <button class="cal-nav-btn" onclick="calPrev()">‹</button>
         <div class="cal-month-label" id="cal-month-label"></div>
         <div style="display:flex;align-items:center;gap:2px;">
+          <button class="cal-toggle-btn" onclick="toggleCalCollapse()" id="cal-toggle" title="收起日历">▲</button>
           <button class="cal-nav-btn" onclick="calNext()">›</button>
         </div>
       </div>
@@ -1215,6 +1272,8 @@
         <div class="cal-wd">Sa</div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
+      <!-- 7天迷你行（收起时显示） -->
+      <div class="cal-week-strip" id="cal-week-strip"></div>
       </div>
     </div>
   </div>
@@ -2651,6 +2710,76 @@ function closeDayDetailOnBg(e) { if (e.target === document.getElementById('day-d
 
 function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
 function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+
+/* ---- 日历收起/展开 + 7天迷你行 ---- */
+var calCollapsed = false;
+function toggleCalCollapse() {
+  var card = document.querySelector('.cal-card');
+  var btn = document.getElementById('cal-toggle');
+  if (!card || !btn) return;
+  calCollapsed = !calCollapsed;
+  card.classList.toggle('cal-collapsed', calCollapsed);
+  btn.textContent = calCollapsed ? '▼' : '▲';
+  btn.title = calCollapsed ? '展开日历' : '收起日历';
+  if (calCollapsed) renderCalWeekStrip();
+}
+
+function renderCalWeekStrip() {
+  var strip = document.getElementById('cal-week-strip');
+  if (!strip) return;
+
+  var today = new Date();
+  // 以今日为中心，前后各3天 = 7天
+  var days = [];
+  for (var i = -3; i <= 3; i++) {
+    var d = new Date(today);
+    d.setDate(today.getDate() + i);
+    days.push(d);
+  }
+
+  var wdNames = ['日','一','二','三','四','五','六'];
+  var todayStr = localDateStr();
+  var html = '';
+  days.forEach(function(day) {
+    var dateStr = day.getFullYear() + '-' + String(day.getMonth()+1).padStart(2,'0') + '-' + String(day.getDate()).padStart(2,'0');
+    var isToday = dateStr === todayStr;
+    var hasCheck = false;
+    try { hasCheck = isDayPartial(day.getFullYear(), day.getMonth(), day.getDate()); } catch(e) {}
+    var hasExpense = false;
+    try {
+      hasExpense = loadExpenses().filter(function(e) { return e.date === dateStr; }).length > 0;
+    } catch(e) {}
+    var isPast = day < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    var cls = 'cal-strip-day';
+    if (isToday) cls += ' is-today';
+    else if (hasCheck) cls += ' has-check';
+    else if (isPast) cls += ' past-empty';
+
+    var dotsHtml = '';
+    if (hasCheck && !isToday) dotsHtml += '<span class="cal-strip-dot check"></span>';
+    else if (!hasCheck && hasExpense) dotsHtml += '<span class="cal-strip-dot expense"></span>';
+    else if (hasCheck && isToday) dotsHtml += '<span class="cal-strip-dot expense" style="background:#fff;opacity:0.7"></span>';
+
+    // 今日有打卡也显示白点
+    if (isToday && hasCheck) dotsHtml = '<span class="cal-strip-dot check" style="background:#fff"></span>' +
+      (hasExpense ? '<span class="cal-strip-dot expense" style="background:#fff;opacity:0.7"></span>' : '');
+
+    html += '<div class="' + cls + '" onclick="openDayDetail(' + day.getFullYear() + ',' + day.getMonth() + ',' + day.getDate() + ')">' +
+      '<span class="cal-strip-wd">周' + wdNames[day.getDay()] + '</span>' +
+      '<span class="cal-strip-num">' + day.getDate() + '</span>' +
+      dotsHtml +
+      '</div>';
+  });
+  strip.innerHTML = html;
+}
+
+// 每次渲染完整月历时同步更新7天行数据
+var _origRenderCalendar = renderCalendar;
+renderCalendar = function() {
+  _origRenderCalendar();
+  if (calCollapsed) renderCalWeekStrip();
+};
 
 function saveState() { localStorage.setItem(TODAY_KEY, JSON.stringify(state)); }
 
