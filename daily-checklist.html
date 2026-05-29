@@ -308,7 +308,7 @@
   .plan-icon {
     grid-column: 1;
     grid-row: 2;
-    align-self: center;
+    align-self: start;
     width: 44px; height: 44px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 22px; flex-shrink: 0;
@@ -316,31 +316,33 @@
   .plan-info {
     grid-column: 2;
     grid-row: 2;
-    flex: 1; min-width: 0;
-    align-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    align-self: start;
   }
   .plan-title {
     font-size: 17px; font-weight: 600; color: var(--text-primary);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    line-height: 1.35;
   }
   .plan-sub {
-    flex: 1;
-    min-width: 0;
     font-size: 13px; color: var(--text-hint);
     line-height: 1.4;
     white-space: normal;
     word-break: break-word;
   }
   .plan-item-meta {
-    grid-column: 2;
+    grid-column: 1 / -1;
     grid-row: 3;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 10px;
     min-height: 34px;
+    padding-left: 56px;
   }
-  .plan-item-meta--actions-only { justify-content: flex-end; }
   .plan-item-actions {
     display: flex; align-items: center; gap: 8px; flex-shrink: 0;
   }
@@ -1334,9 +1336,9 @@ function renderPlanList() {
       '<div class="plan-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
       '<div class="plan-info">' +
         '<div class="plan-title">' + escapeHTML(task.title) + '</div>' +
-      '</div>' +
-      '<div class="plan-item-meta' + (task.sub ? '' : ' plan-item-meta--actions-only') + '">' +
         (task.sub ? '<div class="plan-sub">' + escapeHTML(task.sub) + '</div>' : '') +
+      '</div>' +
+      '<div class="plan-item-meta">' +
         '<div class="plan-item-actions">' +
           '<button class="plan-item-btn plan-item-btn--edit" onclick="openEditModal(\'' + task.id + '\');event.stopPropagation();" aria-label="编辑">✏️</button>' +
           '<button class="plan-item-btn plan-item-btn--del" onclick="deleteTask(\'' + task.id + '\', event)" aria-label="删除">✕</button>' +
