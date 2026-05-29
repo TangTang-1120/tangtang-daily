@@ -315,6 +315,37 @@
     box-shadow: 0 3px 12px rgba(127,119,221,0.45);
   }
   .plan-item.done .plan-check svg { opacity: 1; transform: scale(1); }
+  .plan-item-actions {
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  }
+  .plan-item-btn {
+    width: 34px; height: 34px; border-radius: 10px;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; line-height: 1;
+    position: relative; flex-shrink: 0;
+    transition: transform .12s, opacity .12s;
+  }
+  .plan-item-btn::before { content: ''; position: absolute; inset: -6px; }
+  .plan-item-btn:active { transform: scale(0.9); }
+  .plan-item-btn--edit {
+    background: var(--bg); color: var(--text-secondary);
+  }
+  .plan-item-btn--del {
+    background: var(--coral-light); color: var(--coral);
+    font-size: 13px; font-weight: 600;
+  }
+  .plan-header-add-btn {
+    width: 36px; height: 36px; border-radius: 12px;
+    border: none; cursor: pointer;
+    background: var(--purple); color: #fff;
+    font-size: 22px; font-weight: 400; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 12px rgba(127,119,221,0.35);
+    flex-shrink: 0; position: relative;
+  }
+  .plan-header-add-btn::before { content: ''; position: absolute; inset: -6px; }
+  .plan-header-add-btn:active { transform: scale(0.92); }
   .plan-empty {
     text-align: center; padding: 40px 20px;
     font-size: 15px; color: var(--text-hint);
@@ -330,6 +361,109 @@
   }
   .plan-add-btn::before { content: ''; position: absolute; inset: -5px; }
   .plan-add-btn:active { background: #DDD6FE; }
+
+  /* 激励卡片 */
+  .motive-card {
+    margin: 14px 14px 0;
+    background: var(--purple);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; transition: background .4s ease, transform .15s;
+    user-select: none; position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .motive-card::before {
+    content: ''; position: absolute;
+    inset: -4px;
+    border-radius: calc(var(--radius-card) + 4px);
+    z-index: -1;
+  }
+  .motive-left {
+    display: flex; align-items: center; gap: 16px;
+    flex: 1; min-width: 0;
+  }
+  .motive-card:active { transform: scale(.98); }
+  .motive-emoji {
+    font-size: 36px; transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+    flex-shrink: 0; cursor: pointer; position: relative;
+    border-radius: 12px; padding: 8px; margin: -8px;
+    min-width: 44px; min-height: 44px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .motive-emoji:active { transform: scale(1.2); }
+  .motive-emoji::after {
+    content: ''; position: absolute; bottom: -2px; right: -2px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,.5);
+  }
+  .motive-text { color: #fff; min-width: 0; flex: 1; }
+  .motive-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .motive-sub { font-size: 12px; opacity: 0.75; }
+  .motive-edit-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: none; background: rgba(255,255,255,.2); color: #fff;
+    font-size: 16px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .2s; position: relative;
+  }
+  .motive-edit-btn::before { content: ''; position: absolute; inset: -4px; }
+  .motive-edit-btn:active { background: rgba(255,255,255,.35); transform: scale(.9); }
+  .motive-edit-modal {
+    position: fixed; inset: 0; z-index: 2100;
+    background: rgba(0,0,0,0.35);
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .motive-edit-modal.show { opacity: 1; pointer-events: auto; }
+  .motive-edit-sheet {
+    width: 100%; max-width: 480px; background: var(--card);
+    border-radius: 22px 22px 0 0; padding: 28px 24px 40px;
+    transform: translateY(100%);
+    transition: transform .32s cubic-bezier(.32,.72,0,1);
+  }
+  .motive-edit-modal.show .motive-edit-sheet { transform: translateY(0); }
+  .motive-edit-handle {
+    width: 38px; height: 4px; border-radius: 2px;
+    background: var(--border); margin: 0 auto 22px;
+  }
+  .motive-edit-title {
+    font-size: 19px; font-weight: 600; color: var(--text-primary);
+    margin-bottom: 22px; text-align: center;
+  }
+  .mot-modal-field { margin-bottom: 16px; }
+  .mot-modal-field label {
+    display: block; font-size: 12px; font-weight: 500;
+    color: var(--text-secondary); margin-bottom: 6px;
+  }
+  .mot-modal-input {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--border); border-radius: 14px;
+    font-size: 15px; color: var(--text-primary);
+    background: var(--bg); outline: none; font-family: inherit;
+  }
+  .mot-modal-input:focus { border-color: var(--purple); }
+  .mot-color-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .mot-color-opt {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2.5px solid transparent; cursor: pointer;
+    transition: transform .12s, border-color .12s; position: relative;
+  }
+  .mot-color-opt::before { content: ''; position: absolute; inset: -6px; }
+  .mot-color-opt.selected {
+    border-color: var(--text-primary); transform: scale(1.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  .motive-edit-actions { display: flex; gap: 12px; margin-top: 26px; }
+  .mot-btn-cancel, .mot-btn-save {
+    flex: 1; padding: 14px; border-radius: 14px;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    border: none; font-family: inherit; min-height: 48px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mot-btn-cancel { background: var(--bg); color: var(--text-secondary); }
+  .mot-btn-save { background: var(--purple); color: #fff; font-weight: 600; }
+  .mot-btn-cancel:active, .mot-btn-save:active { opacity: .7; }
 
   .all-done-banner {
     margin: 14px 14px 0; padding: 14px 16px;
@@ -551,6 +685,7 @@
     .plan-item { padding: 14px 16px; }
     .plan-icon { width: 40px; height: 40px; font-size: 20px; }
     .plan-title { font-size: 16px; }
+    .motive-card { margin: 12px 12px 0; padding: 14px; }
   }
 </style>
 </head>
@@ -595,6 +730,18 @@
   </div>
 </div>
 
+<!-- 激励卡片 -->
+<div class="motive-card" id="motive-card" onclick="cycleMotive()">
+  <div class="motive-left">
+    <div class="motive-emoji" id="motive-emoji" onclick="event.stopPropagation();cycleMotiveEmoji()">🌿</div>
+    <div class="motive-text" id="motive-text-display">
+      <div class="motive-title" id="motive-title">今天也要好好的</div>
+      <div class="motive-sub" id="motive-sub">一项一项来，不慌不忙</div>
+    </div>
+  </div>
+  <button class="motive-edit-btn" id="motive-edit-btn" onclick="event.stopPropagation();toggleMotiveEdit()">✏️</button>
+</div>
+
 <!-- 目标 -->
 <div class="plan-section">
   <div class="plan-card" id="plan-card">
@@ -607,6 +754,7 @@
         </div>
       </div>
       <div class="plan-card-right">
+        <button class="plan-header-add-btn" onclick="openAddModal()" title="添加目标" aria-label="添加目标">+</button>
         <svg class="plan-card-ring" viewBox="0 0 32 32" id="plan-ring">
           <circle class="ring-bg" cx="16" cy="16" r="14"/>
           <circle class="ring-fg" cx="16" cy="16" r="14" id="plan-ring-fg"/>
@@ -693,6 +841,30 @@
   </div>
 </div>
 
+<!-- 激励卡编辑弹窗 -->
+<div class="motive-edit-modal" id="motive-edit-modal" onclick="closeMotiveEditModalOnBg(event)">
+  <div class="motive-edit-sheet">
+    <div class="motive-edit-handle"></div>
+    <div class="motive-edit-title">✏️ 编辑激励语</div>
+    <div class="mot-modal-field">
+      <label>标题</label>
+      <input class="mot-modal-input" id="mot-edit-title" placeholder="写一句鼓励自己的话" maxlength="30">
+    </div>
+    <div class="mot-modal-field">
+      <label>副标题</label>
+      <input class="mot-modal-input" id="mot-edit-sub" placeholder="简短描述（选填）" maxlength="40">
+    </div>
+    <div class="mot-modal-field">
+      <label>卡片背景色</label>
+      <div class="mot-color-grid" id="mot-color-grid"></div>
+    </div>
+    <div class="motive-edit-actions">
+      <button class="mot-btn-cancel" onclick="closeMotiveEditModal()">取消</button>
+      <button class="mot-btn-save" onclick="saveMotiveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const CAT_LABELS = { morning:'🌅 晨间', work:'💼 工作', health:'🏃 健康', evening:'🌙 晚间' };
 const DEFAULT_TASKS = [
@@ -715,7 +887,8 @@ const DEFAULT_TASKS = [
 ];
 
 const EMOJIS = [
-  '🐱','🐶','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦',
+  '🐱','🐶','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐵','🐔','🐧','🐦',
+  '🎻','🏊','🦦','🐬',
   '💧','🧘','📓','🪥','🎨','📬','📎','🔍','🥗','🚶','👁️','📖','✏️','📵','🌙','☕',
   '🎧','🍵','✨','🌸','💪','📝','🎯','💤','🧹','🏋️','🎵','📸','🛁'
 ];
@@ -725,6 +898,43 @@ const COLORS = [
   { c:'#BA7517', b:'#FAEEDA' }, { c:'#D85A30', b:'#FAECE7' },
   { c:'#D4537E', b:'#FBEAF0' }, { c:'#534AB7', b:'#EEEDFE' },
 ];
+
+const MOTIVES = [
+  { emoji: '🌿', title: '今天也要好好的', sub: '一项一项来，不慌不忙', color: '#7F77DD' },
+  { emoji: '🔥', title: '状态来了！', sub: '趁热打铁，继续冲！', color: '#D85A30' },
+  { emoji: '🎯', title: '已经完成一半了', sub: '剩下的，慢慢来', color: '#378ADD' },
+  { emoji: '🏆', title: '今日全部搞定！', sub: '给自己一个奖励吧', color: '#1D9E75' },
+  { emoji: '☁️', title: '休息也是一种成就', sub: '不要对自己太苛刻', color: '#888780' },
+  { emoji: '🌸', title: '慢慢来比较快', sub: '允许自己今天只做一件事', color: '#D4537E' },
+  { emoji: '✨', title: '你比自己想象的更棒', sub: '每一步都算数', color: '#BA7517' },
+  { emoji: '🌊', title: '保持节奏就好', sub: '稳住就是胜利', color: '#534AB7' },
+  { emoji: '💫', title: '今天也要发光哦', sub: '你的努力会被看见的', color: '#D4537E' },
+  { emoji: '🎪', title: '生活就是游乐场', sub: '别那么严肃嘛~', color: '#3B6D11' },
+];
+const MOTIVES_KEY = 'custom_motives_v1';
+const MOTIVE_PETS = ['🐰', '🐱', '🐶', '🐯', '🐬', '🦦', '🦈', '🐼', '🦄'];
+const MOTIVE_PET_KEY = 'motive_pet_v1';
+const MOTIVE_COLORS = [
+  '#7F77DD', '#D85A30', '#378ADD', '#1D9E75',
+  '#888780', '#D4537E', '#BA7517', '#534AB7', '#3B6D11'
+];
+
+function loadCustomMotives() {
+  try { return JSON.parse(localStorage.getItem(MOTIVES_KEY) || 'null'); }
+  catch (e) { return null; }
+}
+function saveCustomMotives(m) { localStorage.setItem(MOTIVES_KEY, JSON.stringify(m)); }
+
+let motiveIdx = -1;
+let autoMotiveIdx = -1;
+let pickedMotiveColorIdx = -1;
+
+var savedMotives = loadCustomMotives();
+if (savedMotives && Array.isArray(savedMotives)) {
+  savedMotives.forEach(function(sm, i) {
+    if (MOTIVES[i]) MOTIVES[i] = Object.assign({}, MOTIVES[i], sm);
+  });
+}
 
 const TASKS_KEY = 'my_tasks_v2';
 const TODAY = new Date();
@@ -1069,7 +1279,7 @@ function renderPlanList() {
   updatePlanTotalDuration(tasks);
 
   if (total === 0) {
-    list.innerHTML = '<div class="plan-empty">还没有目标，点击下方添加吧</div>';
+    list.innerHTML = '<div class="plan-empty">还没有目标，点右上角 + 或下方按钮添加</div>';
     return;
   }
 
@@ -1084,6 +1294,10 @@ function renderPlanList() {
       '<div class="plan-info">' +
         '<div class="plan-title">' + escapeHTML(task.title) + '</div>' +
         (task.sub ? '<div class="plan-sub">' + escapeHTML(task.sub) + '</div>' : '') +
+      '</div>' +
+      '<div class="plan-item-actions">' +
+        '<button class="plan-item-btn plan-item-btn--edit" onclick="openEditModal(\'' + task.id + '\');event.stopPropagation();" aria-label="编辑">✏️</button>' +
+        '<button class="plan-item-btn plan-item-btn--del" onclick="deleteTask(\'' + task.id + '\', event)" aria-label="删除">✕</button>' +
       '</div>' +
       '<div class="plan-check">' +
         '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
@@ -1130,6 +1344,18 @@ function updateProgress() {
   var pt = document.getElementById('progress-text');
   if (pf) pf.style.width = pct + '%';
   if (pt) pt.textContent = pct + '%';
+
+  var mi = 0;
+  if (pct >= 100) mi = 3;
+  else if (pct >= 50) mi = 2;
+  else if (pct >= 25) mi = 1;
+  if (motiveIdx < 0) {
+    applyMotive(mi);
+    autoMotiveIdx = mi;
+  } else {
+    applyMotive(motiveIdx);
+  }
+
   var banner = document.getElementById('all-done-banner');
   if (banner) banner.classList.toggle('show', total > 0 && pct >= 100);
   if (total > 0 && pct >= 100 && !window.__confettiFired) {
@@ -1137,6 +1363,115 @@ function updateProgress() {
     launchConfetti();
   } else if (pct < 100) {
     window.__confettiFired = false;
+  }
+}
+
+function applyMotive(idx) {
+  var m = MOTIVES[idx];
+  if (!m) return;
+  var elEmoji = document.getElementById('motive-emoji');
+  var elTitle = document.getElementById('motive-title');
+  var elSub = document.getElementById('motive-sub');
+  var card = document.getElementById('motive-card');
+  if (elEmoji) {
+    var petIdx = parseInt(localStorage.getItem(MOTIVE_PET_KEY) || '0', 10);
+    elEmoji.textContent = MOTIVE_PETS[petIdx] || m.emoji;
+  }
+  if (elTitle) elTitle.textContent = m.title;
+  if (elSub) elSub.textContent = m.sub;
+  if (card) card.style.background = m.color || 'var(--purple)';
+}
+
+function cycleMotive() {
+  motiveIdx = (motiveIdx + 1) % MOTIVES.length;
+  applyMotive(motiveIdx);
+  var em = document.getElementById('motive-emoji');
+  if (em) {
+    em.style.transform = 'scale(1.3) rotate(10deg)';
+    setTimeout(function() { em.style.transform = ''; }, 300);
+  }
+}
+
+function cycleMotiveEmoji() {
+  var idx = parseInt(localStorage.getItem(MOTIVE_PET_KEY) || '0', 10);
+  idx = (idx + 1) % MOTIVE_PETS.length;
+  localStorage.setItem(MOTIVE_PET_KEY, String(idx));
+  var em = document.getElementById('motive-emoji');
+  if (em) {
+    em.textContent = MOTIVE_PETS[idx];
+    em.style.transform = 'scale(1.4) rotate(-15deg)';
+    setTimeout(function() { em.style.transform = ''; }, 350);
+  }
+}
+
+(function buildMotiveColorPicker() {
+  var grid = document.getElementById('mot-color-grid');
+  if (!grid) return;
+  MOTIVE_COLORS.forEach(function(c, i) {
+    var opt = document.createElement('div');
+    opt.className = 'mot-color-opt';
+    opt.style.background = c;
+    opt.dataset.idx = String(i);
+    opt.dataset.color = c;
+    opt.onclick = function() {
+      document.querySelectorAll('.mot-color-opt').forEach(function(o) { o.classList.remove('selected'); });
+      opt.classList.add('selected');
+      pickedMotiveColorIdx = i;
+    };
+    grid.appendChild(opt);
+  });
+})();
+
+function toggleMotiveEdit() {
+  var modal = document.getElementById('motive-edit-modal');
+  var titleIn = document.getElementById('mot-edit-title');
+  var subIn = document.getElementById('mot-edit-sub');
+  var currentIdx = motiveIdx >= 0 ? motiveIdx : (autoMotiveIdx >= 0 ? autoMotiveIdx : 0);
+  var m = MOTIVES[currentIdx] || MOTIVES[0];
+  titleIn.value = m.title || '';
+  subIn.value = m.sub || '';
+  pickedMotiveColorIdx = -1;
+  var currentColor = m.color || '#7F77DD';
+  document.querySelectorAll('.mot-color-opt').forEach(function(opt) {
+    opt.classList.toggle('selected', opt.dataset.color === currentColor);
+  });
+  modal.classList.add('show');
+  setTimeout(function() { titleIn.focus(); }, 350);
+}
+
+function closeMotiveEditModal() {
+  var modal = document.getElementById('motive-edit-modal');
+  if (modal) modal.classList.remove('show');
+}
+
+function closeMotiveEditModalOnBg(e) {
+  if (e.target === document.getElementById('motive-edit-modal')) closeMotiveEditModal();
+}
+
+function saveMotiveEdit() {
+  var titleIn = document.getElementById('mot-edit-title');
+  var subIn = document.getElementById('mot-edit-sub');
+  var newTitle = (titleIn.value || '').trim();
+  var newSub = (subIn.value || '').trim();
+  if (!newTitle) { titleIn.focus(); return; }
+  if (motiveIdx < 0) motiveIdx = autoMotiveIdx >= 0 ? autoMotiveIdx : 0;
+  var newColor = (pickedMotiveColorIdx >= 0)
+    ? MOTIVE_COLORS[pickedMotiveColorIdx]
+    : (MOTIVES[motiveIdx].color || '#7F77DD');
+  var currentEmoji = MOTIVES[motiveIdx].emoji;
+  MOTIVES[motiveIdx] = {
+    emoji: currentEmoji,
+    title: newTitle,
+    sub: newSub || '一项一项来，不慌不忙',
+    color: newColor
+  };
+  saveCustomMotives(MOTIVES);
+  applyMotive(motiveIdx);
+  closeMotiveEditModal();
+  var em = document.getElementById('motive-emoji');
+  if (em) {
+    em.style.transform = 'scale(1.3) rotate(10deg)';
+    setTimeout(function() { em.style.transform = ''; }, 300);
   }
 }
 
@@ -1288,16 +1623,26 @@ function saveTask() {
   if (calCollapsed) renderCalWeekStrip();
 }
 
-function deleteCurrentTask() {
-  if (!editingTaskId) return;
-  if (!confirm('确定删除这个计划吗？')) return;
-  TASKS = TASKS.filter(function(t) { return t.id !== editingTaskId; });
+function removeTaskById(id) {
+  TASKS = TASKS.filter(function(t) { return t.id !== id; });
   saveTasks(TASKS);
-  delete state[editingTaskId];
+  delete state[id];
   saveState();
-  closeModal();
   renderAll(); renderCalendar();
   if (calCollapsed) renderCalWeekStrip();
+}
+
+function deleteTask(id, e) {
+  if (e) e.stopPropagation();
+  if (!confirm('确定删除这个目标吗？')) return;
+  removeTaskById(id);
+}
+
+function deleteCurrentTask() {
+  if (!editingTaskId) return;
+  if (!confirm('确定删除这个目标吗？')) return;
+  removeTaskById(editingTaskId);
+  closeModal();
 }
 
 function popEffect() {
