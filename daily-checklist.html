@@ -26,43 +26,29 @@
     --purple-light: #EEEDFE;
     --teal: #1D9E75;
     --teal-light: #E1F5EE;
-    --amber: #BA7517;
-    --amber-light: #FAEEDA;
     --coral: #D85A30;
     --coral-light: #FAECE7;
-    --blue: #378ADD;
-    --blue-light: #E6F1FB;
-    --mint: #42A882;
-    --mint-light: #DEF5EE;
-    --cyan: #2CB5A0;
-    --cyan-light: #D4F3ED;
-    --pink: #D4537E;
-    --pink-light: #FBEAF0;
   }
 
   body {
     background: var(--bg);
     font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
     min-height: 100vh;
-    padding: 0 0 120px;
+    padding: 0 0 80px;
     overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Header */
   .header {
     background: var(--card);
     background-image: url('header-bg.png');
     background-size: cover;
     background-position: left center;
     padding: 48px 16px 20px;
-    border-bottom: none;
   }
   .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    display: flex; justify-content: space-between; align-items: flex-start;
     margin-bottom: 16px;
   }
   .greeting { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
@@ -74,7 +60,6 @@
     font-size: 20px;
   }
 
-  /* Progress summary */
   .progress-summary {
     display: flex; align-items: center; gap: 12px;
     margin-top: 14px;
@@ -89,65 +74,7 @@
   }
   .progress-text { font-size: 13px; font-weight: 500; color: var(--purple); min-width: 36px; text-align: right; }
 
-  /* ===== 每日数据总览 ===== */
-  .daily-summary { margin-top: 16px; }
-  .daily-summary-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  .daily-stat-card {
-    background: #fff;
-    border-radius: var(--radius-card);
-    padding: 12px 10px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .daily-stat-card--checkin {
-    border: 0.5px solid rgba(127,119,221,0.15);
-    box-shadow: 0 2px 10px rgba(127,119,221,0.06);
-    background: linear-gradient(165deg, #F8F7FF, #fff);
-  }
-  .daily-stat-card--expense {
-    border: 0.5px solid rgba(234,179,8,0.15);
-    box-shadow: 0 2px 10px rgba(234,179,8,0.06);
-    background: linear-gradient(165deg, #FFFDF5, #fff);
-  }
-  .daily-stat-card--study {
-    border: 0.5px solid rgba(127,119,221,0.15);
-    box-shadow: 0 2px 10px rgba(127,119,221,0.06);
-    background: linear-gradient(165deg, #F8F7FF, #fff);
-  }
-  .daily-stat-icon {
-    width: 36px; height: 36px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 6px; font-size: 18px;
-  }
-  .daily-stat-icon--checkin { background: linear-gradient(135deg,#EDE9FD,#DDD6FE); }
-  .daily-stat-icon--expense { background: linear-gradient(135deg,#FEF3C7,#FDE68A); }
-  .daily-stat-icon--study { background: linear-gradient(135deg,#EDE9FD,#DDD6FE); }
-  .daily-stat-value {
-    font-size: 22px; font-weight: 800; line-height: 1.1;
-    letter-spacing: -0.5px;
-  }
-  .daily-stat-value--checkin { color: var(--purple); }
-  .daily-stat-value--expense { color: var(--coral); }
-  .daily-stat-value--study { color: var(--purple); }
-  .daily-stat-sub {
-    font-size: 11px; color: var(--text-hint); margin-top: 3px;
-    line-height: 1.2;
-  }
-  .daily-stat-detail {
-    font-size: 11px; color: var(--text-secondary); margin-top: 4px;
-  }
-
-  @media (max-width: 380px) {
-    .daily-stat-value { font-size: 19px; }
-    .daily-stat-card { padding: 10px 8px; }
-  }
-
-  /* ===== 卡片式月历 ===== */
+  /* 日历 */
   .cal-section { margin-top: 18px; }
   .cal-card {
     background: linear-gradient(165deg, #F5F3FF 0%, #FFFFFF 50%, #EEEDFE 100%);
@@ -159,20 +86,13 @@
     overflow: hidden;
     position: relative;
   }
-  /* 收起状态：隐藏月历网格，显示7天迷你行 */
   .cal-card.cal-collapsed .cal-nav { display: none; }
   .cal-card.cal-collapsed .cal-weekdays { display: none; }
   .cal-card.cal-collapsed .cal-grid { display: none; }
   .cal-card.cal-collapsed .cal-week-strip { display: grid; }
   .cal-card:not(.cal-collapsed) .cal-week-strip { display: none; }
 
-  /* 收起/展开按钮（独立定位，始终可见） */
-  .cal-toggle-wrap {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 5;
-  }
+  .cal-toggle-wrap { position: absolute; top: 8px; right: 8px; z-index: 5; }
   .cal-toggle-btn {
     background: none; border: none; cursor: pointer;
     width: 32px; height: 32px; border-radius: 8px;
@@ -183,7 +103,6 @@
   .cal-toggle-btn::before { content: ''; position: absolute; inset: -6px; }
   .cal-toggle-btn:active { background: var(--bg); }
 
-  /* 7天迷你行 */
   .cal-week-strip {
     display: none; grid-template-columns: repeat(7, 1fr);
     gap: 4px; padding: 6px 4px 8px;
@@ -194,37 +113,22 @@
     cursor: pointer; position: relative; transition: all 0.18s;
     min-height: 48px; justify-content: center;
   }
+  .cal-strip-day::before { content: ''; position: absolute; inset: -4px; }
   .cal-strip-day:active { transform: scale(0.92); }
   .cal-strip-wd { font-size: 9px; color: var(--text-hint); font-weight: 500; line-height: 1; }
   .cal-strip-num { font-size: 14px; font-weight: 600; color: var(--text-primary); line-height: 1.2; }
-  .cal-strip-dot {
-    width: 5px; height: 5px; border-radius: 50%; margin-top: 2px;
-  }
-  .cal-strip-dot.check { background: var(--purple); opacity: 0.6; box-shadow: 0 1px 3px rgba(127,119,221,.3); }
-  .cal-strip-dot.expense { background: var(--coral); box-shadow: 0 1px 3px rgba(216,90,48,.3); }
-  /* 迷你行 - 今日 */
-  .cal-strip-day.is-today {
-    background: linear-gradient(145deg, #7F77DD, #5B52B8);
-    border-radius: 10px;
-  }
+  .cal-strip-dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 2px; background: var(--purple); opacity: 0.6; }
+  .cal-strip-day.is-today { background: linear-gradient(145deg, #7F77DD, #5B52B8); border-radius: 10px; }
   .cal-strip-day.is-today .cal-strip-wd { color: rgba(255,255,255,0.75); }
   .cal-strip-day.is-today .cal-strip-num { color: #fff; font-weight: 700; }
-  .cal-strip-day.is-today .cal-strip-dot.check { background: #fff; opacity: 0.85; }
-  /* 迷你行 - 有打卡 */
+  .cal-strip-day.is-today .cal-strip-dot { background: #fff; opacity: 0.85; }
   .cal-strip-day.has-check:not(.is-today) { background: var(--purple-light); }
   .cal-strip-day.has-check:not(.is-today) .cal-strip-num { color: var(--purple); }
-  /* 迷你行 - 过去无记录 */
   .cal-strip-day.past-empty:not(.is-today) .cal-strip-num { color: var(--text-hint); opacity: 0.45; }
 
-  @media (max-width: 380px) {
-    .cal-strip-day { min-height: 42px; padding: 4px 1px 2px; }
-    .cal-strip-num { font-size: 13px; }
-    .cal-strip-dot { width: 4px; height: 4px; }
-  }
   .cal-nav {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 6px;
-    padding: 0 2px;
+    margin-bottom: 6px; padding: 0 2px;
   }
   .cal-month-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
   .cal-nav-btn {
@@ -232,37 +136,23 @@
     width: 32px; height: 32px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     color: var(--text-secondary); font-size: 16px;
-    transition: background 0.15s;
     position: relative;
   }
   .cal-nav-btn::before { content: ''; position: absolute; inset: -6px; }
   .cal-nav-btn:active { background: var(--bg); }
-  /* 日历内容区（始终展开） */
-  .cal-body { }
+
   .cal-weekdays {
     display: grid; grid-template-columns: repeat(7, 1fr);
     text-align: center; margin-bottom: 4px;
   }
-  .cal-wd {
-    font-size: 10px; font-weight: 500; color: var(--text-hint);
-    padding: 1px 0 4px;
-  }
-  /* 当前列高亮下划线 */
-  .cal-wd.today-col {
-    color: var(--purple);
-    position: relative;
-  }
+  .cal-wd { font-size: 10px; font-weight: 500; color: var(--text-hint); padding: 1px 0 4px; }
+  .cal-wd.today-col { color: var(--purple); position: relative; }
   .cal-wd.today-col::after {
-    content: '';
-    position: absolute; bottom: 2px; left: 50%;
-    transform: translateX(-50%);
-    width: 16px; height: 2.5px; border-radius: 2px;
-    background: var(--purple);
+    content: ''; position: absolute; bottom: 2px; left: 50%;
+    transform: translateX(-50%); width: 16px; height: 2.5px;
+    border-radius: 2px; background: var(--purple);
   }
-  .cal-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-  }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
   .cal-day {
     height: 60px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
@@ -271,426 +161,101 @@
     transition: all 0.18s;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
+  .cal-day:not(.empty)::before { content: ''; position: absolute; inset: -3px; }
   .cal-day:active { transform: scale(.92); }
   .cal-day.empty { pointer-events: none; box-shadow: none; }
-
-  /* 今日 - 紫色实心圆角块 */
   .cal-day.today {
     background: linear-gradient(145deg, #7F77DD, #5B52B8);
-    color: #fff;
-    font-weight: 700;
-    box-shadow: 0 4px 16px rgba(127,119,221,.45), 0 2px 4px rgba(0,0,0,0.08);
+    color: #fff; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(127,119,221,.45);
   }
-
-  /* 有打卡记录（非今日）- 浅紫色背景 */
   .cal-day.has-check:not(.today):not(.empty) {
-    background: var(--purple-light);
-    color: var(--purple);
-    font-weight: 600;
-    box-shadow: 0 3px 10px rgba(127,119,2,.18);
+    background: var(--purple-light); color: var(--purple); font-weight: 600;
   }
-
-  /* 未来日期 / 无记录 - 黑色字体 */
-  .cal-day.no-data:not(.today):not(.empty) {
-    color: var(--text-primary);
-  }
-
-  /* 过去无记录 - 更灰 */
-  .cal-day.past-empty:not(.today):not(.empty) {
-    color: var(--text-hint);
-    opacity: 0.5;
-  }
-
-  /* 有消费记录 - 右下角红点 */
-  .cal-day.has-expense { position: relative; }
-  .cal-exp-dot {
-    position: absolute; bottom: 3px; right: 3px;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--coral);
-    box-shadow: 0 1px 2px rgba(216,90,48,0.4);
-  }
-  .cal-day.today .cal-exp-dot { background: #fff; opacity: 0.85; }
-
-  /* 万年历标签 - 日历格子内 */
+  .cal-day.no-data:not(.today):not(.empty) { color: var(--text-primary); }
+  .cal-day.past-empty:not(.today):not(.empty) { color: var(--text-hint); opacity: 0.5; }
   .cal-day-tag {
     font-size: 8px; line-height: 1; position: absolute;
     bottom: 1px; left: 0; right: 0; text-align: center;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    pointer-events: none; letter-spacing: 0.2px;
+    pointer-events: none;
   }
   .cal-day-tag.term { color: #1D9E75; }
   .cal-day-tag.fest { color: #D85A30; }
-  .cal-day-tag.holi { color: #7F77DD; font-weight:600; }
+  .cal-day-tag.holi { color: #7F77DD; font-weight: 600; }
   .cal-day.today .cal-day-tag { color: rgba(255,255,255,.85); }
-  .cal-day.has-check .cal-day-tag { color: #7F77DD; }
 
-  /* 万年历信息条 - 详情面板 */
-  .day-info-bar {
-    display: flex; gap: 5px; flex-wrap: wrap;
-    padding: 4px 0 10px; margin-bottom: 2px;
-  }
+  .day-info-bar { display: flex; gap: 5px; flex-wrap: wrap; padding: 4px 0 10px; }
   .day-info-chip {
-    font-size: 11px; padding: 2px 9px; border-radius: 10px;
-    font-weight: 500; white-space: nowrap;
+    font-size: 11px; padding: 2px 9px; border-radius: 10px; font-weight: 500;
   }
   .day-info-chip.term { background: #E1F5EE; color: #1D9E75; }
   .day-info-chip.fest { background: #FAECE7; color: #D85A30; }
   .day-info-chip.holi { background: #EEEDFE; color: #7F77DD; }
 
-  /* ===== 快捷打卡卡片（独立项） ===== */
-  .quick-check-section { padding: 12px 14px 0; }
-  .quick-check-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  /* 任务卡片网格 */
+  .cards-section { padding: 16px 14px 0; }
+  .section-label {
+    font-size: 13px; font-weight: 600; color: var(--text-primary);
+    margin-bottom: 10px; padding: 0 2px;
   }
-  .quick-card {
-    background: var(--card); border-radius: var(--radius-card);
-    padding: 16px 12px 14px;
-    border: 1.5px solid transparent;
-    box-shadow: 0 2px 12px rgba(0,0,0,.04);
-    transition: all .2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .quick-card-header {
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 14px;
-    width: 100%;
-  }
-  .quick-card-left {
-    display: flex; align-items: center; gap: 10px;
-    justify-content: center;
-    flex: 1;
-  }
-  .quick-card-icon-wrap {
-    width: 38px; height: 38px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-  }
-  .quick-card-name {
-    font-size: 15px; font-weight: 600; color: var(--text-primary);
-  }
-  .quick-card-btn {
-    width: 38px; height: 38px; border-radius: 50%;
-    border: 2.5px solid #E8E6E0;
-    background: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .3s cubic-bezier(.34,1.56,.64,1);
-    flex-shrink: 0;
-    padding: 0;
-    position: relative;
-  }
-  .quick-card-btn::before { content: ''; position: absolute; inset: -6px; }
-  .quick-card-btn svg {
-    opacity: 0; transform: scale(.5);
-    transition: all .2s cubic-bezier(.34,1.56,.64,1);
-    fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
-  }
-  .quick-card-btn.checked {
-    border-color: transparent;
-  }
-  .quick-card-btn.checked svg {
-    opacity: 1; transform: scale(1);
-  }
-  /* 大提琴 - 紫色系 */
-  .quick-card--violin .quick-card-icon-wrap { background: linear-gradient(135deg,#DDD6FF,#EEEDFE); }
-  .quick-card--violin .quick-card-btn:not(.checked) { border-color: rgba(127,119,221,.35); }
-  .quick-card--violin .quick-card-btn.checked { background: linear-gradient(145deg, #7F77DD, #5B52B8); box-shadow: 0 3px 12px rgba(127,119,221,.4); }
-  /* 健身 - 青绿色系 */
-  .quick-card--fitness .quick-card-icon-wrap { background: linear-gradient(135deg,#C2EDE1,#DEF5EE); }
-  .quick-card--fitness .quick-card-btn:not(.checked) { border-color: rgba(66,168,130,.35); }
-  .quick-card--fitness .quick-card-btn.checked { background: linear-gradient(145deg, #42A882, #369170); box-shadow: 0 3px 12px rgba(66,168,130,.4); }
-
-  .quick-card-streak {
-    font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
-    letter-spacing: -0.5px;
-  }
-  .quick-card-label {
-    font-size: 12px; color: var(--text-hint); margin-top: 2px;
-  }
-  .quick-card-duration {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    justify-content: center;
-    margin-top: 8px;
-    padding-top: 10px;
-    border-top: 0.5px solid var(--border);
-    width: 100%;
-  }
-  .quick-card-duration-icon { font-size: 14px; }
-  .quick-card-duration-text {
-    font-size: 13px; font-weight: 500; color: var(--text-secondary);
-  }
-
-  /* 打卡次数+累计时长 */
-  .quick-session-summary {
-    display: none;
-    flex-direction: column; align-items: center; gap: 4px;
-    margin-top: 8px; width: 100%;
-  }
-  .quick-session-summary.show { display: flex; }
-  .session-count-row {
-    display: flex; align-items: baseline; justify-content: center; gap: 6px;
-  }
-  .session-count-num {
-    font-size: 22px; font-weight: 700; color: var(--mint); line-height: 1.2;
-  }
-  .session-count-label { font-size: 12px; color: var(--text-hint); }
-  .session-total-row {
-    display: flex; align-items: center; gap: 4px; justify-content: center;
-  }
-  .session-total-text { font-size: 13px; font-weight: 600; }
-  .quick-again-btn {
-    margin-top: 6px; padding: 7px 18px; border-radius: 20px;
-    border: 1.5px solid rgba(0,0,0,.12); background: transparent;
-    font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-secondary);
-    position: relative;
-    min-height: 32px;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .quick-again-btn::before { content: ''; position: absolute; inset: -6px; }
-
-  /* 时长设置行 */
-  .quick-timer-row {
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    margin-top: 8px; width: 100%;
-  }
-  .timer-min-input {
-    width: 52px; height: 32px; border-radius: 8px;
-    border: 1.5px solid rgba(0,0,0,.14); background: var(--bg);
-    text-align: center; font-size: 16px; font-weight: 600;
-    color: var(--text-primary); padding: 0; outline: none;
-    -moz-appearance: textfield;
-  }
-  .timer-min-input::-webkit-inner-spin-button,
-  .timer-min-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-  .timer-unit {
-    font-size: 13px; color: var(--text-hint); font-weight: 500;
-  }
-  .timer-start-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; color: #fff;
-    transition: all .2s cubic-bezier(.34,1.56,.64,1);
-    position: relative;
-  }
-  .timer-start-btn::before { content: ''; position: absolute; inset: -6px; }
-  .timer-start-btn:active { transform: scale(.88); }
-  .quick-card--violin .timer-start-btn { background: linear-gradient(145deg, #7F77DD, #5B52B8); box-shadow: 0 2px 10px rgba(127,119,2,.35); }
-  .quick-card--fitness .timer-start-btn { background: linear-gradient(145deg, #42A882, #369170); box-shadow: 0 2px 10px rgba(66,168,130,.35); }
-
-  /* 倒计时显示 */
-  .quick-countdown {
-    display: none; /* 默认隐藏，开始计时后显示 */
-    flex-direction: column; align-items: center; justify-content: center;
-    margin-top: 10px; padding-top: 10px;
-    border-top: 0.5px solid var(--border); width: 100%;
-  }
-  .quick-countdown.active { display: flex; }
-  .countdown-time {
-    font-size: 28px; font-weight: 700; color: var(--text-primary);
-    letter-spacing: -0.5px; line-height: 1.2;
-    font-variant-numeric: tabular-nums;
-  }
-  .countdown-label { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
-  .countdown-controls { display: flex; gap: 8px; margin-top: 8px; }
-  .countdown-ctrl-btn {
-    border: 1px solid rgba(0,0,0,.14); border-radius: 20px;
-    padding: 6px 16px; background: #fff; cursor: pointer;
-    font-size: 13px; font-weight: 500; color: var(--text-primary);
-    transition: all .15s;
-    position: relative;
-    min-height: 32px;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .countdown-ctrl-btn::before { content: ''; position: absolute; inset: -6px; }
-  .countdown-ctrl-btn:active { background: var(--bg); transform: scale(.95); }
-  .countdown-ctrl-btn--stop { border-color: rgba(216,90,48,.35); color: var(--coral); }
-  .countdown-ctrl-btn--cancel { border-color: rgba(0,0,0,.1); color: var(--text-hint); }
-
-  /* ===== 记账长条卡片 ===== */
-  .expense-section { padding: 12px 14px 0; }
-  .expense-card {
-    background: var(--card); border-radius: var(--radius-card);
-    padding: 14px 14px 12px;
-    border: 1.5px solid transparent;
-    box-shadow: 0 2px 12px rgba(0,0,0,.04);
-  }
-  .expense-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .expense-left {
-    display: flex; align-items: center; gap: 8px;
-  }
-  .expense-icon-wrap {
-    width: 34px; height: 34px; border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    background: linear-gradient(135deg, #FAECE7, #FBEAF0);
-  }
-  .expense-title {
-    font-size: 15px; font-weight: 600; color: var(--text-primary);
-  }
-  .expense-total {
-    font-size: 20px; font-weight: 700; color: var(--coral);
-    letter-spacing: -0.5px;
-  }
-
-  .expense-input-row {
-    display: flex; gap: 6px; margin-bottom: 8px;
-  }
-  .exp-amount-input {
-    flex: 0 0 80px; height: 38px; border-radius: 11px;
-    border: 1.5px solid rgba(0,0,0,.1); background: var(--bg);
-    text-align: left; font-size: 15px; font-weight: 600;
-    color: var(--text-primary); padding: 0 10px; outline: none;
-    -moz-appearance: textfield;
-  }
-  .exp-amount-input::-webkit-inner-spin-button,
-  .exp-amount-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-  .exp-amount-input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(216,90,48,.08); }
-  .exp-note-input {
-    flex: 1; height: 38px; border-radius: 11px;
-    border: 1.5px solid rgba(0,0,0,.1); background: var(--bg);
-    text-align: left; font-size: 13px;
-    color: var(--text-primary); padding: 0 10px; outline: none;
-    min-width: 0;
-  }
-  .exp-note-input::placeholder { color: var(--text-hint); }
-  .exp-note-input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(216,90,48,.08); }
-  .exp-add-btn {
-    width: 40px; height: 40px; border-radius: 11px;
-    border: none; cursor: pointer;
-    background: linear-gradient(145deg, var(--coral), #c24a20);
-    color: #fff; font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .2s cubic-bezier(.34,1.56,.64,1);
-    box-shadow: 0 3px 10px rgba(216,90,48,.25);
-    flex-shrink: 0;
-    position: relative;
-  }
-  .exp-add-btn::before { content: ''; position: absolute; inset: -5px; }
-  .exp-add-btn:active { transform: scale(.9); }
-
-  .expense-list { max-height: 280px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .expense-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 7px 0; border-bottom: 0.5px solid rgba(0,0,0,.04);
-    animation: expIn .25s ease-out;
-  }
-  .expense-item:last-child { border-bottom: none; }
-  @keyframes expIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-
-  .exp-item-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-  .exp-item-note {
-    font-size: 14px; font-weight: 500; color: var(--text-primary);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .exp-item-time { font-size: 11px; color: var(--text-hint); }
-  .exp-item-amt {
-    font-size: 15px; font-weight: 600; color: var(--coral);
-    flex-shrink: 0; margin-left: 8px;
-  }
-  .exp-del-btn {
-    width: 32px; height: 32px; border-radius: 50%;
-    border: none; background: none; cursor: pointer;
-    color: var(--text-hint); font-size: 14px; display: flex;
-    align-items: center; justify-content: center; flex-shrink: 0;
-    margin-left: 4px; transition: color .15s;
-    position: relative;
-  }
-  .exp-del-btn::before { content: ''; position: absolute; inset: -6px; }
-  .exp-del-btn:active { color: var(--coral); background: rgba(216,90,48,.06); }
-  .expense-empty {
-    text-align: center; padding: 16px 0 4px;
-    font-size: 13px; color: var(--text-hint);
-  }
-
-  /* ===== 卡片网格（分类概览） ===== */
-  .cards-section { padding: 12px 14px 0; }
   .cards-grid {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
   }
   .cat-card {
     background: var(--card); border-radius: var(--radius-card);
     padding: 12px 8px 10px; cursor: pointer;
-    transition: all .2s; position: relative;
-    border: 1.5px solid transparent;
-    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+    border: 0.5px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    transition: transform .15s;
+    position: relative;
   }
   .cat-card:active { transform: scale(.97); }
-
-  .cat-card-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 8px;
-  }
-  .cat-card-left {
-    display: flex; align-items: center; gap: 6px;
-  }
+  .cat-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .cat-card-left { display: flex; align-items: center; gap: 4px; min-width: 0; }
   .cat-card-icon {
-    width: 28px; height: 28px; border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; flex-shrink: 0;
+    width: 24px; height: 24px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; font-size: 12px;
   }
-  .cat-card-name {
-    font-size: 13px; font-weight: 600; color: var(--text-primary);
-  }
-
-  /* 右侧圆环 SVG */
-  .cat-card-ring {
-    width: 24px; height: 24px; flex-shrink: 0;
-  }
-  .cat-card-ring circle {
-    fill: none; stroke-width: 3; stroke-linecap: round;
-    transform: rotate(-90deg); transform-origin: center;
-    transition: stroke-dashoffset .5s cubic-bezier(.4,0,.2,1);
-  }
+  .cat-card-name { font-size: 11px; font-weight: 600; color: var(--text-primary); }
+  .cat-card-ring { width: 28px; height: 28px; flex-shrink: 0; }
+  .cat-card-ring circle { fill: none; stroke-width: 3; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
   .cat-card-ring .ring-bg { stroke: #E8E6E0; }
   .cat-card-ring .ring-fg { stroke-dasharray: 72; transition: stroke .3s; }
-
-  .cat-card-value {
-    font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
-    letter-spacing: -0.5px;
+  .cat-card-value { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.1; }
+  .cat-card-value small { font-size: 12px; font-weight: 500; color: var(--text-hint); }
+  .cat-card-done-badge {
+    position: absolute; top: 6px; right: 6px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--teal); display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(0.5); transition: all .25s;
   }
-  .cat-card-value small {
-    font-size: 12px; font-weight: 500; color: var(--text-hint);
-  }
-  .cat-card-sub {
-    font-size: 12px; color: var(--text-hint); margin-top: 2px;
-  }
-
-  /* 全部完成态 */
+  .cat-card.all-done .cat-card-done-badge { opacity: 1; transform: scale(1); }
   .cat-card.all-done .cat-card-ring .ring-fg { stroke: var(--teal); }
 
-  /* 类目卡片完成 ✓ 图标覆盖 */
-  .cat-card-done-badge {
-    position: absolute; top: 8px; right: 8px;
-    width: 22px; height: 22px; border-radius: 50%;
-    background: linear-gradient(145deg, #7F77DD, #5B52B8);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 8px rgba(127,119,221,0.45);
-    opacity: 0; transform: scale(.5);
-    transition: all .3s cubic-bezier(.34,1.56,.64,1);
-    z-index: 2; pointer-events: none;
+  .all-done-banner {
+    margin: 14px 14px 0; padding: 14px 16px;
+    background: var(--teal-light); border-radius: var(--radius-item);
+    border: 1px solid rgba(29,158,117,0.2);
+    display: none; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 500; color: var(--teal);
   }
-  .cat-card-done-badge svg { opacity: 1 !important; transform: scale(1) !important; }
-  .cat-card.has-done .cat-card-done-badge {
-    opacity: 1; transform: scale(1);
-  }
-  /* 全完成时放大一点 */
-  .cat-card.all-done .cat-card-done-badge {
-    width: 24px; height: 24px;
-    box-shadow: 0 3px 12px rgba(127,119,221,0.5);
-  }
+  .all-done-banner.show { display: flex; }
 
-  /* ===== 分类详情面板（点击卡片后展开） ===== */
+  .bottom-actions {
+    display: flex; align-items: center; justify-content: center; gap: 20px;
+    margin-top: 16px; padding-bottom: 8px;
+  }
+  .reset-btn {
+    font-size: 13px; color: var(--text-hint);
+    background: none; border: none; cursor: pointer;
+    padding: 10px 18px; position: relative;
+  }
+  .reset-btn::before { content: ''; position: absolute; inset: -8px; }
+
+  /* 详情面板 */
   .cat-detail-overlay {
-    position: fixed; inset: 0; z-index: 300;
+    position: fixed; inset: 0; z-index: 1500;
     background: rgba(0,0,0,0.35);
     display: flex; align-items: flex-end; justify-content: center;
     opacity: 0; pointer-events: none;
@@ -716,10 +281,7 @@
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 16px;
   }
-  .cat-detail-title {
-    font-size: 19px; font-weight: 600; color: var(--text-primary);
-    display: flex; align-items: center; gap: 8px;
-  }
+  .cat-detail-title { font-size: 19px; font-weight: 600; color: var(--text-primary); }
   .cat-detail-close {
     width: 34px; height: 34px; border-radius: 50%;
     background: var(--bg); border: none; cursor: pointer;
@@ -729,13 +291,9 @@
   }
   .cat-detail-close::before { content: ''; position: absolute; inset: -6px; }
 
-  /* 详情内任务列表 */
-  .detail-task-list {}
   .detail-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 13px 4px;
-    cursor: pointer;
-    transition: background .15s;
+    padding: 13px 4px; cursor: pointer;
     border-bottom: 0.5px solid var(--border);
   }
   .detail-item:last-child { border-bottom: none; }
@@ -754,12 +312,13 @@
   .detail-sub { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
   .detail-check {
     width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-    border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
     transition: all .25s cubic-bezier(.34,1.56,.64,1);
     position: relative;
   }
   .detail-check::before { content: ''; position: absolute; inset: -7px; }
-  .detail-check svg { opacity: 0; transform: scale(.5); transition: all .2s; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .detail-check svg { opacity: 0; transform: scale(.5); transition: all .2s; }
   .detail-item.done .detail-check {
     border-color: transparent;
     background: linear-gradient(145deg, #7F77DD, #5B52B8);
@@ -767,315 +326,32 @@
   }
   .detail-item.done .detail-check svg { opacity: 1; transform: scale(1); }
 
-  /* Tabs (保留用于切换视图模式) */
-  .tabs {
-    display: flex; gap: 8px;
-    padding: 14px 20px 0;
-    overflow-x: auto; scrollbar-width: none;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    white-space: nowrap; font-size: 13px; font-weight: 500;
-    padding: 8px 16px; border-radius: 99px; cursor: pointer;
-    border: 1.5px solid transparent;
-    color: var(--text-secondary);
-    background: var(--card);
-    transition: all 0.2s;
-    position: relative;
-    min-height: 36px;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .tab::before { content: ''; position: absolute; inset: -5px; }
-  .tab.active {
-    background: var(--purple);
-    color: #fff;
-  }
-
-  /* Section */
-  .section { padding: 14px 14px 0; }
-  .section-label {
-    font-size: 11px; font-weight: 500;
-    color: var(--text-hint); text-transform: uppercase; letter-spacing: 0.08em;
-    padding: 0 4px; margin-bottom: 8px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .section-label-right { display: flex; align-items: center; gap: 6px; }
-
-  /* Card group */
-  .card-group {
-    background: var(--card);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    border: 0.5px solid var(--border);
-  }
-
-  /* Check item */
-  .check-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 13px 16px;
-    cursor: pointer;
-    transition: background 0.15s;
-    position: relative;
-  }
-  .check-item:not(:last-child)::after {
-    content: '';
-    position: absolute; bottom: 0; left: 54px; right: 0;
-    height: 0.5px; background: var(--border);
-  }
-  .check-item:active { background: var(--bg); }
-
-  /* Icon circle */
-  .item-icon {
-    width: 34px; height: 34px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 17px; flex-shrink: 0;
-    transition: transform 0.2s;
-  }
-
-  .item-content { flex: 1; min-width: 0; }
-  .item-title-row { display: flex; align-items: center; gap: 6px; }
-  .item-title {
-    font-size: 15px; font-weight: 500; color: var(--text-primary);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    transition: color 0.2s;
-  }
-  .item-sub {
-    font-size: 12px; color: var(--text-hint); margin-top: 2px;
-  }
-  .item-edit-btn {
-    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: none; border: none; cursor: pointer;
-    color: var(--text-hint); font-size: 13px; opacity: 0;
-    transition: opacity 0.15s, background 0.15s;
-    position: relative;
-  }
-  .item-edit-btn::before { content: ''; position: absolute; inset: -6px; }
-  .check-item:hover .item-edit-btn,
-  .check-item:has(.item-edit-btn:focus) .item-edit-btn,
-  .item-edit-btn.visible { opacity: 1 !important; }
-
-  /* Checkbox */
-  .checkbox {
-    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-    border: 2px solid var(--border-check, #D3D1C7);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
-    background: transparent;
-    position: relative;
-  }
-  .checkbox::before { content: ''; position: absolute; inset: -7px; }
-  .checkbox svg { opacity: 0; transform: scale(0.5); transition: all 0.2s cubic-bezier(.34,1.56,.64,1); }
-
-  /* Checked state */
-  .check-item.done .checkbox {
-    background: var(--check-color, var(--purple));
-    border-color: var(--check-color, var(--purple));
-  }
-  .check-item.done .checkbox svg { opacity: 1; transform: scale(1); }
-  .check-item.done .item-title { color: var(--text-hint); text-decoration: line-through; }
-  .check-item.done .item-icon { transform: scale(0.92); opacity: 0.5; }
-
-  /* Add button inside card group */
   .add-btn {
     display: flex; align-items: center; justify-content: center;
     gap: 6px; width: 100%; padding: 13px;
     font-size: 13px; font-weight: 500; color: var(--text-hint);
     background: none; border: none; cursor: pointer;
     border-top: 0.5px dashed var(--border);
-    transition: color 0.15s, background 0.15s;
+    margin-top: 12px; min-height: 44px;
     position: relative;
-    min-height: 44px;
   }
   .add-btn::before { content: ''; position: absolute; inset: -5px; }
   .add-btn:active { background: var(--bg); color: var(--purple); }
-  .add-btn-icon { font-size: 17px; line-height: 1; }
 
-  /* Delete btn on item (shown when editing) */
-  .item-delete-btn {
-    position: absolute; right: 48px; top: 50%;
-    transform: translateY(-50%);
-    width: 30px; height: 30px; border-radius: 50%;
-    background: var(--coral-light); color: var(--coral);
-    border: none; cursor: pointer; font-size: 13px;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.15s;
+  .day-task-progress {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; margin-bottom: 8px;
+    border-bottom: 0.5px solid var(--border);
   }
-  .item-delete-btn::before { content: ''; position: absolute; inset: -6px; }
-  .check-item.show-del .item-delete-btn { opacity: 1; pointer-events: auto; }
+  .day-ring { width: 48px; height: 48px; flex-shrink: 0; }
+  .day-ring circle { fill: none; stroke-width: 4; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
+  .day-ring .ring-bg { stroke: #E8E6E0; }
+  .day-ring .ring-fg { stroke: var(--purple); stroke-dasharray: 113; transition: stroke-dashoffset .3s; }
+  .day-progress-text { flex: 1; }
+  .day-progress-pct { font-size: 20px; font-weight: 700; color: var(--purple); }
+  .day-progress-sub { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
 
-  /* Motivational footer card */
-  .motive-card {
-    margin: 14px 14px 0;
-    background: var(--purple);
-    border-radius: var(--radius-card);
-    padding: 16px;
-    display: flex; align-items: center; gap: 10px;
-    cursor: pointer; transition: background .4s ease, transform .15s;
-    user-select: none; position: relative;
-    -webkit-tap-highlight-color: transparent;
-    /* 隐形扩展热区到边缘外 4px */
-  }
-  .motive-card::before {
-    content: ''; position: absolute;
-    inset: -4px;
-    border-radius: calc(var(--radius-card) + 4px);
-    z-index: -1;
-  }
-  .motive-left {
-    display: flex; align-items: center; gap: 16px;
-    flex: 1; min-width: 0;
-  }
-  .motive-card:active { transform: scale(.98); }
-  .motive-emoji { font-size: 36px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); flex-shrink: 0; cursor: pointer; position: relative; border-radius: 12px; padding: 8px; margin: -8px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
-  .motive-emoji:active { transform: scale(1.2); }
-  .motive-emoji::after {
-    content: ''; position: absolute; bottom: -2px; right: -2px;
-    width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.5);
-    transition: background .15s;
-  }
-  .motive-text { color: #fff; min-width: 0; flex: 1; }
-  .motive-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  .motive-sub { font-size: 12px; opacity: 0.75; }
-
-  /* Edit button — 扩大触摸热区 */
-  .motive-edit-btn {
-    width: 40px; height: 40px; border-radius: 50%;
-    border: none; background: rgba(255,255,255,.2); color: #fff;
-    font-size: 16px; cursor: pointer; display: flex;
-    align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all .2s;
-    position: relative;
-    /* 隐形扩展热区到 48x48 */
-    --hit-area: 4px;
-  }
-  .motive-edit-btn::before {
-    content: ''; position: absolute;
-    inset: calc(var(--hit-area) * -1);
-  }
-  .motive-edit-btn:active { background: rgba(255,255,255,.35); transform: scale(.9); }
-
-  /* Motive Edit Modal (底部弹窗) */
-  .motive-edit-modal {
-    position: fixed; inset: 0; z-index: 2000;
-    background: rgba(0,0,0,0.35);
-    display: flex; align-items: flex-end; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity .25s;
-  }
-  .motive-edit-modal.show { opacity: 1; pointer-events: auto; }
-  .motive-edit-sheet {
-    width: 100%; max-width: 480px;
-    background: var(--card);
-    border-radius: 22px 22px 0 0;
-    padding: 28px 24px 40px;
-    transform: translateY(100%);
-    transition: transform .32s cubic-bezier(.32,.72,0,1);
-  }
-  .motive-edit-modal.show .motive-edit-sheet { transform: translateY(0); }
-  .motive-edit-handle {
-    width: 38px; height: 4px; border-radius: 2px;
-    background: var(--border); margin: 0 auto 22px;
-    /* 隐形扩展热区到 44x44 */
-    position: relative;
-  }
-  .motive-edit-handle::before {
-    content: ''; position: absolute;
-    inset: -20px -80px;
-  }
-  .motive-edit-title {
-    font-size: 19px; font-weight: 600; color: var(--text-primary);
-    margin-bottom: 22px; text-align: center;
-  }
-  .mot-modal-field { margin-bottom: 16px; }
-  .mot-modal-field label {
-    display: block; font-size: 12px; font-weight: 500;
-    color: var(--text-secondary); margin-bottom: 6px;
-  }
-  .mot-modal-input {
-    width: 100%; padding: 12px 14px;
-    border: 1.5px solid var(--border); border-radius: 14px;
-    font-size: 15px; color: var(--text-primary);
-    background: var(--bg); outline: none; font-family: inherit;
-    transition: border-color .2s;
-  }
-  .mot-modal-input:focus { border-color: var(--purple); }
-
-  /* 颜色选择器（Motivational Modal 内） */
-  .mot-color-grid {
-    display: flex; flex-wrap: wrap; gap: 10px;
-  }
-  .mot-color-opt {
-    width: 42px; height: 42px; border-radius: 50%;
-    border: 2.5px solid transparent; cursor: pointer;
-    transition: transform .12s, border-color .12s;
-    position: relative;
-    /* 隐形扩展热区 */
-  }
-  .mot-color-opt::before {
-    content: ''; position: absolute; inset: -6px;
-  }
-  .mot-color-opt.selected { border-color: var(--text-primary); transform: scale(1.15); box-shadow: 0 2px 8px rgba(0,0,0,.15); }
-
-  .motive-edit-actions {
-    display: flex; gap: 12px; margin-top: 26px;
-  }
-  .mot-btn-cancel {
-    flex: 1; padding: 14px; border-radius: 14px;
-    font-size: 15px; font-weight: 500; cursor: pointer;
-    border: none; background: var(--bg); color: var(--text-secondary);
-    font-family: inherit; transition: opacity .15s;
-    min-height: 48px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .mot-btn-save {
-    flex: 1; padding: 14px; border-radius: 14px;
-    font-size: 15px; font-weight: 600; cursor: pointer;
-    border: none; background: var(--purple); color: #fff;
-    font-family: inherit; transition: opacity .15s;
-    min-height: 48px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .mot-btn-cancel:active, .mot-btn-save:active { opacity: .7; }
-
-  /* Reset & Manage btns */
-  .bottom-actions {
-    display: flex; align-items: center; justify-content: center; gap: 20px;
-    margin-top: 16px;
-  }
-  .reset-btn, .manage-btn {
-    font-size: 13px; color: var(--text-hint);
-    background: none; border: none; cursor: pointer;
-    padding: 10px 18px;
-    position: relative;
-  }
-  .reset-btn::before, .manage-btn::before { content: ''; position: absolute; inset: -8px; }
-  .manage-btn.active { color: var(--coral); }
-
-  /* Confetti */
-  .confetti-wrap {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 999;
-  }
-
-  /* Tab content sections */
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* All-done state */
-  .all-done-banner {
-    margin: 0 16px;
-    padding: 14px 16px;
-    background: var(--teal-light);
-    border-radius: var(--radius-item);
-    border: 1px solid rgba(29,158,117,0.2);
-    display: flex; align-items: center; gap: 10px;
-    font-size: 13px; font-weight: 500; color: var(--teal);
-    display: none;
-  }
-
-  /* ===== Modal (Add / Edit) ===== */
+  /* Modal */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 2000;
     background: rgba(0,0,0,0.35);
@@ -1084,7 +360,6 @@
     transition: opacity 0.25s;
   }
   .modal-overlay.show { opacity: 1; pointer-events: auto; }
-
   .modal-sheet {
     width: 100%; max-width: 480px;
     background: var(--card);
@@ -1092,354 +367,72 @@
     padding: 28px 24px 40px;
     transform: translateY(100%);
     transition: transform 0.32s cubic-bezier(.32,.72,0,1);
-    max-height: 92vh;
-    overflow-y: auto;
+    max-height: 92vh; overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
   .modal-overlay.show .modal-sheet { transform: translateY(0); }
-
-  .modal-handle {
-    width: 38px; height: 4px; border-radius: 2px;
-    background: var(--border); margin: 0 auto 22px;
-  }
-  .modal-title {
-    font-size: 19px; font-weight: 600; color: var(--text-primary);
-    margin-bottom: 22px; text-align: center;
-  }
-
+  .modal-handle { width: 38px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 22px; }
+  .modal-title { font-size: 19px; font-weight: 600; color: var(--text-primary); margin-bottom: 22px; text-align: center; }
   .modal-field { margin-bottom: 16px; }
-  .modal-field label {
-    display: block; font-size: 12px; font-weight: 500;
-    color: var(--text-secondary); margin-bottom: 6px;
-  }
+  .modal-field label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
   .modal-input {
     width: 100%; padding: 12px 14px;
     border: 1.5px solid var(--border); border-radius: 14px;
     font-size: 15px; color: var(--text-primary);
-    background: var(--bg);
-    outline: none; font-family: inherit;
-    transition: border-color 0.2s;
+    background: var(--bg); outline: none; font-family: inherit;
   }
   .modal-input:focus { border-color: var(--purple); }
-
-  .modal-cat-row {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-  }
+  .modal-cat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .cat-option {
     padding: 12px 4px; border-radius: 12px;
     border: 1.5px solid var(--border);
     background: var(--card); text-align: center;
     cursor: pointer; font-size: 13px;
-    transition: all 0.15s; user-select: none;
     position: relative; min-height: 44px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
   .cat-option::before { content: ''; position: absolute; inset: -5px; }
-  .cat-option.selected {
-    border-color: var(--purple); background: var(--purple-light);
-    color: var(--purple); font-weight: 500;
-  }
+  .cat-option.selected { border-color: var(--purple); background: var(--purple-light); color: var(--purple); font-weight: 500; }
   .cat-option span:first-of-type { display: block; font-size: 20px; margin-bottom: 2px; }
-  .cat-option span:last-of-type { font-size: 11px; color: inherit; opacity: 0.8; }
-
-  .emoji-grid {
-    display: flex; flex-wrap: wrap; gap: 6px;
-  }
+  .emoji-grid, .color-grid { display: flex; flex-wrap: wrap; gap: 8px; }
   .emoji-opt {
-    width: 44px; height: 44px; border-radius: 10px;
+    width: 46px; height: 46px; border-radius: 10px;
     border: 1.5px solid transparent; background: var(--bg);
     font-size: 20px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.12s;
-    position: relative;
+    cursor: pointer; position: relative;
   }
-  .emoji-opt::before { content: ''; position: absolute; inset: -5px; }
+  .emoji-opt::before { content: ''; position: absolute; inset: -6px; }
   .emoji-opt.selected { border-color: var(--purple); background: var(--purple-light); }
-
-  .color-grid {
-    display: flex; flex-wrap: wrap; gap: 8px;
-  }
   .color-opt {
     width: 34px; height: 34px; border-radius: 9px;
-    border: 2.5px solid transparent; cursor: pointer;
-    transition: transform 0.12s, border-color 0.12s;
-    position: relative;
+    border: 2.5px solid transparent; cursor: pointer; position: relative;
   }
   .color-opt::before { content: ''; position: absolute; inset: -6px; }
   .color-opt.selected { border-color: var(--text-primary); transform: scale(1.12); }
-
-  .modal-actions {
-    display: flex; gap: 12px; margin-top: 26px;
-  }
+  .modal-actions { display: flex; gap: 12px; margin-top: 26px; }
   .modal-btn {
     flex: 1; padding: 14px; border-radius: 14px;
     font-size: 15px; font-weight: 500; cursor: pointer;
-    border: none; transition: opacity 0.15s;
-    font-family: inherit;
-    min-height: 48px;
+    border: none; font-family: inherit; min-height: 48px;
     display: flex; align-items: center; justify-content: center;
   }
-  .modal-btn-cancel {
-    background: var(--bg); color: var(--text-secondary);
-  }
-  .modal-btn-confirm {
-    background: var(--purple); color: #fff;
-  }
-  .modal-btn-danger {
-    background: var(--coral-light); color: var(--coral);
-    flex: 0 0 auto; width: 80px;
-  }
-  .modal-btn:active { opacity: 0.8; }
+  .modal-btn-cancel { background: var(--bg); color: var(--text-secondary); }
+  .modal-btn-confirm { background: var(--purple); color: #fff; }
+  .modal-btn-danger { background: var(--coral-light); color: var(--coral); flex: 0 0 auto; width: 80px; }
 
-  /* ===== 移动端适配 ===== */
+  .confetti-wrap {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 999;
+  }
+
   @media (max-width: 400px) {
     .header { padding: 44px 12px 18px; }
     .date-title { font-size: 20px; }
-    .cal-card { padding: 6px 4px 4px; }
-    .cal-day { height: 50px; font-size: 11px; border-radius: 6px; }
-    .quick-check-section { padding: 10px 12px 0; }
-    .quick-check-grid { gap: 8px; }
-    .quick-card { padding: 14px 10px 12px; }
-    .quick-card-icon-wrap { width: 34px; height: 34px; font-size: 20px; }
-    .quick-card-name { font-size: 14px; }
-    .quick-card-streak { font-size: 24px; }
-    .expense-section { padding: 10px 12px 0; }
-    .expense-card { padding: 12px 12px 10px; }
-    .exp-amount-input { flex: 0 0 70px; height: 36px; font-size: 14px; }
-    .exp-note-input { height: 36px; font-size: 12px; }
-    .exp-add-btn { width: 36px; height: 36px; font-size: 16px; }
-    .cards-section { padding: 10px 12px 0; }
+    .cal-day { height: 50px; font-size: 11px; }
+    .cards-section { padding: 14px 12px 0; }
     .cards-grid { gap: 6px; }
     .cat-card { padding: 10px 6px 8px; }
     .cat-card-value { font-size: 18px; }
-    .cat-card-value small { font-size: 11px; }
-    .motive-card { margin: 12px 12px 0; padding: 14px; }
-    .section { padding: 12px 12px 0; }
-    .bottom-actions { gap: 14px; }
-    .tabs { padding: 12px 14px 0; }
-  }
-
-  /* 确保所有滚动容器在iOS上流畅 */
-  * {
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* ===== Study/Expense Tab 切换 ===== */
-  .se-tab-bar {
-    display: flex;
-    padding: 0 14px;
-    margin-top: 4px;
-    gap: 0;
-    background: var(--bg);
-    border-radius: var(--radius-card);
-    padding: 4px;
-    margin-bottom: 0;
-  }
-  .se-tab {
-    flex: 1;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 12px 0;
-    border-radius: calc(var(--radius-card) - 4px);
-    cursor: pointer;
-    color: var(--text-secondary);
-    background: transparent;
-    border: none;
-    transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
-    position: relative;
-    z-index: 1;
-    -webkit-tap-highlight-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    min-height: 44px;
-  }
-  .se-tab:active { transform: scale(0.96); }
-  .se-tab.active {
-    background: #fff;
-    color: var(--text-primary);
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  }
-  .se-tab--study.active {
-    color: var(--purple);
-  }
-  .se-tab--expense.active {
-    color: var(--coral);
-  }
-
-  /* Tab content panels */
-  .se-panel { display: none; }
-  .se-panel.active { display: block; }
-
-  @media (max-width: 400px) {
-    .se-tab { font-size: 13px; padding: 9px 0; }
-  }
-
-  /* ===== 学习计时卡片 Study ===== */
-  .study-section { padding: 12px 14px 0; }
-  .study-card {
-    background: var(--card); border-radius: var(--radius-card);
-    padding: 14px 14px 12px;
-    border: 1.5px solid transparent;
-    box-shadow: 0 2px 12px rgba(0,0,0,.04);
-  }
-  .study-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .study-left { display: flex; align-items: center; gap: 8px; }
-  .study-icon-wrap {
-    width: 34px; height: 34px; border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    background: linear-gradient(135deg, #EDE9FD, var(--purple-light));
-  }
-  .study-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
-  .study-right { display: flex; align-items: baseline; gap: 4px; }
-  .study-count { font-size: 18px; font-weight: 700; color: var(--purple); }
-  .study-count-label { font-size: 12px; color: var(--text-hint); }
-  .study-today-total { text-align: right; }
-  .study-today-time { font-size: 16px; font-weight: 700; color: var(--purple); }
-  .study-today-label { font-size: 11px; color: var(--text-hint); }
-
-  /* 科目网格 */
-  .study-subjects-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  /* 单个科目卡片 */
-  .study-subject-card {
-    background: var(--bg); border-radius: var(--radius-item);
-    padding: 12px 10px 10px;
-    border: 1.5px solid var(--border);
-    transition: all .2s;
-  }
-  .study-subject-card:active { transform: scale(.97); }
-  .study-subject-card.has-active {
-    border-color: var(--purple); background: var(--purple-light);
-  }
-  .study-subject-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 8px;
-  }
-  .study-subject-left { display: flex; align-items: center; gap: 6px; }
-  .study-subject-icon {
-    width: 28px; height: 28px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-  }
-  .study-subject-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-  .study-subject-delete {
-    width: 30px; height: 30px; border-radius: 50%;
-    border: none; background: none; cursor: pointer;
-    color: var(--text-hint); font-size: 13px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .study-subject-delete::before { content: ''; position: absolute; inset: -6px; }
-  .study-subject-delete:active { color: var(--coral); background: var(--coral-light); }
-
-  .study-subject-stats {
-    display: flex; justify-content: space-between;
-    font-size: 11px; color: var(--text-hint); margin-bottom: 8px;
-  }
-  .study-subject-today { color: var(--purple); font-weight: 500; }
-
-  .study-timer-row {
-    display: flex; align-items: center; justify-content: center; gap: 4px;
-  }
-  .study-timer-input {
-    width: 44px; height: 28px; border-radius: 7px;
-    border: 1.5px solid rgba(0,0,0,.1); background: var(--card);
-    text-align: center; font-size: 14px; font-weight: 600;
-    color: var(--text-primary); padding: 0; outline: none;
-    -moz-appearance: textfield;
-  }
-  .study-timer-input::-webkit-inner-spin-button,
-  .study-timer-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-  .study-timer-unit { font-size: 11px; color: var(--text-hint); }
-  .study-start-btn {
-    width: 34px; height: 34px; border-radius: 50%;
-    border: none; cursor: pointer;
-    background: linear-gradient(145deg, var(--purple), #5B52B8);
-    color: #fff; font-size: 13px;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 8px rgba(127,119,221,.35);
-    position: relative;
-  }
-  .study-start-btn::before { content: ''; position: absolute; inset: -6px; }
-  .study-start-btn:active { transform: scale(.88); }
-
-  /* 倒计时显示 */
-  .study-countdown {
-    display: none; flex-direction: column; align-items: center; padding-top: 6px;
-  }
-  .study-countdown.active { display: flex; }
-  .study-cd-time {
-    font-size: 22px; font-weight: 700; color: var(--blue);
-    font-variant-numeric: tabular-nums;
-  }
-  .study-cd-label { font-size: 10px; color: var(--text-hint); }
-  .study-cd-controls { display: flex; gap: 6px; margin-top: 6px; }
-  .study-cd-btn {
-    border: 1px solid rgba(0,0,0,.1); border-radius: 16px;
-    padding: 6px 14px; background: #fff; cursor: pointer;
-    font-size: 12px; font-weight: 500; color: var(--text-primary);
-    position: relative;
-    min-height: 32px;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .study-cd-btn::before { content: ''; position: absolute; inset: -6px; }
-  .study-cd-btn:active { background: var(--bg); }
-  .study-cd-btn--done { border-color: var(--purple); color: var(--purple); }
-  .study-cd-btn--cancel { color: var(--text-hint); }
-
-  /* 空状态 */
-  .study-empty {
-    text-align: center; padding: 20px 0 10px;
-    font-size: 13px; color: var(--text-hint);
-  }
-
-  /* 添加按钮 */
-  .study-add-btn {
-    display: flex; align-items: center; justify-content: center;
-    gap: 6px; width: 100%; padding: 12px;
-    font-size: 13px; font-weight: 500;     color: var(--purple);
-    background: var(--purple-light); border: 1.5px dashed rgba(127,119,221,.3);
-    border-radius: var(--radius-item); cursor: pointer;
-    position: relative; min-height: 44px;
-  }
-  .study-add-btn::before { content: ''; position: absolute; inset: -5px; }
-  .study-add-btn:active { background: #DDD6FE; }
-  .study-add-icon { font-size: 16px; }
-
-  /* 学习历史面板 */
-  .study-history-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 4px; border-bottom: 0.5px solid var(--border);
-  }
-  .study-history-item:last-child { border-bottom: none; }
-  .study-history-info { display: flex; align-items: center; gap: 10px; }
-  .study-history-icon {
-    width: 32px; height: 32px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center; font-size: 16px;
-  }
-  .study-history-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
-  .study-history-date { font-size: 11px; color: var(--text-hint); }
-  .study-history-duration { font-size: 14px; font-weight: 600; color: var(--purple); }
-
-  /* Study Modal 调整 */
-  #study-add-modal .modal-btn-confirm { background: var(--purple) !important; }
-  #study-add-modal .modal-input:focus { border-color: var(--purple) !important; }
-
-  @media (max-width: 400px) {
-    .study-section { padding: 10px 12px 0; }
-    .study-card { padding: 12px 12px 10px; }
-    .study-subjects-grid { gap: 8px; }
-    .study-subject-card { padding: 10px 8px 8px; }
   }
 </style>
 </head>
@@ -1454,7 +447,6 @@
     <div class="avatar">🐱</div>
   </div>
 
-  <!-- 日历打卡 -->
   <div class="cal-section">
     <div class="cal-card">
       <div class="cal-nav">
@@ -1462,19 +454,17 @@
         <div class="cal-month-label" id="cal-month-label"></div>
         <button class="cal-nav-btn" onclick="calNext()">›</button>
       </div>
-      <!-- 收起/展开按钮（独立于 cal-nav，收起时仍可见） -->
-      <div class="cal-toggle-wrap" id="cal-toggle-wrap">
+      <div class="cal-toggle-wrap">
         <button class="cal-toggle-btn" onclick="toggleCalCollapse()" id="cal-toggle" title="收起日历">▲</button>
       </div>
-      <div class="cal-body" id="cal-body">
-      <div class="cal-weekdays" id="cal-weekdays">
-        <div class="cal-wd">Su</div><div class="cal-wd">Mo</div><div class="cal-wd">Tu</div>
-        <div class="cal-wd">We</div><div class="cal-wd">Th</div><div class="cal-wd">Fr</div>
-        <div class="cal-wd">Sa</div>
-      </div>
-      <div class="cal-grid" id="cal-grid"></div>
-      <!-- 7天迷你行（收起时显示） -->
-      <div class="cal-week-strip" id="cal-week-strip"></div>
+      <div class="cal-body">
+        <div class="cal-weekdays" id="cal-weekdays">
+          <div class="cal-wd">Su</div><div class="cal-wd">Mo</div><div class="cal-wd">Tu</div>
+          <div class="cal-wd">We</div><div class="cal-wd">Th</div><div class="cal-wd">Fr</div>
+          <div class="cal-wd">Sa</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-week-strip" id="cal-week-strip"></div>
       </div>
     </div>
   </div>
@@ -1485,268 +475,38 @@
     </div>
     <div class="progress-text" id="progress-text">0%</div>
   </div>
-
-  <!-- 每日数据总览 -->
-  <div class="daily-summary">
-    <div class="daily-summary-grid">
-      <div class="daily-stat-card daily-stat-card--checkin">
-        <div class="daily-stat-icon daily-stat-icon--checkin">🎯</div>
-        <div class="daily-stat-value daily-stat-value--checkin" id="ds-checkin-value">—</div>
-        <div class="daily-stat-sub">打卡次数</div>
-        <div class="daily-stat-detail" id="ds-checkin-detail"></div>
-      </div>
-      <div class="daily-stat-card daily-stat-card--expense">
-        <div class="daily-stat-icon daily-stat-icon--expense">💰</div>
-        <div class="daily-stat-value daily-stat-value--expense" id="ds-expense-value">¥0</div>
-        <div class="daily-stat-sub">今日支出</div>
-        <div class="daily-stat-detail" id="ds-expense-detail"></div>
-      </div>
-      <div class="daily-stat-card daily-stat-card--study">
-        <div class="daily-stat-icon daily-stat-icon--study">📚</div>
-        <div class="daily-stat-value daily-stat-value--study" id="ds-study-value">0m</div>
-        <div class="daily-stat-sub">学习时长</div>
-        <div class="daily-stat-detail" id="ds-study-detail"></div>
-      </div>
-    </div>
-  </div>
 </div>
 
-<!-- 快捷打卡卡片 -->
-<div class="quick-check-section">
-  <div class="quick-check-grid">
-    <div class="quick-card quick-card--violin" id="quick-violin">
-      <div class="quick-card-header">
-        <div class="quick-card-left">
-          <div class="quick-card-icon-wrap">🎻</div>
-          <div class="quick-card-name">Cello</div>
-        </div>
-        <button class="quick-card-btn" id="btn-violin" onclick="toggleQuickCheck('violin')">
-          <svg width="16" height="12" viewBox="0 0 14 11" fill="none"><path d="M1.8 5.5L6 9.2L12.2 1.8" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-      <div class="quick-card-streak" id="streak-violin">0</div>
-      <div class="quick-card-label">days streak</div>
-      <!-- 打卡次数+累计时长 -->
-      <div class="quick-session-summary" id="session-summary-violin">
-        <div class="session-count-row">
-          <span class="session-count-num" id="session-count-violin">0</span>
-          <span class="session-count-label">times today</span>
-        </div>
-        <div class="session-total-row">
-          <span class="session-total-text" id="session-total-violin" style="color:var(--purple)">0 min</span>
-        </div>
-        <button class="quick-again-btn" onclick="resetForNextSession('violin')" style="border-color:rgba(127,119,221,.3);color:var(--purple)">+ Again</button>
-      </div>
-      <!-- 时长设置（未开始时显示） -->
-      <div class="quick-timer-row" id="timer-set-violin">
-        <input type="number" class="timer-min-input" id="timer-input-violin"
-               min="1" max="180" value="30" placeholder="min" inputmode="numeric">
-        <span class="timer-unit">min</span>
-        <button class="timer-start-btn" onclick="startCustomTimer('violin')">▶</button>
-      </div>
-      <!-- 倒计时（运行中显示） -->
-      <div class="quick-countdown" id="countdown-violin">
-        <div class="countdown-time" id="cd-time-violin">00:00</div>
-        <div class="countdown-label">remaining</div>
-        <div class="countdown-controls">
-          <button class="countdown-ctrl-btn countdown-ctrl-btn--stop" onclick="stopTimer('violin')">Stop</button>
-          <button class="countdown-ctrl-btn countdown-ctrl-btn--cancel" onclick="cancelTimer('violin')">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="quick-card quick-card--fitness" id="quick-fitness">
-      <div class="quick-card-header">
-        <div class="quick-card-left">
-          <div class="quick-card-icon-wrap">💪</div>
-          <div class="quick-card-name">Workout</div>
-        </div>
-        <button class="quick-card-btn" id="btn-fitness" onclick="toggleQuickCheck('fitness')">
-          <svg width="16" height="12" viewBox="0 0 14 11" fill="none"><path d="M1.8 5.5L6 9.2L12.2 1.8" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-      <div class="quick-card-streak" id="streak-fitness">0</div>
-      <div class="quick-card-label">days streak</div>
-      <!-- 打卡次数+累计时长 -->
-      <div class="quick-session-summary" id="session-summary-fitness">
-        <div class="session-count-row">
-          <span class="session-count-num" id="session-count-fitness">0</span>
-          <span class="session-count-label">times today</span>
-        </div>
-        <div class="session-total-row">
-          <span class="session-total-text" id="session-total-fitness" style="color:var(--mint)">0 min</span>
-        </div>
-        <button class="quick-again-btn" onclick="resetForNextSession('fitness')" style="border-color:rgba(29,158,117,.3);color:var(--teal)">+ Again</button>
-      </div>
-      <!-- 时长设置（未开始时显示） -->
-      <div class="quick-timer-row" id="timer-set-fitness">
-        <input type="number" class="timer-min-input" id="timer-input-fitness"
-               min="1" max="180" value="30" placeholder="min" inputmode="numeric">
-        <span class="timer-unit">min</span>
-        <button class="timer-start-btn" onclick="startCustomTimer('fitness')">▶</button>
-      </div>
-      <!-- 倒计时（运行中显示） -->
-      <div class="quick-countdown" id="countdown-fitness">
-        <div class="countdown-time" id="cd-time-fitness">00:00</div>
-        <div class="countdown-label">remaining</div>
-        <div class="countdown-controls">
-          <button class="countdown-ctrl-btn countdown-ctrl-btn--stop" onclick="stopTimer('fitness')">Stop</button>
-          <button class="countdown-ctrl-btn countdown-ctrl-btn--cancel" onclick="cancelTimer('fitness')">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- 每日任务清单 -->
+<div class="cards-section">
+  <div class="section-label">今日任务</div>
+  <div class="cards-grid" id="cards-grid"></div>
 </div>
 
-<!-- 激励卡片（独立于Tab，首页显示） -->
-<div class="motive-card" id="motive-card" onclick="cycleMotive()">
-  <div class="motive-left">
-    <div class="motive-emoji" id="motive-emoji" onclick="event.stopPropagation();cycleMotiveEmoji()">🌿</div>
-    <div class="motive-text" id="motive-text-display">
-      <div class="motive-title" id="motive-title">今天也要好好的</div>
-      <div class="motive-sub" id="motive-sub">一项一项来，不慌不忙</div>
-    </div>
-  </div>
-  <button class="motive-edit-btn" id="motive-edit-btn" onclick="event.stopPropagation();toggleMotiveEdit()">✏️</button>
+<div class="all-done-banner" id="all-done-banner">
+  <span>🎉</span>
+  <span>今日任务全部完成！</span>
 </div>
 
-<!-- Study / Expense Tab 切换 -->
-<div class="se-tab-bar">
-  <button class="se-tab se-tab--study active" id="se-tab-study" onclick="switchSETab('study')">
-    <span>📚</span> Study
-  </button>
-  <button class="se-tab se-tab--expense" id="se-tab-expense" onclick="switchSETab('expense')">
-    <span>💰</span> Expense
-  </button>
-</div>
-
-<!-- 学习计时卡片 Study (默认显示) -->
-<div class="se-panel active" id="se-panel-study">
-  <div class="study-card" id="study-card">
-    <div class="study-header">
-      <div class="study-left">
-        <div class="study-icon-wrap">📚</div>
-        <div class="study-title">Study</div>
-      </div>
-      <div class="study-right">
-        <div class="study-count" id="study-count">0</div>
-        <div class="study-count-label">subjects</div>
-      </div>
-      <div class="study-today-total">
-        <div class="study-today-time" id="study-today-time">0m</div>
-        <div class="study-today-label">today</div>
-      </div>
-    </div>
-
-    <!-- 科目卡片网格 -->
-    <div class="study-subjects-grid" id="study-subjects-grid">
-      <!-- 动态渲染 -->
-    </div>
-
-    <!-- 添加科目按钮 -->
-    <button class="study-add-btn" onclick="openStudyAddModal()">
-      <span class="study-add-icon">+</span> 添加科目
-    </button>
-  </div>
-</div><!-- /se-panel-study -->
-
-<!-- 记账长条卡片 (Expense tab) -->
-<div class="se-panel" id="se-panel-expense">
-<div class="expense-section">
-  <div class="expense-card" id="expense-card">
-    <div class="expense-header">
-      <div class="expense-left">
-        <div class="expense-icon-wrap">💰</div>
-        <div class="expense-title">Expense</div>
-      </div>
-      <div class="expense-total" id="expense-total">¥0.00</div>
-    </div>
-    <div class="expense-input-row">
-      <input type="number" class="exp-amount-input" id="exp-amount"
-             min="0" step="0.01" placeholder="¥ 0.00"
-             inputmode="decimal">
-      <input type="text" class="exp-note-input" id="exp-note"
-             placeholder="What did you buy?" maxlength="30">
-      <button class="exp-add-btn" onclick="addExpense()">+</button>
-    </div>
-    <div class="expense-list" id="expense-list">
-      <div class="expense-empty">No records today ~</div>
-    </div>
-  </div>
-</div><!-- /se-panel-expense -->
-
-<!-- 学习历史记录面板 -->
-<div class="cat-detail-overlay" id="study-history-overlay" onclick="closeStudyHistoryOnBg(event)">
-  <div class="cat-detail-sheet" style="max-height:75vh;">
-    <div class="cat-detail-handle"></div>
-    <div class="cat-detail-header">
-      <div class="cat-detail-title" id="study-history-title">📖 学习历史</div>
-      <button class="cat-detail-close" onclick="closeStudyHistory()">✕</button>
-    </div>
-    <div id="study-history-body"></div>
-  </div>
-</div>
-
-<!-- 添加学习科目 Modal -->
-<div class="modal-overlay" id="study-add-modal" onclick="closeStudyModalOnBg(event)">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="study-modal-title">添加学习科目</div>
-    <div class="modal-field">
-      <label>科目名称</label>
-      <input class="modal-input" id="study-subject-name" placeholder="例如：数学、英语" maxlength="15">
-    </div>
-    <div class="modal-field">
-      <label>选择图标</label>
-      <div class="emoji-grid" id="study-emoji-grid"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeStudyAddModal()">取消</button>
-      <button class="modal-btn modal-btn-danger" id="study-btn-delete" style="display:none;" onclick="deleteCurrentSubject()">删除</button>
-      <button class="modal-btn modal-btn-confirm" onclick="saveStudySubject()">保存</button>
-    </div>
-  </div>
-</div>
-
-<!-- 激励卡编辑弹窗 Modal -->
-<div class="motive-edit-modal" id="motive-edit-modal" onclick="closeMotiveEditModalOnBg(event)">
-  <div class="motive-edit-sheet">
-    <div class="motive-edit-handle"></div>
-    <div class="motive-edit-title">✏️ 编辑激励语</div>
-    <div class="mot-modal-field">
-      <label>标题</label>
-      <input class="mot-modal-input" id="mot-edit-title" placeholder="写一句鼓励自己的话" maxlength="30">
-    </div>
-    <div class="mot-modal-field">
-      <label>副标题</label>
-      <input class="mot-modal-input mot-modal-sub" id="mot-edit-sub" placeholder="简短描述（选填）" maxlength="40">
-    </div>
-    <div class="mot-modal-field">
-      <label>卡片背景色</label>
-      <div class="mot-color-grid" id="mot-color-grid"></div>
-    </div>
-    <div class="motive-edit-actions">
-      <button class="mot-btn-cancel" onclick="closeMotiveEditModal()">取消</button>
-      <button class="mot-btn-save" onclick="saveMotiveEdit()">保存</button>
-    </div>
-  </div>
+<div class="bottom-actions">
+  <button class="reset-btn" onclick="resetAll()">重置今日打卡</button>
 </div>
 
 <canvas class="confetti-wrap" id="confetti"></canvas>
 
-<!-- 日期历史记录面板 -->
+<!-- 日期详情 -->
 <div class="cat-detail-overlay" id="day-detail" onclick="closeDayDetailOnBg(event)">
   <div class="cat-detail-sheet" style="max-height:75vh;">
     <div class="cat-detail-handle"></div>
     <div class="cat-detail-header">
-      <div class="cat-detail-title" id="day-detail-title">📅 5月15日 周四</div>
+      <div class="cat-detail-title" id="day-detail-title">📅</div>
       <button class="cat-detail-close" onclick="closeDayDetail()">✕</button>
     </div>
     <div id="day-detail-body"></div>
   </div>
 </div>
 
-<!-- 分类详情面板 -->
+<!-- 分类任务详情 -->
 <div class="cat-detail-overlay" id="cat-detail" onclick="closeCatDetailOnBg(event)">
   <div class="cat-detail-sheet">
     <div class="cat-detail-handle"></div>
@@ -1758,7 +518,7 @@
   </div>
 </div>
 
-<!-- Add/Edit Modal -->
+<!-- 添加/编辑任务 -->
 <div class="modal-overlay" id="modal" onclick="closeModalOnBg(event)">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -1797,11 +557,6 @@
 </div>
 
 <script>
-/* ============================================================
-   DATA — custom tasks stored in localStorage under key 'mytasks'
-   Default tasks are built-in but can be removed.
-   ============================================================ */
-
 const CAT_LABELS = { morning:'🌅 晨间', work:'💼 工作', health:'🏃 健康', evening:'🌙 晚间' };
 const DEFAULT_TASKS = [
   { id: 'a1', cat: 'morning', emoji: '💧', bg: '#E6F1FB', title: '喝一杯水', sub: '起床后第一件事', color: '#378ADD' },
@@ -1823,17 +578,9 @@ const DEFAULT_TASKS = [
 ];
 
 const EMOJIS = [
-  // 🐾 可爱动物们
-  '🐱','🐶','🐰','🦊','🐻','🐼','🐨','🐯',
-  '🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🦆',
-  '🦉','🐺','🐗','🐴','🦄','🐝','🦋',
-  '🐢','🦖','🦕','🐙','🦑','🦐','🦀',
-  '🐡','🐠','🐟','🐬','🐳','🦈','🐊','🐅','🐆','🦓',
-  '🦩','🦚','🦜','🐓','🦃','🏇','🐿️','🦔',
-  // ✨ 可爱杂项
-  '💧','🧘','📓','🪥','🎨','📬','📎','🔍','🥗','🚶',
-  '👁️','📖','✏️','📵','🌙','☕','🎧','🍵','✨','🌸',
-  '🐾','💪','📝','🎯','💤','🧹','🏋️','🎵','📸','🛁'
+  '🐱','🐶','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦',
+  '💧','🧘','📓','🪥','🎨','📬','📎','🔍','🥗','🚶','👁️','📖','✏️','📵','🌙','☕',
+  '🎧','🍵','✨','🌸','💪','📝','🎯','💤','🧹','🏋️','🎵','📸','🛁'
 ];
 const COLORS = [
   { c:'#7F77DD', b:'#EEEDFE' }, { c:'#378ADD', b:'#E6F1FB' },
@@ -1842,454 +589,17 @@ const COLORS = [
   { c:'#D4537E', b:'#FBEAF0' }, { c:'#534AB7', b:'#EEEDFE' },
 ];
 
-const MOTIVES = [
-  { emoji: '🌿', title: '今天也要好好的', sub: '一项一项来，不慌不忙', color: '#7F77DD' },
-  { emoji: '🔥', title: '状态来了！', sub: '趁热打铁，继续冲！', color: '#D85A30' },
-  { emoji: '🎯', title: '已经完成一半了', sub: '剩下的，慢慢来', color: '#378ADD' },
-  { emoji: '🏆', title: '今日全部搞定！', sub: '给自己一个奖励吧', color: '#1D9E75' },
-  { emoji: '☁️', title: '休息也是一种成就', sub: '不要对自己太苛刻', color: '#888780' },
-  { emoji: '🌸', title: '慢慢来比较快', sub: '允许自己今天只做一件事', color: '#D4537E' },
-  { emoji: '✨', title: '你比自己想象的更棒', sub: '每一步都算数', color: '#BA7517' },
-  { emoji: '🌊', title: '保持节奏就好', sub: '稳住就是胜利', color: '#534AB7' },
-  { emoji: '💫', title: '今天也要发光哦', sub: '你的努力会被看见的', color: '#D4537E' },
-  { emoji: '🎪', title: '生活就是游乐场', sub: '别那么严肃嘛~', color: '#3B6D11' },
-];
-
-const MOTIVES_KEY = 'custom_motives_v1';
-const MOTIVE_PETS = ['🐰', '🐱', '🐶', '🐯', '🐬', '🦦', '🦈', '🐼', '🦄'];
-const MOTIVE_PET_KEY = 'motive_pet_v1';
-
-function loadCustomMotives() {
-  try { return JSON.parse(localStorage.getItem(MOTIVES_KEY) || 'null'); }
-  catch(e) { return null; }
-}
-function saveCustomMotives(m) { localStorage.setItem(MOTIVES_KEY, JSON.stringify(m)); }
-
-let motiveIdx = -1; // current displayed index, -1 means auto
-let motiveEditing = false;
-
-// Load custom motives if saved
-const savedMotives = loadCustomMotives();
-if (savedMotives && Array.isArray(savedMotives)) {
-  // Merge: keep original structure, update title/sub/color from saved
-  savedMotives.forEach((sm, i) => {
-    if (MOTIVES[i]) {
-      MOTIVES[i] = { ...MOTIVES[i], ...sm };
-    }
-  });
-}
-
 const TASKS_KEY = 'my_tasks_v2';
 const TODAY = new Date();
 
-// 使用本地时间生成日期字符串，避免 UTC 时区在凌晨0~8点导致日期错误
 function localDateStr(date) {
   const d = date || new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
 const TODAY_KEY = 'checklist_' + localDateStr();
-
 let state = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}');
-let manageMode = false;
 let editingTaskId = null;
-
-/* ---- Quick check (Cello / Workout) with timer ---- */
-const QUICK_KEY = 'quick_check_v1';
-const TIMER_KEY = 'quick_timer_v1';
-const SESSIONS_KEY = 'quick_sessions_v1';
-
-function loadQuickState() { return JSON.parse(localStorage.getItem(QUICK_KEY) || '{}'); }
-function saveQuickState(s) { localStorage.setItem(QUICK_KEY, JSON.stringify(s)); }
-
-function loadQuickSessions() { try { return JSON.parse(localStorage.getItem(SESSIONS_KEY) || '{}'); } catch(e) { return {}; } }
-function saveQuickSessions(s) { localStorage.setItem(SESSIONS_KEY, JSON.stringify(s)); }
-
-function getTodaySessions(key) {
-  const all = loadQuickSessions();
-  const sessions = all[key] || [];
-  return sessions.filter(function(r) { return r.date === localDateStr(); });
-}
-function getTodaySessionTotal(key) {
-  return getTodaySessions(key).reduce(function(sum, r) { return sum + r.duration; }, 0);
-}
-
-/* Timer state: { violin: { targetSec, remainingSec, running }, fitness: {...} } */
-function loadTimerState() {
-  try { return JSON.parse(localStorage.getItem(TIMER_KEY) || '{}'); }
-  catch(e) { return {}; }
-}
-function saveTimerState(s) { localStorage.setItem(TIMER_KEY, JSON.stringify(s)); }
-
-// Active timer intervals per key
-let timerIntervals = {};
-
-function formatTime(sec) {
-  sec = Math.max(0, Math.floor(sec));
-  const m = String(Math.floor(sec / 60)).padStart(2, '0');
-  const s = String(sec % 60).padStart(2, '0');
-  return m + ':' + s;
-}
-
-function startCustomTimer(key) {
-  const input = document.getElementById('timer-input-' + key);
-  let minutes = parseInt(input.value, 10);
-  if (!minutes || isNaN(minutes)) { input.value = 30; minutes = 30; }
-  minutes = Math.max(1, Math.min(180, minutes)); // clamp 1~180 min
-  const target = minutes * 60;
-  const ts = loadTimerState();
-  ts[key] = { targetSec: target, remainingSec: target, running: true, startTs: Date.now() };
-  saveTimerState(ts);
-  // show countdown, hide set row
-  document.getElementById('timer-set-' + key).style.display = 'none';
-  const cd = document.getElementById('countdown-' + key);
-  cd.classList.add('active');
-  document.getElementById('cd-time-' + key).textContent = formatTime(target);
-  startTimerTick(key);
-}
-
-function startTimerTick(key) {
-  // clear existing
-  if (timerIntervals[key]) clearInterval(timerIntervals[key]);
-  timerIntervals[key] = setInterval(() => {
-    const ts = loadTimerState();
-    const t = ts[key];
-    if (!t || !t.running) {
-      clearInterval(timerIntervals[key]); delete timerIntervals[key]; return;
-    }
-    if (t.remainingSec <= 1) {
-      // Timer complete! Auto-check
-      clearInterval(timerIntervals[key]); delete timerIntervals[key];
-      t.remainingSec = 0; t.running = false;
-      saveTimerState(ts);
-      document.getElementById('cd-time-' + key).textContent = '00:00';
-      autoCompleteTimer(key);
-    } else {
-      t.remainingSec--;
-      saveTimerState(ts);
-      document.getElementById('cd-time-' + key).textContent = formatTime(t.remainingSec);
-    }
-  }, 1000);
-}
-
-function stopTimer(key) {
-  const ts = loadTimerState();
-  if (ts[key]) {
-    ts[key].running = false;
-    saveTimerState(ts);
-  }
-  if (timerIntervals[key]) { clearInterval(timerIntervals[key]); delete timerIntervals[key]; }
-  autoCompleteTimer(key); // stop = complete early
-}
-
-function cancelTimer(key) {
-  const ts = loadTimerState();
-  if (ts[key]) { delete ts[key]; saveTimerState(ts); }
-  if (timerIntervals[key]) { clearInterval(timerIntervals[key]); delete timerIntervals[key]; }
-  // reset UI to set buttons
-  document.getElementById('countdown-' + key).classList.remove('active');
-  document.getElementById('cd-time-' + key).textContent = '00:00';
-  document.getElementById('timer-set-' + key).style.display = '';
-}
-
-function autoCompleteTimer(key) {
-  // Record this completed session
-  const ts = loadTimerState();
-  const t = ts[key];
-  var durationMin = 0;
-  if (t) {
-    durationMin = Math.ceil(Math.max(0, t.targetSec - (t.remainingSec || 0)) / 60);
-    delete ts[key]; saveTimerState(ts);
-  }
-  if (durationMin > 0 || true) {
-    recordQuickSession(key, Math.max(1, durationMin)); // at least 1 min
-  }
-  // Mark date for streak
-  const s = loadQuickState();
-  const todayStr = localDateStr();
-  if (!(s[key] || []).includes(todayStr)) {
-    s[key] = [...(s[key]||[]), todayStr];
-    saveQuickState(s);
-  }
-  // Update UI
-  const btn = document.getElementById('btn-' + key);
-  btn.classList.add('checked');
-  document.getElementById('streak-' + key).textContent = getQuickStreak(key);
-  popEffect(); // confetti!
-  showDoneUI(key);
-}
-
-function recordQuickSession(key, durationMin) {
-  try {
-    var now = new Date();
-    var startH = now.getHours(), startM = now.getMinutes();
-    var endM = startM + (durationMin || 0);
-    var endH = startH + Math.floor(endM / 60);
-    endM = endM % 60;
-    var all = loadQuickSessions();
-    if (!all[key]) all[key] = [];
-    all[key].push({
-      id: 'qs_' + Date.now() + '_' + Math.floor(Math.random() * 999),
-      date: localDateStr(now),
-      startTime: String(startH).padStart(2,'0') + ':' + String(startM).padStart(2,'0'),
-      endTime: String(endH).padStart(2,'0') + ':' + String(endM).padStart(2,'0'),
-      duration: Math.max(1, durationMin),
-      ts: Date.now()
-    });
-    saveQuickSessions(all);
-    updateSessionSummary(key); // refresh display
-    renderDailySummary(); // refresh daily overview
-  } catch(e) { console.warn('recordQuickSession error:', e); }
-}
-
-function restoreTimersOnLoad() {
-  try {
-  ['violin', 'fitness'].forEach(key => {
-    const ts = loadTimerState();
-    const t = ts[key];
-    if (t && t.running && t.remainingSec > 0) {
-      // Timer was running, restore it
-      document.getElementById('timer-set-' + key).style.display = 'none';
-      const cd = document.getElementById('countdown-' + key);
-      cd.classList.add('active');
-      document.getElementById('cd-time-' + key).textContent = formatTime(t.remainingSec);
-      startTimerTick(key);
-    }
-  });
-  } catch(e) { console.warn('restoreTimersOnLoad error:', e); }
-}
-
-function getQuickStreak(key) {
-  const s = loadQuickState();
-  const dates = s[key] || [];
-  if (dates.length === 0) return 0;
-  let streak = 0;
-  const today = localDateStr();
-  for (let i = 1; i <= 365; i++) {
-    const d = localDateStr(new Date(Date.now() - i * 86400000));
-    if (dates.includes(d)) streak++;
-    else break;
-  }
-  if (dates.includes(today)) streak++;
-  return streak;
-}
-
-function renderQuickCards() {
-  try {
-  ['violin', 'fitness'].forEach(key => {
-    const s = loadQuickState();
-    const dates = s[key] || [];
-    const todayStr = localDateStr();
-    const isChecked = dates.includes(todayStr);
-    document.getElementById('btn-' + key).classList.toggle('checked', isChecked);
-    document.getElementById('streak-' + key).textContent = getQuickStreak(key);
-
-    // Restore today's sessions or timer state
-    var ts = loadTimerState();
-    var t = ts[key];
-    var hasTimerRunning = t && t.running && (t.remainingSec > 0);
-
-    if (hasTimerRunning) {
-      // Timer is actively running — restore it
-      document.getElementById('timer-set-' + key).style.display = 'none';
-      document.getElementById('session-summary-' + key).classList.remove('show');
-      const cd = document.getElementById('countdown-' + key);
-      cd.classList.add('active');
-      resetCountdownHTML(key); // restore original countdown HTML
-      document.getElementById('cd-time-' + key).textContent = formatTime(t.remainingSec);
-      startTimerTick(key);
-    } else {
-      // Clean up stale timer state
-      if (t && !t.running) { delete ts[key]; saveTimerState(ts); }
-      var todaySessions = getTodaySessions(key);
-      if (todaySessions.length > 0) {
-        // Has sessions today → show summary with count + total
-        updateSessionSummary(key);
-        document.getElementById('timer-set-' + key).style.display = 'none';
-        document.getElementById('countdown-' + key).classList.remove('active');
-      } else {
-        // No sessions today, no running timer → fresh state
-        document.getElementById('session-summary-' + key).classList.remove('show');
-        document.getElementById('timer-set-' + key).style.display = '';
-        document.getElementById('countdown-' + key).classList.remove('active');
-        resetCountdownHTML(key);
-      }
-    }
-  });
-  } catch(e) { console.warn('renderQuickCards error:', e); }
-}
-
-function showDoneUI(key) {
-  try {
-    const timerSet = document.getElementById('timer-set-' + key);
-    if (timerSet) timerSet.style.display = 'none';
-    const cd = document.getElementById('countdown-' + key);
-    if (!cd) return;
-    cd.classList.remove('active'); // hide countdown area
-    updateSessionSummary(key); // show count + total + Again button
-  } catch(e) { console.warn('showDoneUI error:', e); }
-}
-
-function updateSessionSummary(key) {
-  try {
-    const summaryEl = document.getElementById('session-summary-' + key);
-    if (!summaryEl) return;
-    var count = getTodaySessions(key).length;
-    var totalMin = getTodaySessionTotal(key);
-    var countEl = document.getElementById('session-count-' + key);
-    var totalEl = document.getElementById('session-total-' + key);
-    if (countEl) countEl.textContent = count;
-    if (totalEl) totalEl.textContent = formatDuration(totalMin);
-    summaryEl.classList.add('show');
-  } catch(e) { console.warn('updateSessionSummary error:', e); }
-}
-
-function resetForNextSession(key) {
-  try {
-    // Hide summary, show timer-set again
-    const summaryEl = document.getElementById('session-summary-' + key);
-    if (summaryEl) summaryEl.classList.remove('show');
-    const timerSet = document.getElementById('timer-set-' + key);
-    if (timerSet) timerSet.style.display = '';
-    // Reset countdown HTML
-    resetCountdownHTML(key);
-    document.getElementById('countdown-' + key).classList.remove('active');
-  } catch(e) { console.warn('resetForNextSession error:', e); }
-}
-
-function toggleQuickCheck(key) {
-  // If timer is running, ignore
-  const ts = loadTimerState();
-  if (ts[key] && ts[key].running) return;
-
-  const s = loadQuickState();
-  const dates = s[key] || [];
-  const todayStr = localDateStr();
-  const btn = document.getElementById('btn-' + key);
-
-  if (!dates.includes(todayStr)) {
-    // First check-in today → mark streak
-    s[key] = [...dates, todayStr];
-    btn.classList.add('checked');
-    saveQuickState(s);
-    document.getElementById('streak-' + key).textContent = getQuickStreak(key);
-    popEffect();
-    renderCalendar(); // refresh calendar check state
-  }
-  // If already checked: no-op (repeat mode — sessions recorded by timer)
-}
-
-function resetCountdownHTML(key) {
-  const isViolin = key === 'violin';
-  const colorClass = isViolin ? 'quick-card--violin' : 'quick-card--fitness';
-  const name = isViolin ? 'Cello' : 'Workout';
-  const icon = isViolin ? '🎻' : '💪';
-  document.getElementById('countdown-' + key).innerHTML =
-    '<div class="countdown-time" id="cd-time-' + key + '">00:00</div>' +
-    '<div class="countdown-label">remaining</div>' +
-    '<div class="countdown-controls">' +
-    '  <button class="countdown-ctrl-btn countdown-ctrl-btn--stop" onclick="stopTimer(\''+key+'\')">Stop</button>' +
-    '  <button class="countdown-ctrl-btn countdown-ctrl-btn--cancel" onclick="cancelTimer(\''+key+'\')">Cancel</button>' +
-    '</div>';
-}
-
-/* ---- Expense Tracker ---- */
-const EXPENSE_KEY = 'expense_tracker_v1';
-function loadExpenses() {
-  try { return JSON.parse(localStorage.getItem(EXPENSE_KEY) || '[]'); }
-  catch(e) { return []; }
-}
-function saveExpenses(arr) { localStorage.setItem(EXPENSE_KEY, JSON.stringify(arr)); }
-
-// Get today's expenses only
-function todayExpenses() {
-  const todayStr = localDateStr();
-  return loadExpenses().filter(e => e.date === todayStr);
-}
-
-function formatAmt(n) { return '¥' + Number(n).toFixed(2); }
-
-function renderExpenses() {
-  try {
-    const items = todayExpenses();
-    const list = document.getElementById('expense-list');
-    if (!list) return;
-  if (items.length === 0) {
-    list.innerHTML = '<div class="expense-empty">No records today ~</div>';
-    document.getElementById('expense-total').textContent = '¥0.00';
-    return;
-  }
-
-  let total = 0;
-  let html = '';
-  // Show newest first
-  items.slice().reverse().forEach((e, i) => {
-    total += parseFloat(e.amount);
-    html += '<div class="expense-item" id="exp-item-' + i + '">' +
-      '<div class="exp-item-info">' +
-        '<div class="exp-item-note">' + escapeHTML(e.note || '-') + '</div>' +
-        '<div class="exp-item-time">' + e.time + '</div>' +
-      '</div>' +
-      '<span class="exp-item-amt">' + formatAmt(e.amount) + '</span>' +
-      '<button class="exp-del-btn" onclick="delExpense(' + i + ')">✕</button>' +
-    '</div>';
-  });
-  list.innerHTML = html;
-  document.getElementById('expense-total').textContent = formatAmt(total);
-  } catch(e) { console.warn('renderExpenses error:', e); }
-}
-
-function addExpense() {
-  const amountEl = document.getElementById('exp-amount');
-  const noteEl = document.getElementById('exp-note');
-  const amount = parseFloat(amountEl.value);
-  const note = (noteEl.value || '').trim();
-
-  if (!amount || amount <= 0) {
-    amountEl.focus(); return;
-  }
-
-  const now = new Date();
-  const time = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-
-  const expenses = loadExpenses();
-  expenses.push({
-    date: localDateStr(now),
-    time: time,
-    amount: amount,
-    note: note,
-    ts: Date.now()
-  });
-  saveExpenses(expenses);
-
-  // clear inputs & re-render
-  amountEl.value = ''; noteEl.value = '';
-  renderExpenses();
-  renderCalendar(); // 刷新日历消费红点
-  popEffect(); // small celebration!
-  renderDailySummary(); // refresh daily overview
-}
-
-function delExpense(idx) {
-  // idx is from reversed today list, need to find the actual index
-  const items = todayExpenses();
-  const targetItem = items[items.length - 1 - idx];
-  if (!targetItem) return;
-
-  const all = loadExpenses();
-  const realIdx = all.findIndex(e => e.ts === targetItem.ts && e.amount === targetItem.amount && e.note === targetItem.note);
-  if (realIdx >= 0) {
-    all.splice(realIdx, 1);
-    saveExpenses(all);
-    renderExpenses();
-    renderCalendar(); // 刷新日历消费红点
-  }
-}
-
-function escapeHTML(s) {
-  const d = document.createElement('div');
-  d.textContent = s; return d.innerHTML;
-}
 
 function loadTasks() {
   const raw = localStorage.getItem(TASKS_KEY);
@@ -2299,409 +609,16 @@ function loadTasks() {
 function saveTasks(tasks) { localStorage.setItem(TASKS_KEY, JSON.stringify(tasks)); }
 let TASKS = loadTasks();
 
-/* ---- Study 学习模块 ---- */
-const STUDY_SUBJECTS_KEY = 'study_subjects_v1';
-const STUDY_RECORDS_KEY = 'study_records_v1';
-const STUDY_TIMER_KEY = 'study_timer_v1';
-const STUDY_EMOJIS = ['📖','📐','🧮','🔤','🌍','🧬','🎵','🎨','💻','⚛️','🏛️','📝'];
-let studyTimerIntervals = {};
-let editingSubjectId = null;
-let pickedStudyEmoji = '📖';
-
-function loadStudySubjects() {
-  try { return JSON.parse(localStorage.getItem(STUDY_SUBJECTS_KEY) || '[]'); }
-  catch(e) { return []; }
-}
-function saveStudySubjects(arr) { localStorage.setItem(STUDY_SUBJECTS_KEY, JSON.stringify(arr)); }
-function loadStudyRecords() {
-  try { return JSON.parse(localStorage.getItem(STUDY_RECORDS_KEY) || '[]'); }
-  catch(e) { return []; }
-}
-function saveStudyRecords(arr) { localStorage.setItem(STUDY_RECORDS_KEY, JSON.stringify(arr)); }
-function loadStudyTimerState() {
-  try { return JSON.parse(localStorage.getItem(STUDY_TIMER_KEY) || '{}'); }
-  catch(e) { return {}; }
-}
-function saveStudyTimerState(s) { localStorage.setItem(STUDY_TIMER_KEY, JSON.stringify(s)); }
-
-function getTodaySubjectMinutes(subjectId) {
-  const todayStr = localDateStr();
-  return loadStudyRecords().filter(r => r.subjectId === subjectId && r.date === todayStr).reduce((sum, r) => sum + r.duration, 0);
-}
-function getTodayTotalMinutes() {
-  const todayStr = localDateStr();
-  return loadStudyRecords().filter(r => r.date === todayStr).reduce((sum, r) => sum + r.duration, 0);
-}
-function formatDuration(minutes) {
-  if (!minutes || minutes < 1) return '0m';
-  if (minutes < 60) return minutes + 'm';
-  var h = Math.floor(minutes / 60);
-  var m = minutes % 60;
-  return m > 0 ? h + 'h ' + m + 'm' : h + 'h';
-}
-
-/* 科目管理 */
-function openStudyAddModal(subjectId) {
-  try {
-    editingSubjectId = subjectId || null;
-    var modal = document.getElementById('study-add-modal');
-    var title = document.getElementById('study-modal-title');
-    var nameInput = document.getElementById('study-subject-name');
-    var delBtn = document.getElementById('study-btn-delete');
-
-    if (subjectId) {
-      title.textContent = '编辑科目';
-      delBtn.style.display = '';
-      var subjects = loadStudySubjects();
-      var sub = subjects.find(function(s) { return s.id === subjectId; });
-      if (sub) { nameInput.value = sub.name; pickedStudyEmoji = sub.emoji; }
-    } else {
-      title.textContent = '添加学习科目';
-      delBtn.style.display = 'none';
-      nameInput.value = '';
-      pickedStudyEmoji = '📖';
-    }
-
-    // 更新 emoji 选择状态
-    document.querySelectorAll('.study-emoji-opt').forEach(function(opt) {
-      opt.classList.toggle('selected', opt.dataset.v === pickedStudyEmoji);
-    });
-
-    modal.classList.add('show');
-    setTimeout(function() { nameInput.focus(); }, 300);
-  } catch(e) { console.warn('openStudyAddModal error:', e); }
-}
-function closeStudyAddModal() {
-  document.getElementById('study-add-modal').classList.remove('show');
-  editingSubjectId = null;
-}
-function closeStudyModalOnBg(e) {
-  if (e.target === document.getElementById('study-add-modal')) closeStudyAddModal();
-}
-function selectStudyEmoji(opt) {
-  document.querySelectorAll('.study-emoji-opt').forEach(function(o) { o.classList.remove('selected'); });
-  opt.classList.add('selected');
-  pickedStudyEmoji = opt.dataset.v;
-}
-function saveStudySubject() {
-  var nameInput = document.getElementById('study-subject-name');
-  var name = (nameInput.value || '').trim();
-  if (!name) { nameInput.focus(); return; }
-
-  var subjects = loadStudySubjects();
-
-  if (editingSubjectId) {
-    var idx = subjects.findIndex(function(s) { return s.id === editingSubjectId; });
-    if (idx > -1) { subjects[idx].name = name; subjects[idx].emoji = pickedStudyEmoji; }
-  } else {
-    subjects.push({
-      id: 'sub_' + Date.now() + '_' + Math.floor(Math.random() * 999),
-      name: name, emoji: pickedStudyEmoji,
-      createdAt: localDateStr(), totalMinutes: 0
-    });
-  }
-  saveStudySubjects(subjects);
-  closeStudyAddModal();
-  renderStudySubjects();
-}
-function deleteCurrentSubject() {
-  if (!editingSubjectId) return;
-  if (!confirm('确定删除这个科目吗？学习记录会保留。')) return;
-
-  saveStudySubjects(loadStudySubjects().filter(function(s) { return s.id !== editingSubjectId; }));
-
-  var ts = loadStudyTimerState();
-  if (ts[editingSubjectId]) {
-    delete ts[editingSubjectId];
-    saveStudyTimerState(ts);
-    if (studyTimerIntervals[editingSubjectId]) {
-      clearInterval(studyTimerIntervals[editingSubjectId]);
-      delete studyTimerIntervals[editingSubjectId];
-    }
-  }
-  closeStudyAddModal();
-  renderStudySubjects();
-}
-
-/* 计时器 */
-function startStudyTimer(subjectId) {
-  try {
-    var card = document.getElementById('study-card-' + subjectId);
-    if (!card) return;
-    var input = card.querySelector('.study-timer-input');
-    var minutes = parseInt(input.value, 10);
-    if (!minutes || isNaN(minutes)) { input.value = 30; minutes = 30; }
-    minutes = Math.max(1, Math.min(180, minutes));
-    var targetSec = minutes * 60;
-
-    var ts = loadStudyTimerState();
-    ts[subjectId] = { targetSec: targetSec, remainingSec: targetSec, running: true, startTs: Date.now() };
-    saveStudyTimerState(ts);
-
-    card.querySelector('.study-timer-row').style.display = 'none';
-    var cd = card.querySelector('.study-countdown');
-    cd.classList.add('active');
-    card.querySelector('.study-cd-time').textContent = formatTime(targetSec);
-    card.classList.add('has-active');
-
-    startStudyTimerTick(subjectId);
-  } catch(e) { console.warn('startStudyTimer error:', e); }
-}
-function startStudyTimerTick(subjectId) {
-  if (studyTimerIntervals[subjectId]) clearInterval(studyTimerIntervals[subjectId]);
-  studyTimerIntervals[subjectId] = setInterval(function() {
-    try {
-      var ts = loadStudyTimerState();
-      var t = ts[subjectId];
-      if (!t || !t.running) {
-        clearInterval(studyTimerIntervals[subjectId]);
-        delete studyTimerIntervals[subjectId];
-        return;
-      }
-      if (t.remainingSec <= 1) {
-        clearInterval(studyTimerIntervals[subjectId]);
-        delete studyTimerIntervals[subjectId];
-        t.remainingSec = 0; t.running = false;
-        saveStudyTimerState(ts);
-        completeStudySession(subjectId, true);
-      } else {
-        t.remainingSec--;
-        saveStudyTimerState(ts);
-        var cdTimeEl = document.getElementById('study-cd-time-' + subjectId);
-        if (cdTimeEl) cdTimeEl.textContent = formatTime(t.remainingSec);
-      }
-    } catch(e) { console.warn('studyTimerTick error:', e); }
-  }, 1000);
-}
-function stopStudyTimer(subjectId) {
-  var ts = loadStudyTimerState();
-  if (ts[subjectId]) { ts[subjectId].running = false; saveStudyTimerState(ts); }
-  if (studyTimerIntervals[subjectId]) {
-    clearInterval(studyTimerIntervals[subjectId]);
-    delete studyTimerIntervals[subjectId];
-  }
-  completeStudySession(subjectId, false);
-}
-function cancelStudyTimer(subjectId) {
-  var ts = loadStudyTimerState();
-  if (ts[subjectId]) { delete ts[subjectId]; saveStudyTimerState(ts); }
-  if (studyTimerIntervals[subjectId]) {
-    clearInterval(studyTimerIntervals[subjectId]);
-    delete studyTimerIntervals[subjectId];
-  }
-  var card = document.getElementById('study-card-' + subjectId);
-  if (card) {
-    card.classList.remove('has-active');
-    card.querySelector('.study-countdown').classList.remove('active');
-    card.querySelector('.study-timer-row').style.display = '';
-    var ct = card.querySelector('.study-cd-time');
-    if (ct) ct.textContent = '00:00';
-  }
-}
-function completeStudySession(subjectId, completed) {
-  try {
-    var ts = loadStudyTimerState();
-    var t = ts[subjectId];
-    var card = document.getElementById('study-card-' + subjectId);
-
-    var durationMinutes = 0;
-    if (t) {
-      var elapsedSec = t.targetSec - (t.remainingSec || 0);
-      durationMinutes = Math.ceil(Math.max(0, elapsedSec) / 60);
-    }
-    if (durationMinutes <= 0 && !card) return;
-
-    if (durationMinutes > 0) {
-      var now = new Date();
-      var startH = now.getHours(), startM = now.getMinutes();
-      var endMin = startM + durationMinutes;
-      var endH = startH + Math.floor(endMin / 60);
-      endM = endMin % 60;
-      var records = loadStudyRecords(); // ← 缺失！导致记录无法持久化
-      records.push({
-        id: 'rec_' + Date.now() + '_' + Math.floor(Math.random() * 999),
-        subjectId: subjectId,
-        date: localDateStr(now),
-        startTime: String(startH).padStart(2,'0') + ':' + String(startM).padStart(2,'0'),
-        endTime: String(endH).padStart(2,'0') + ':' + String(endM).padStart(2,'0'),
-        duration: durationMinutes,
-        completed: !!completed,
-        ts: Date.now()
-      });
-      saveStudyRecords(records);
-
-      var subjects = loadStudySubjects();
-      var si = subjects.findIndex(function(s) { return s.id === subjectId; });
-      if (si > -1) {
-        subjects[si].totalMinutes = (subjects[si].totalMinutes || 0) + durationMinutes;
-        saveStudySubjects(subjects);
-      }
-    }
-
-    if (ts[subjectId]) { delete ts[subjectId]; saveStudyTimerState(ts); }
-
-    if (card) {
-      card.classList.remove('has-active');
-      var tr = card.querySelector('.study-timer-row');
-      if (tr) tr.style.display = '';
-      var cdl = card.querySelector('.study-countdown');
-      if (cdl) cdl.classList.remove('active');
-      var stEl = card.querySelector('.study-subject-today');
-      if (stEl) stEl.textContent = formatDuration(getTodaySubjectMinutes(subjectId));
-      popEffect();
-    }
-    updateStudyTotal();
-    renderDailySummary(); // refresh daily overview
-  } catch(e) { console.warn('completeStudySession error:', e); }
-}
-function updateStudyTotal() {
-  var el = document.getElementById('study-today-time');
-  if (el) el.textContent = formatDuration(getTodayTotalMinutes());
-}
-
-/* 渲染 */
-function renderStudySubjects() {
-  try {
-    var grid = document.getElementById('study-subjects-grid');
-    var countEl = document.getElementById('study-count');
-    if (!grid) return;
-
-    var subjects = loadStudySubjects();
-    var timerState = loadStudyTimerState();
-
-    if (countEl) countEl.textContent = subjects.length;
-
-    if (subjects.length === 0) {
-      grid.innerHTML = '<div class="study-empty">还没有添加科目，点击下方添加吧~</div>';
-      updateStudyTotal();
-      return;
-    }
-
-    var html = '';
-    subjects.forEach(function(sub) {
-      var todayMin = getTodaySubjectMinutes(sub.id);
-      var isRunning = timerState[sub.id] && timerState[sub.id].running;
-      html += '<div class="study-subject-card' + (isRunning ? ' has-active' : '') + '" id="study-card-' + sub.id + '">' +
-        '<div class="study-subject-header">' +
-          '<div class="study-subject-left">' +
-            '<div class="study-subject-icon" style="background:var(--cyan-light)">' + escapeHTML(sub.emoji) + '</div>' +
-            '<div class="study-subject-name">' + escapeHTML(sub.name) + '</div>' +
-          '</div>' +
-          '<button class="study-subject-delete" onclick="event.stopPropagation();openStudyAddModal(\'' + sub.id + '\')">✕</button>' +
-        '</div>' +
-        '<div class="study-subject-stats">' +
-          '<span>今日: <span class="study-subject-today">' + formatDuration(todayMin) + '</span></span>' +
-          '<span>累计: ' + formatDuration(sub.totalMinutes || 0) + '</span>' +
-        '</div>' +
-        '<div class="study-timer-row">' +
-          '<input type="number" class="study-timer-input" value="30" min="1" max="180" inputmode="numeric">' +
-          '<span class="study-timer-unit">min</span>' +
-          '<button class="study-start-btn" onclick="startStudyTimer(\'' + sub.id + '\')">▶</button>' +
-        '</div>' +
-        '<div class="study-countdown" id="study-cd-' + sub.id + '">' +
-          '<div class="study-cd-time" id="study-cd-time-' + sub.id + '">00:00</div>' +
-          '<div class="study-cd-label">remaining</div>' +
-          '<div class="study-cd-controls">' +
-            '<button class="study-cd-btn study-cd-btn--done" onclick="stopStudyTimer(\'' + sub.id + '\')">✓ Done</button>' +
-            '<button class="study-cd-btn study-cd-btn--cancel" onclick="cancelStudyTimer(\'' + sub.id + '\')">Cancel</button>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-    });
-    grid.innerHTML = html;
-
-    // 恢复运行中的计时器
-    subjects.forEach(function(sub) {
-      var st = timerState[sub.id];
-      if (st && st.running && st.remainingSec > 0) {
-        var card = document.getElementById('study-card-' + sub.id);
-        if (card) {
-          card.classList.add('has-active');
-          var tr = card.querySelector('.study-timer-row');
-          if (tr) tr.style.display = 'none';
-          var cd = card.querySelector('.study-countdown');
-          if (cd) cd.classList.add('active');
-          var cdt = document.getElementById('study-cd-time-' + sub.id);
-          if (cdt) cdt.textContent = formatTime(st.remainingSec);
-          startStudyTimerTick(sub.id);
-        }
-      }
-    });
-    updateStudyTotal();
-  } catch(e) { console.warn('renderStudySubjects error:', e); }
-}
-
-/* 历史记录 */
-function openStudyHistory(subjectId) {
-  renderStudyHistory(subjectId);
-}
-function renderStudyHistory(subjectId) {
-  try {
-    var overlay = document.getElementById('study-history-overlay');
-    var body = document.getElementById('study-history-body');
-    var title = document.getElementById('study-history-title');
-    if (!overlay || !body) return;
-
-    var records = loadStudyRecords();
-    var subjects = loadStudySubjects();
-    var sub = subjectId ? subjects.find(function(s) { return s.id === subjectId; }) : null;
-    title.textContent = sub ? sub.emoji + ' ' + sub.name + ' 学习历史' : '📖 学习历史';
-
-    var filtered = subjectId ? records.filter(function(r) { return r.subjectId === subjectId; }) : records.slice();
-    filtered.sort(function(a, b) { return b.ts - a.ts; });
-
-    if (filtered.length === 0) {
-      body.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-hint)">暂无学习记录</div>';
-    } else {
-      var days = {};
-      filtered.forEach(function(r) { if (!days[r.date]) days[r.date] = []; days[r.date].push(r); });
-
-      var html = '';
-      Object.keys(days).sort().reverse().forEach(function(date) {
-        var dayRecs = days[date];
-        var dayTotal = dayRecs.reduce(function(sum, r) { return sum + r.duration; }, 0);
-        var dateObj = new Date(date + 'T12:00:00');
-        var dateLabel = date === localDateStr() ? '今天'
-          : date === localDateStr(new Date(Date.now() - 86400000)) ? '昨天'
-          : (dateObj.getMonth()+1) + '月' + dateObj.getDate() + '日';
-
-        html += '<div style="margin-bottom:16px">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px solid var(--border)">' +
-            '<span style="font-size:13px;font-weight:600;color:var(--text-primary)">' + dateLabel + '</span>' +
-            '<span style="font-size:13px;font-weight:600;color:var(--blue)">' + formatDuration(dayTotal) + '</span>' +
-          '</div>';
-
-        dayRecs.forEach(function(r) {
-          var rs = subjects.find(function(s) { return s.id === r.subjectId; }) || {};
-          html += '<div class="study-history-item">' +
-            '<div class="study-history-info">' +
-              '<div class="study-history-icon" style="background:var(--cyan-light)">' + (rs.emoji || '📖') + '</div>' +
-              '<div>' +
-                '<div class="study-history-name">' + escapeHTML(rs.name || '-') + '</div>' +
-                '<div class="study-history-date">' + (r.startTime || '--:--') + ' – ' + (r.endTime || '--:--') + (r.completed ? ' ✓' : '') + '</div>' +
-              '</div>' +
-            '</div>' +
-            '<span class="study-history-duration">' + formatDuration(r.duration) + '</span>' +
-          '</div>';
-        });
-        html += '</div>';
-      });
-      body.innerHTML = html;
-    }
-    overlay.classList.add('show');
-  } catch(e) { console.warn('renderStudyHistory error:', e); }
-}
-function closeStudyHistory() {
-  var o = document.getElementById('study-history-overlay');
-  if (o) o.classList.remove('show');
-}
-function closeStudyHistoryOnBg(e) {
-  if (e.target === document.getElementById('study-history-overlay')) closeStudyHistory();
+function escapeHTML(s) {
+  const d = document.createElement('div');
+  d.textContent = s; return d.innerHTML;
 }
 
 function genId() {
   return 't' + Date.now() + Math.floor(Math.random()*999);
 }
+
+function saveState() { localStorage.setItem(TODAY_KEY, JSON.stringify(state)); }
 
 // ---- Calendar ----
 let calYear = TODAY.getFullYear(), calMonth = TODAY.getMonth();
@@ -2709,16 +626,11 @@ let calYear = TODAY.getFullYear(), calMonth = TODAY.getMonth();
 function calKey(y, m, d) {
   return 'checklist_' + y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
 }
-function isDayDone(y, m, d) {
-  const s = JSON.parse(localStorage.getItem(calKey(y, m, d)) || '{}');
-  return TASKS.every(t => s[t.id]);
-}
 function isDayPartial(y, m, d) {
   const s = JSON.parse(localStorage.getItem(calKey(y, m, d)) || '{}');
   return TASKS.some(t => s[t.id]);
 }
 
-/* ---- 万年历数据（节气、节日、假期）---- */
 const SOLAR_TERMS = {
   '1-5':'小寒','1-20':'大寒','2-4':'立春','2-19':'雨水',
   '3-5':'惊蛰','3-21':'春分','4-5':'清明','4-20':'谷雨',
@@ -2727,46 +639,17 @@ const SOLAR_TERMS = {
   '9-8':'白露','9-23':'秋分','10-8':'寒露','10-24':'霜降',
   '11-7':'立冬','11-22':'小雪','12-7':'大雪','12-22':'冬至'
 };
-
 const FIXED_FESTIVALS = {
-  '1-1':'元旦','2-14':'情人节','3-8':'妇女节','3-12':'植树节',
-  '4-1':'愚人节','5-1':'劳动节','5-4':'青年节','6-1':'儿童节',
-  '7-1':'建党节','8-1':'建军节','9-10':'教师节','10-1':'国庆节',
-  '12-24':'平安夜','12-25':'圣诞节','3-15':'消费者权益日',
-  '5-12':'护士节','6-6':'全国爱眼日','11-11':'光棍节'
+  '1-1':'元旦','2-14':'情人节','3-8':'妇女节','5-1':'劳动节',
+  '10-1':'国庆节','12-25':'圣诞节'
 };
-
 const LUNAR_FESTIVALS = {
-  '2025-1-29':'春节','2025-1-28':'除夕','2025-2-8':'元宵',
-  '2025-4-4':'清明','2025-5-31':'端午','2025-6-28':'七夕',
-  '2025-9-6':'中秋','2025-10-29':'重阳',
-  '2026-2-17':'春节','2026-2-16':'除夕','2026-3-1':'元宵',
-  '2026-4-5':'清明','2026-6-19':'端午','2026-8-16':'七夕',
-  '2026-9-25':'中秋','2026-10-18':'重阳',
-  '2027-2-6':'春节','2027-2-5':'除夕','2027-2-18':'元宵',
-  '2027-4-5':'清明','2027-6-9':'端午','2027-8-6':'七夕',
-  '2027-9-15':'中秋',
-  '2028-1-26':'春节','2028-1-25':'除夕','2028-2-7':'元宵',
-  '2028-4-4':'清明','2028-5-27':'端午','2028-8-25':'七夕',
-  '2028-10-3':'中秋'
+  '2026-2-17':'春节','2026-2-16':'除夕','2026-4-5':'清明',
+  '2026-6-19':'端午','2026-9-25':'中秋','2026-10-1':'国庆'
 };
-
 const PUBLIC_HOLIDAYS = {
-  '2025-1-1':'元旦假','2025-1-28':'除夕','2025-1-29':'春节',
-  '2025-1-30':'春节','2025-1-31':'春节','2025-2-1':'春节','2025-2-2':'春节',
-  '2025-4-4':'清明假','2025-5-1':'五一假','2025-5-2':'五一假',
-  '2025-5-3':'五一假','2025-5-4':'五一假','2025-5-5':'五一假',
-  '2025-6-1':'端午假','2025-10-1':'国庆假','2025-10-2':'国庆假',
-  '2025-10-3':'中秋','2025-10-4':'国庆假','2025-10-5':'国庆假',
-  '2025-10-6':'国庆假','2025-10-7':'国庆假',
-  '2026-1-1':'元旦假','2026-2-15':'春节','2026-2-16':'除夕',
-  '2026-2-17':'春节','2026-2-18':'春节','2026-2-19':'春节',
-  '2026-2-20':'春节','2026-2-21':'春节','2026-4-5':'清明假',
-  '2026-5-1':'五一假','2026-5-2':'五一假','2026-5-3':'五一假',
-  '2026-5-4':'五一假','2026-5-5':'五一假','2026-6-19':'端午假',
-  '2026-10-1':'国庆假','2026-10-2':'国庆假','2026-10-3':'国庆假',
-  '2026-10-4':'国庆假','2026-10-5':'国庆假','2026-10-6':'国庆假',
-  '2026-10-7':'国庆假','2026-9-25':'中秋'
+  '2026-1-1':'元旦假','2026-2-16':'除夕','2026-2-17':'春节',
+  '2026-5-1':'五一假','2026-10-1':'国庆假'
 };
 
 function getDayInfo(year, month, day) {
@@ -2788,7 +671,6 @@ function renderCalendar() {
   monthLabel.textContent = calYear + '年 ' + (calMonth + 1) + '月';
   grid.innerHTML = '';
 
-  // 星期头 - 高亮今日列
   var wdNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
   weekdaysEl.innerHTML = wdNames.map(function(name, i) {
     var isTodayCol = (i === TODAY.getDay()) && (calMonth === TODAY.getMonth()) && (calYear === TODAY.getFullYear());
@@ -2799,186 +681,39 @@ function renderCalendar() {
   var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   var todayMs = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()).getTime();
 
-  // 空白填充格
   for (var i = 0; i < firstDay; i++) {
     var blank = document.createElement('div');
     blank.className = 'cal-day empty';
     grid.appendChild(blank);
   }
-  // 日期格子
+
   for (var d = 1; d <= daysInMonth; d++) {
-    try {
-      var isToday = d === TODAY.getDate() && calMonth === TODAY.getMonth() && calYear === TODAY.getFullYear();
-      var dateMs = new Date(calYear, calMonth, d).getTime();
-      var hasCheck = false;
-      try { hasCheck = isDayPartial(calYear, calMonth, d); } catch(e) {}
-      var isPast = dateMs < todayMs;
-      var hasExpense = false;
-      try {
-        var dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-        var dayExpenses = loadExpenses().filter(function(e) { return e.date === dateStr; });
-        hasExpense = dayExpenses.length > 0;
-      } catch(e) {}
-      var di = { solarTerm:null, festival:null, holiday:null };
-      try { di = getDayInfo(calYear, calMonth, d); } catch(e) {}
-      var tagHTML = '';
-      if (di.solarTerm) tagHTML += '<span class="cal-day-tag term">' + di.solarTerm + '</span>';
-      else if (di.festival) tagHTML += '<span class="cal-day-tag fest">' + di.festival + '</span>';
-      else if (di.holiday) tagHTML += '<span class="cal-day-tag holi">休</span>';
-      var el = document.createElement('div');
-      var cls = 'cal-day';
-      if (isToday) cls += ' today';
-      else if (hasCheck) cls += ' has-check';
-      else if (isPast) cls += ' past-empty';
-      else cls += ' no-data';
-      if (hasExpense) cls += ' has-expense';
-      el.className = cls;
-      el.innerHTML = String(d) + (hasExpense ? '<span class="cal-exp-dot"></span>' : '') + tagHTML;
-      el.onclick = (function(y, m, day) { return function() { openDayDetail(y, m, day); }; })(calYear, calMonth, d);
-      grid.appendChild(el);
-    } catch(err) {
-      // 单个日期出错时不影响其他日期
-      var fallback = document.createElement('div');
-      fallback.className = 'cal-day no-data';
-      fallback.textContent = String(d);
-      grid.appendChild(fallback);
-    }
+    var isToday = d === TODAY.getDate() && calMonth === TODAY.getMonth() && calYear === TODAY.getFullYear();
+    var dateMs = new Date(calYear, calMonth, d).getTime();
+    var hasCheck = isDayPartial(calYear, calMonth, d);
+    var isPast = dateMs < todayMs;
+    var di = getDayInfo(calYear, calMonth, d);
+    var tagHTML = '';
+    if (di.solarTerm) tagHTML += '<span class="cal-day-tag term">' + di.solarTerm + '</span>';
+    else if (di.festival) tagHTML += '<span class="cal-day-tag fest">' + di.festival + '</span>';
+    else if (di.holiday) tagHTML += '<span class="cal-day-tag holi">休</span>';
+
+    var el = document.createElement('div');
+    var cls = 'cal-day';
+    if (isToday) cls += ' today';
+    else if (hasCheck) cls += ' has-check';
+    else if (isPast) cls += ' past-empty';
+    else cls += ' no-data';
+    el.className = cls;
+    el.innerHTML = String(d) + tagHTML;
+    el.onclick = (function(y, m, day) { return function() { openDayDetail(y, m, day); }; })(calYear, calMonth, d);
+    grid.appendChild(el);
   }
 }
 
-function openDayDetail(y, m, d) {
-  const overlay = document.getElementById('day-detail');
-  const days = ['周日','周一','周二','周三','周四','周五','周六'];
-  const dayDate = new Date(y, m, d);
-  document.getElementById('day-detail-title').textContent = `📅 ${m+1}月${d}日 ${days[dayDate.getDay()]}`;
+function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); if(calCollapsed) renderCalWeekStrip(); }
+function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); if(calCollapsed) renderCalWeekStrip(); }
 
-  // 万年历信息条
-  const di = getDayInfo(y, m, d);
-  let infoChips = '';
-  if (di.solarTerm) infoChips += `<span class="day-info-chip term">🌿 ${di.solarTerm}</span>`;
-  if (di.festival) infoChips += `<span class="day-info-chip fest">🧧 ${di.festival}</span>`;
-  if (di.holiday) infoChips += `<span class="day-info-chip holi">🏖️ ${di.holiday}</span>`;
-
-  const body = document.getElementById('day-detail-body');
-
-  let html = '';
-  if (infoChips) html += `<div class="day-info-bar">${infoChips}</div>`;
-
-  // 消费记录
-  const dateStr = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-  const dayExpenses = loadExpenses().filter(e => e.date === dateStr);
-  if (dayExpenses.length > 0) {
-    let expTotal = 0;
-    let expHTML = '<div style="margin-top:8px;padding-top:10px;border-top:0.5px solid var(--border);">' +
-      '<div style="font-size:13px;font-weight:600;color:var(--coral);margin-bottom:8px;">💰 消费记录</div>';
-    dayExpenses.slice().reverse().forEach(e => {
-      expTotal += parseFloat(e.amount);
-      expHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;">' +
-        '<div>' +
-          '<span style="color:var(--text-primary);">' + escapeHTML(e.note || '-') + '</span>' +
-          '<span style="color:var(--text-hint);font-size:11px;margin-left:6px;">' + e.time + '</span>' +
-        '</div>' +
-        '<span style="color:var(--coral);font-weight:600;">' + formatAmt(e.amount) + '</span>' +
-        '</div>';
-    });
-    expHTML += '<div style="display:flex;justify-content:flex-end;padding-top:6px;margin-top:4px;border-top:0.5px solid var(--border);font-size:14px;font-weight:700;color:var(--coral);">合计 ' + formatAmt(expTotal) + '</div>';
-    expHTML += '</div>';
-    html += expHTML;
-  }
-
-  // 学习记录
-  const dayStudyRecs = getDayStudyRecords(dateStr);
-  const studySubjects = loadStudySubjects();
-  if (dayStudyRecs.length > 0) {
-    let studyTotal = 0;
-    let studyHTML = '<div style="margin-top:8px;padding-top:10px;border-top:0.5px solid var(--border);">' +
-      '<div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px;">📚 学习记录</div>';
-    // 按科目聚合
-    var bySubject = {};
-    dayStudyRecs.forEach(function(r) {
-      if (!bySubject[r.subjectId]) bySubject[r.subjectId] = [];
-      bySubject[r.subjectId].push(r);
-      studyTotal += r.duration;
-    });
-    Object.keys(bySubject).forEach(function(sid) {
-      var subTotal = bySubject[sid].reduce(function(s, r) { return s + r.duration; }, 0);
-      var sub = studySubjects.find(function(s) { return s.id === sid; });
-      var name = sub ? sub.name : sid;
-      var emoji = sub ? sub.emoji : '📖';
-      studyHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;">' +
-        '<div><span>' + emoji + '</span> <span style="color:var(--text-primary);">' + escapeHTML(name) + '</span>' +
-        '<span style="color:var(--text-hint);font-size:11px;margin-left:4px;">' + bySubject[sid].length + '次</span></div>' +
-        '<span style="color:var(--blue);font-weight:600;">' + subTotal + ' min</span></div>';
-    });
-    studyHTML += '<div style="display:flex;justify-content:flex-end;padding-top:6px;margin-top:4px;border-top:0.5px solid var(--border);font-size:14px;font-weight:700;color:var(--cyan);">合计 ' + studyTotal + ' min</div>';
-    studyHTML += '</div>';
-    html += studyHTML;
-  }
-
-  // 快速打卡记录 (Cello / Workout)
-  let hasQuickData = false;
-  let quickHTML = '<div style="margin-top:8px;padding-top:10px;border-top:0.5px solid var(--border);">' +
-    '<div style="font-size:13px;font-weight:600;color:var(--purple);margin-bottom:8px;">⚡ 快速打卡</div>';
-  Object.keys(QUICK_ITEMS).forEach(function(key) {
-    var item = QUICK_ITEMS[key];
-    var sessions = getDayQuickSessions(key, dateStr);
-    if (sessions.length > 0) {
-      hasQuickData = true;
-      var qTotal = sessions.reduce(function(s, r) { return s + r.duration; }, 0);
-      quickHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;">' +
-        '<div><span>' + item.emoji + '</span> <span style="color:var(--text-primary);">' + item.name + '</span>' +
-        '<span style="color:var(--text-hint);font-size:11px;margin-left:4px;">' + sessions.length + '次</span></div>' +
-        '<span style="color:' + item.color + ';font-weight:600;">' + qTotal + ' min</span></div>';
-      // 每次详情
-      sessions.forEach(function(sess) {
-        quickHTML += '<div style="padding:3px 0 3px 20px;font-size:12px;color:var(--text-secondary);display:flex;justify-content:space-between;">' +
-          '<span>' + sess.startTime + ' - ' + sess.endTime + '</span>' +
-          '<span>' + sess.duration + 'min</span></div>';
-      });
-    }
-    // 也检查是否有打卡标记（无session数据的老数据兼容）
-    var qs = loadQuickState();
-    if ((qs[key] || []).includes(dateStr) && sessions.length === 0) {
-      hasQuickData = true;
-      quickHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;">' +
-        '<div><span>' + item.emoji + '</span> <span style="color:var(--text-primary);">' + item.name + '</span></div>' +
-        '<span style="color:' + item.color + ';font-weight:600;">✓ 已完成</span></div>';
-    }
-  });
-  quickHTML += '</div>';
-  if (hasQuickData) html += quickHTML;
-
-  // 空状态提示
-  if (dayExpenses.length === 0 && dayStudyRecs.length === 0 && !hasQuickData) {
-    html += '<div style="text-align:center;padding:24px 0;color:var(--text-hint);font-size:14px;">📭 这一天还没有任何记录</div>';
-  }
-
-  body.innerHTML = html;
-  overlay.classList.add('show');
-}
-
-// 快速打卡项配置
-const QUICK_ITEMS = {
-  violin: { name: 'Cello', emoji: '🎻', color: 'var(--purple)' },
-  fitness: { name: 'Workout', emoji: '💪', color: 'var(--mint)' },
-};
-
-function getDayQuickSessions(key, dateStr) {
-  const all = loadQuickSessions();
-  return (all[key] || []).filter(function(r) { return r.date === dateStr; });
-}
-
-function getDayStudyRecords(dateStr) {
-  return loadStudyRecords().filter(function(r) { return r.date === dateStr; });
-}
-
-function closeDayDetail() { document.getElementById('day-detail').classList.remove('show'); }
-function closeDayDetailOnBg(e) { if (e.target === document.getElementById('day-detail')) closeDayDetail(); }
-
-function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
-function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
-
-/* ---- 日历收起/展开 + 7天迷你行 ---- */
 var calCollapsed = false;
 function toggleCalCollapse() {
   var card = document.querySelector('.cal-card');
@@ -2994,63 +729,99 @@ function toggleCalCollapse() {
 function renderCalWeekStrip() {
   var strip = document.getElementById('cal-week-strip');
   if (!strip) return;
-
   var today = new Date();
-  // 以今日为中心，前后各3天 = 7天
   var days = [];
   for (var i = -3; i <= 3; i++) {
     var d = new Date(today);
     d.setDate(today.getDate() + i);
     days.push(d);
   }
-
   var wdNames = ['日','一','二','三','四','五','六'];
   var todayStr = localDateStr();
   var html = '';
   days.forEach(function(day) {
-    var dateStr = day.getFullYear() + '-' + String(day.getMonth()+1).padStart(2,'0') + '-' + String(day.getDate()).padStart(2,'0');
+    var dateStr = localDateStr(day);
     var isToday = dateStr === todayStr;
-    var hasCheck = false;
-    try { hasCheck = isDayPartial(day.getFullYear(), day.getMonth(), day.getDate()); } catch(e) {}
-    var hasExpense = false;
-    try {
-      hasExpense = loadExpenses().filter(function(e) { return e.date === dateStr; }).length > 0;
-    } catch(e) {}
+    var hasCheck = isDayPartial(day.getFullYear(), day.getMonth(), day.getDate());
     var isPast = day < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
     var cls = 'cal-strip-day';
     if (isToday) cls += ' is-today';
     else if (hasCheck) cls += ' has-check';
     else if (isPast) cls += ' past-empty';
-
-    var dotsHtml = '';
-    if (hasCheck && !isToday) dotsHtml += '<span class="cal-strip-dot check"></span>';
-    else if (!hasCheck && hasExpense) dotsHtml += '<span class="cal-strip-dot expense"></span>';
-    else if (hasCheck && isToday) dotsHtml += '<span class="cal-strip-dot expense" style="background:#fff;opacity:0.7"></span>';
-
-    // 今日有打卡也显示白点
-    if (isToday && hasCheck) dotsHtml = '<span class="cal-strip-dot check" style="background:#fff"></span>' +
-      (hasExpense ? '<span class="cal-strip-dot expense" style="background:#fff;opacity:0.7"></span>' : '');
-
+    var dotsHtml = (hasCheck && !isToday) ? '<span class="cal-strip-dot"></span>' : '';
+    if (isToday && hasCheck) dotsHtml = '<span class="cal-strip-dot"></span>';
     html += '<div class="' + cls + '" onclick="openDayDetail(' + day.getFullYear() + ',' + day.getMonth() + ',' + day.getDate() + ')">' +
       '<span class="cal-strip-wd">周' + wdNames[day.getDay()] + '</span>' +
-      '<span class="cal-strip-num">' + day.getDate() + '</span>' +
-      dotsHtml +
-      '</div>';
+      '<span class="cal-strip-num">' + day.getDate() + '</span>' + dotsHtml + '</div>';
   });
   strip.innerHTML = html;
 }
 
-// 每次渲染完整月历时同步更新7天行数据
-var _origRenderCalendar = renderCalendar;
-renderCalendar = function() {
-  _origRenderCalendar();
-  if (calCollapsed) renderCalWeekStrip();
-};
+function openDayDetail(y, m, d) {
+  var overlay = document.getElementById('day-detail');
+  if (!overlay) return;
+  var days = ['周日','周一','周二','周三','周四','周五','周六'];
+  var dayDate = new Date(y, m, d);
+  document.getElementById('day-detail-title').textContent = '📅 ' + (m+1) + '月' + d + '日 ' + days[dayDate.getDay()];
 
-function saveState() { localStorage.setItem(TODAY_KEY, JSON.stringify(state)); }
+  var body = document.getElementById('day-detail-body');
+  var html = '';
 
-/* ---- Render cards grid ---- */
+  var di = getDayInfo(y, m, d);
+  var infoChips = '';
+  if (di.solarTerm) infoChips += '<span class="day-info-chip term">🌿 ' + di.solarTerm + '</span>';
+  if (di.festival) infoChips += '<span class="day-info-chip fest">🎁 ' + di.festival + '</span>';
+  if (di.holiday) infoChips += '<span class="day-info-chip holi">🏖 ' + di.holiday + '</span>';
+  if (infoChips) html += '<div class="day-info-bar">' + infoChips + '</div>';
+
+  var dayState = JSON.parse(localStorage.getItem(calKey(y, m, d)) || '{}');
+  var total = TASKS.length;
+  var done = TASKS.filter(function(t) { return !!dayState[t.id]; }).length;
+  var pct = total > 0 ? Math.round(done / total * 100) : 0;
+  var offset = 113 - (113 * pct / 100);
+
+  html += '<div class="day-task-progress">' +
+    '<svg class="day-ring" viewBox="0 0 40 40">' +
+      '<circle class="ring-bg" cx="20" cy="20" r="18"/>' +
+      '<circle class="ring-fg" cx="20" cy="20" r="18" style="stroke-dashoffset:' + offset + '"/>' +
+    '</svg>' +
+    '<div class="day-progress-text">' +
+      '<div class="day-progress-pct">' + pct + '%</div>' +
+      '<div class="day-progress-sub">已完成 ' + done + ' / ' + total + ' 项</div>' +
+    '</div></div>';
+
+  if (TASKS.length === 0) {
+    html += '<div style="text-align:center;padding:24px 0;color:var(--text-hint);font-size:14px;">暂无任务</div>';
+  } else {
+    var cats = ['morning','work','health','evening'];
+    cats.forEach(function(cat) {
+      var catTasks = TASKS.filter(function(t) { return t.cat === cat; });
+      if (catTasks.length === 0) return;
+      html += '<div style="font-size:12px;font-weight:600;color:var(--text-hint);padding:8px 0 4px;">' + (CAT_LABELS[cat]||cat) + '</div>';
+      catTasks.forEach(function(task) {
+        var isDone = !!dayState[task.id];
+        html += '<div class="detail-item' + (isDone ? ' done' : '') + '" style="pointer-events:none;">' +
+          '<div class="detail-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
+          '<div class="detail-info">' +
+            '<div class="detail-title">' + escapeHTML(task.title) + '</div>' +
+            '<div class="detail-sub">' + escapeHTML(task.sub || '') + '</div>' +
+          '</div>' +
+          '<div class="detail-check" style="' + (isDone ? '' : 'border-color:var(--border)') + '">' +
+            '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
+              '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg></div></div>';
+      });
+    });
+  }
+
+  body.innerHTML = html;
+  overlay.classList.add('show');
+}
+
+function closeDayDetail() { document.getElementById('day-detail').classList.remove('show'); }
+function closeDayDetailOnBg(e) { if (e.target === document.getElementById('day-detail')) closeDayDetail(); }
+
+// ---- Task cards ----
 const CAT_META = [
   { key: 'morning', icon: '⚡', name: '目标', color: '#7F77DD', bg: '#EEEDFE' },
   { key: 'evening', icon: '🌙', name: '睡眠', color: '#534AB7', bg: '#EEEDFE' },
@@ -3061,437 +832,168 @@ const CAT_META = [
 function renderCardsGrid() {
   var grid = document.getElementById('cards-grid');
   if (!grid) return;
-  // 防御：确保 state 有效（数据恢复）
-  if (!state || typeof state !== 'object') {
-    try { state = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}'); } catch(e) { state = {}; }
-  }
   grid.innerHTML = '';
   CAT_META.forEach(function(meta) {
     var tasks = TASKS.filter(function(t) { return t.cat === meta.key; });
     var done = tasks.filter(function(t) { return !!state[t.id]; }).length;
-    const total = tasks.length;
-    const pct = total > 0 ? Math.round(done / total * 100) : 0;
-    const allDone = total > 0 && done === total;
+    var total = tasks.length;
+    var pct = total > 0 ? Math.round(done / total * 100) : 0;
+    var allDone = total > 0 && done === total;
+    var offset = 72 - (72 * pct / 100);
 
-    // 计算圆环周长和偏移
-    const circumference = 72; // r * 2π ≈ 22.9 * π
-    const offset = circumference - (circumference * pct / 100);
-
-    const card = document.createElement('div');
-    card.className = 'cat-card' + (allDone ? ' has-done all-done' : '');
+    var card = document.createElement('div');
+    card.className = 'cat-card' + (allDone ? ' all-done' : '');
     card.dataset.cat = meta.key;
-    card.innerHTML = `
-      <div class="cat-card-done-badge">
-        <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
-          <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="cat-card-header">
-        <div class="cat-card-left">
-          <div class="cat-card-icon" style="background:${meta.bg}">${meta.icon}</div>
-          <div class="cat-card-name">${meta.name}</div>
-        </div>
-        <svg class="cat-card-ring" viewBox="0 0 28 28">
-          <circle class="ring-bg" cx="14" cy="14" r="11.45"/>
-          <circle class="ring-fg" cx="14" cy="14" r="11.45"
-            style="stroke:${meta.color};stroke-dashoffset:${offset}"/>
-        </svg>
-      </div>
-      <div class="cat-card-value">${done}<small>/${total}</small></div>`;
-    card.onclick = () => openCatDetail(meta);
+    card.innerHTML =
+      '<div class="cat-card-done-badge">' +
+        '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
+          '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg></div>' +
+      '<div class="cat-card-header">' +
+        '<div class="cat-card-left">' +
+          '<div class="cat-card-icon" style="background:' + meta.bg + '">' + meta.icon + '</div>' +
+          '<div class="cat-card-name">' + meta.name + '</div>' +
+        '</div>' +
+        '<svg class="cat-card-ring" viewBox="0 0 28 28">' +
+          '<circle class="ring-bg" cx="14" cy="14" r="11.45"/>' +
+          '<circle class="ring-fg" cx="14" cy="14" r="11.45" style="stroke:' + meta.color + ';stroke-dashoffset:' + offset + '"/>' +
+        '</svg></div>' +
+      '<div class="cat-card-value">' + done + '<small>/' + total + '</small></div>';
+    card.onclick = function() { openCatDetail(meta); };
     grid.appendChild(card);
   });
 }
 
 function openCatDetail(meta) {
-  const overlay = document.getElementById('cat-detail');
+  var overlay = document.getElementById('cat-detail');
   document.getElementById('detail-cat-title').textContent = meta.icon + ' ' + meta.name;
-  const list = document.getElementById('detail-task-list');
+  var list = document.getElementById('detail-task-list');
   list.innerHTML = '';
 
-  const tasks = TASKS.filter(t => t.cat === meta.key);
+  var tasks = TASKS.filter(function(t) { return t.cat === meta.key; });
   if (tasks.length === 0) {
     list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-hint);font-size:14px;">暂无计划，点击下方按钮添加</div>';
   } else {
-    tasks.forEach(task => {
-      const done = !!state[task.id];
-      const item = document.createElement('div');
+    tasks.forEach(function(task) {
+      var done = !!state[task.id];
+      var item = document.createElement('div');
       item.className = 'detail-item' + (done ? ' done' : '');
-      item.innerHTML = `
-        <div class="detail-icon" style="background:${task.bg}">${task.emoji}</div>
-        <div class="detail-info">
-          <div class="detail-title">${task.title}</div>
-          <div class="detail-sub">${task.sub}</div>
-        </div>
-        <div class="detail-check" style="--border:${task.color}40;--check-color:${task.color}">
-          <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
-            <path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>`;
-      item.onclick = () => toggle(task.id);
-      // long press to edit
-      let timer;
-      item.addEventListener('touchstart', e => { timer = setTimeout(() => openEditModal(task.id), 500); }, { passive: true });
-      item.addEventListener('touchend', () => clearTimeout(timer));
-      item.addEventListener('touchmove', () => clearTimeout(timer));
+      item.innerHTML =
+        '<div class="detail-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
+        '<div class="detail-info">' +
+          '<div class="detail-title">' + escapeHTML(task.title) + '</div>' +
+          '<div class="detail-sub">' + escapeHTML(task.sub || '') + '</div>' +
+        '</div>' +
+        '<div class="detail-check">' +
+          '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
+            '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg></div>';
+      item.onclick = function() { toggle(task.id); };
+      var timer;
+      item.addEventListener('touchstart', function() { timer = setTimeout(function() { openEditModal(task.id); }, 500); }, { passive: true });
+      item.addEventListener('touchend', function() { clearTimeout(timer); });
+      item.addEventListener('touchmove', function() { clearTimeout(timer); });
       list.appendChild(item);
     });
   }
 
-  // 添加按钮
-  const addBtn = document.createElement('button');
+  var addBtn = document.createElement('button');
   addBtn.className = 'add-btn';
-  addBtn.innerHTML = '<span class="add-btn-icon">+</span> 添加新计划';
-  addBtn.style.marginTop = '12px';
-  addBtn.onclick = (e) => { e.stopPropagation(); closeCatDetail(); openAddModal(meta.key); };
+  addBtn.innerHTML = '<span>+</span> 添加新计划';
+  addBtn.onclick = function(e) { e.stopPropagation(); closeCatDetail(); openAddModal(meta.key); };
   list.appendChild(addBtn);
-
   overlay.classList.add('show');
 }
 
-function closeCatDetail() {
-  document.getElementById('cat-detail').classList.remove('show');
-}
-
-function closeCatDetailOnBg(e) {
-  if (e.target === document.getElementById('cat-detail')) closeCatDetail();
-}
+function closeCatDetail() { document.getElementById('cat-detail').classList.remove('show'); }
+function closeCatDetailOnBg(e) { if (e.target === document.getElementById('cat-detail')) closeCatDetail(); }
 
 function renderAll() {
-  try {
   renderCardsGrid();
   updateProgress();
-  } catch(e) { console.warn('renderAll error:', e); }
 }
 
 function toggle(id) {
   state[id] = !state[id];
   saveState();
-  // 立即更新类目卡片的 ✓ 图标（不重新渲染整个网格）
-  const task = TASKS.find(t => t.id === id);
+  var task = TASKS.find(function(t) { return t.id === id; });
   if (task) {
-    const catCard = document.querySelector('.cat-card[data-cat="' + task.cat + '"]');
+    var catCard = document.querySelector('.cat-card[data-cat="' + task.cat + '"]');
     if (catCard) {
-      const catTasks = TASKS.filter(t => t.cat === task.cat);
-      const catDone = catTasks.filter(t => state[t.id]).length;
-      const catTotal = catTasks.length;
-      const allDone = catTotal > 0 && catDone === catTotal;
-
-      // 更新数字
-      const valEl = catCard.querySelector('.cat-card-value');
+      var catTasks = TASKS.filter(function(t) { return t.cat === task.cat; });
+      var catDone = catTasks.filter(function(t) { return state[t.id]; }).length;
+      var catTotal = catTasks.length;
+      var allDone = catTotal > 0 && catDone === catTotal;
+      var valEl = catCard.querySelector('.cat-card-value');
       if (valEl) valEl.innerHTML = catDone + '<small>/' + catTotal + '</small>';
-
-      // 更新圆环进度
-      const ringFg = catCard.querySelector('.ring-fg');
+      var ringFg = catCard.querySelector('.ring-fg');
       if (ringFg) {
-        const pct = Math.round(catDone / catTotal * 100);
-        const offset = 72 - (72 * pct / 100);
-        ringFg.style.strokeDashoffset = offset;
+        var pct = catTotal > 0 ? Math.round(catDone / catTotal * 100) : 0;
+        ringFg.style.strokeDashoffset = 72 - (72 * pct / 100);
       }
-
-      // 只有全部完成才显示 ✓ 图标
-      if (allDone) {
-        catCard.classList.add('has-done', 'all-done');
-      } else {
-        catCard.classList.remove('has-done', 'all-done');
-      }
+      catCard.classList.toggle('all-done', allDone);
     }
   }
   updateProgress();
-  // 同步更新详情面板
-  const detailList = document.getElementById('detail-task-list');
-  if (detailList && detailList.children.length) {
-    // 找到对应 task 并切换 done 状态
-    Array.from(detailList.querySelectorAll('.detail-item')).forEach(el => {
-      const task = TASKS.find(t => el.querySelector('.detail-title')?.textContent === t.title);
-      if (task && task.id === id) {
-        el.classList.toggle('done', !!state[id]);
-        const check = el.querySelector('.detail-check');
-        if (state[id]) {
-          check.style.borderColor = 'transparent';
-          check.style.background = 'linear-gradient(145deg, #7F77DD, #5B52B8)';
-          check.style.boxShadow = '0 2px 10px rgba(127,119,221,0.4)';
-        } else {
-          check.style.borderColor = '';
-          check.style.background = '';
-          check.style.boxShadow = '';
-        }
-      }
+  var detailList = document.getElementById('detail-task-list');
+  if (detailList) {
+    Array.from(detailList.querySelectorAll('.detail-item')).forEach(function(el) {
+      var titleEl = el.querySelector('.detail-title');
+      if (!titleEl) return;
+      var t = TASKS.find(function(x) { return x.title === titleEl.textContent; });
+      if (t && t.id === id) el.classList.toggle('done', !!state[id]);
     });
   }
   if (state[id]) popEffect();
   renderCalendar();
+  if (calCollapsed) renderCalWeekStrip();
 }
 
 function updateProgress() {
-  try {
-    // 防御：确保 state 是有效对象（数据恢复核心）
-    if (!state || typeof state !== 'object') {
-      state = {};
-      try { state = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}'); } catch(e) { state = {}; }
-    }
-
-    const total = TASKS.length;
-    const done = TASKS.filter(function(t) { return !!state[t.id]; }).length;
-    const pct = total > 0 ? Math.round(done / total * 100) : 0;
-
-    // 进度条更新
-    var pf = document.getElementById('progress-fill');
-    var pt = document.getElementById('progress-text');
-    if (pf) pf.style.width = pct + '%';
-    if (pt) pt.textContent = pct + '%';
-
-    // 励志语自动匹配
-    var mi = 0;
-    if (pct >= 100) mi = 3;
-    else if (pct >= 50) mi = 2;
-    else if (pct >= 25) mi = 1;
-
-    // 用户未手动选过 → 自动匹配；否则保留手动选择
-    if (motiveIdx < 0) {
-      applyMotive(mi);
-      autoMotiveIdx = mi;
-    } else {
-      applyMotive(motiveIdx);
-    }
-
-    // 完成横幅显示/隐藏
-    var banner = document.getElementById('all-done-banner');
-    if (banner) banner.style.display = (total > 0 && pct >= 100) ? 'flex' : 'none';
-
-    // 仅在首次达到100%时触发礼花（非刷新重入）
-    if (total > 0 && pct >= 100 && !window.__confettiFired) {
-      window.__confettiFired = true;
-      launchConfetti();
-    } else if (pct < 100) {
-      window.__confettiFired = false;
-    }
-  } catch(e) {
-    console.warn('[updateProgress] error:', e);
-    // 兜底：即使出错也尝试设置基础进度
-    try {
-      var _pf = document.getElementById('progress-fill');
-      var _pt = document.getElementById('progress-text');
-      if (_pf) _pf.style.width = '0%';
-      if (_pt) _pt.textContent = '0%';
-    } catch(_) {}
+  var total = TASKS.length;
+  var done = TASKS.filter(function(t) { return !!state[t.id]; }).length;
+  var pct = total > 0 ? Math.round(done / total * 100) : 0;
+  var pf = document.getElementById('progress-fill');
+  var pt = document.getElementById('progress-text');
+  if (pf) pf.style.width = pct + '%';
+  if (pt) pt.textContent = pct + '%';
+  var banner = document.getElementById('all-done-banner');
+  if (banner) banner.classList.toggle('show', total > 0 && pct >= 100);
+  if (total > 0 && pct >= 100 && !window.__confettiFired) {
+    window.__confettiFired = true;
+    launchConfetti();
+  } else if (pct < 100) {
+    window.__confettiFired = false;
   }
-}
-
-function applyMotive(idx) {
-  try {
-    const m = MOTIVES[idx];
-    if (!m) return;
-    const elEmoji = document.getElementById('motive-emoji');
-    const elTitle = document.getElementById('motive-title');
-    const elSub = document.getElementById('motive-sub');
-    const card = document.getElementById('motive-card');
-    // 优先使用用户选的宠物表情，否则用 motive 默认表情
-    if (elEmoji) {
-      var petIdx = parseInt(localStorage.getItem(MOTIVE_PET_KEY) || '0', 10);
-      elEmoji.textContent = MOTIVE_PETS[petIdx] || m.emoji;
-    }
-    if (elTitle) elTitle.textContent = m.title;
-    if (elSub) elSub.textContent = m.sub;
-    if (card) card.style.background = m.color || 'var(--purple)';
-  } catch(e) { console.warn('applyMotive error:', e); }
-}
-
-let autoMotiveIdx = -1;
-function cycleMotive() {
-  // cycle to next
-  motiveIdx = (motiveIdx + 1) % MOTIVES.length;
-  applyMotive(motiveIdx);
-  // emoji bounce animation
-  const em = document.getElementById('motive-emoji');
-  em.style.transform = 'scale(1.3) rotate(10deg)';
-  setTimeout(() => { em.style.transform = ''; }, 300);
-}
-
-function cycleMotiveEmoji() {
-  let idx = parseInt(localStorage.getItem(MOTIVE_PET_KEY) || '0', 10);
-  idx = (idx + 1) % MOTIVE_PETS.length;
-  localStorage.setItem(MOTIVE_PET_KEY, String(idx));
-  const em = document.getElementById('motive-emoji');
-  em.textContent = MOTIVE_PETS[idx];
-  em.style.transform = 'scale(1.4) rotate(-15deg)';
-  setTimeout(() => { em.style.transform = ''; }, 350);
-}
-
-// Motive 编辑 Modal 颜色选项
-const MOTIVE_COLORS = [
-  '#7F77DD', '#D85A30', '#378ADD', '#1D9E75',
-  '#888780', '#D4537E', '#BA7517', '#534AB7', '#3B6D11'
-];
-let pickedMotiveColorIdx = -1; // -1 = 未改过，用当前motive的color
-
-// 初始化编辑弹窗颜色选择器
-(function buildMotiveColorPicker() {
-  const grid = document.getElementById('mot-color-grid');
-  if (!grid) return;
-  MOTIVE_COLORS.forEach(function(c, i) {
-    const opt = document.createElement('div');
-    opt.className = 'mot-color-opt';
-    opt.style.background = c;
-    opt.dataset.idx = String(i);
-    opt.dataset.color = c;
-    opt.onclick = function() {
-      document.querySelectorAll('.mot-color-opt').forEach(function(o) { o.classList.remove('selected'); });
-      opt.classList.add('selected');
-      pickedMotiveColorIdx = i;
-    };
-    grid.appendChild(opt);
-  });
-})();
-
-function toggleMotiveEdit() {
-  const modal = document.getElementById('motive-edit-modal');
-  const titleIn = document.getElementById('mot-edit-title');
-  const subIn = document.getElementById('mot-edit-sub');
-
-  // 填充当前数据
-  var currentIdx = motiveIdx >= 0 ? motiveIdx : (autoMotiveIdx >= 0 ? autoMotiveIdx : 0);
-  var m = MOTIVES[currentIdx] || MOTIVES[0];
-  titleIn.value = m.title || '';
-  subIn.value = m.sub || '';
-
-  // 重置颜色选中状态
-  pickedMotiveColorIdx = -1;
-  var currentColor = m.color || '#7F77DD';
-  document.querySelectorAll('.mot-color-opt').forEach(function(opt) {
-    opt.classList.toggle('selected', opt.dataset.color === currentColor);
-  });
-
-  // 显示弹窗
-  modal.classList.add('show');
-  setTimeout(function() { titleIn.focus(); }, 350);
-}
-
-function closeMotiveEditModal() {
-  var modal = document.getElementById('motive-edit-modal');
-  if (modal) modal.classList.remove('show');
-}
-
-function closeMotiveEditModalOnBg(e) {
-  if (e.target === document.getElementById('motive-edit-modal')) closeMotiveEditModal();
-}
-
-function saveMotiveEdit() {
-  const titleIn = document.getElementById('mot-edit-title');
-  const subIn = document.getElementById('mot-edit-sub');
-  const newTitle = (titleIn.value || '').trim();
-  const newSub = (subIn.value || '').trim();
-
-  if (!newTitle) {
-    titleIn.focus(); return;
-  }
-
-  // 确定 editing 的 motive index
-  if (motiveIdx < 0) motiveIdx = autoMotiveIdx >= 0 ? autoMotiveIdx : 0;
-
-  // 确定颜色：用户选了新色就用新的，否则保留原色
-  var newColor = (pickedMotiveColorIdx >= 0)
-    ? MOTIVE_COLORS[pickedMotiveColorIdx]
-    : (MOTIVES[motiveIdx].color || '#7F77DD');
-
-  const currentEmoji = MOTIVES[motiveIdx].emoji;
-
-  MOTIVES[motiveIdx] = {
-    emoji: currentEmoji,
-    title: newTitle,
-    sub: newSub || '一项一项来，不慌不忙',
-    color: newColor
-  };
-
-  // 持久化
-  saveCustomMotives(MOTIVES);
-
-  // 应用到卡片
-  applyMotive(motiveIdx);
-
-  // 关闭弹窗
-  closeMotiveEditModal();
-
-  // emoji bounce
-  const em = document.getElementById('motive-emoji');
-  em.style.transform = 'scale(1.3) rotate(10deg)';
-  setTimeout(function() { em.style.transform = ''; }, 300);
-}
-
-function switchSETab(tab) {
-  // 切换 tab 按钮
-  document.getElementById('se-tab-study').classList.toggle('active', tab === 'study');
-  document.getElementById('se-tab-expense').classList.toggle('active', tab === 'expense');
-  // 切换面板（双重保障：class + inline style）
-  var panels = ['study', 'expense'];
-  panels.forEach(function(p) {
-    var el = document.getElementById('se-panel-' + p);
-    if (!el) return;
-    if (tab === p) {
-      el.classList.add('active');
-      el.style.display = 'block';
-    } else {
-      el.classList.remove('active');
-      el.style.display = 'none';
-    }
-  });
-}
-
-function switchTab(tab, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
 }
 
 function resetAll() {
   if (!confirm('确定要重置今日所有打卡吗？')) return;
   state = {}; saveState(); renderAll(); renderCalendar();
+  if (calCollapsed) renderCalWeekStrip();
 }
 
-/* ---- Manage mode ---- */
-function toggleManageMode() {
-  manageMode = !manageMode;
-  const btn = document.getElementById('manage-btn');
-  btn.textContent = manageMode ? '✓ 完成管理' : '✏️ 管理计划';
-  btn.classList.toggle('active', manageMode);
-  document.querySelectorAll('.item-edit-btn').forEach(b => b.classList.toggle('visible', manageMode));
-  document.querySelectorAll('.check-item:not(.done)').forEach(el => el.classList.toggle('show-del', manageMode));
-}
-
-/* ---- Quick delete from manage mode ---- */
-function quickDelete(id) {
-  if (!confirm('确定删除这个计划吗？')) return;
-  TASKS = TASKS.filter(t => t.id !== id);
-  saveTasks(TASKS);
-  delete state[id];
-  saveState();
-  renderAll(); renderCalendar();
-}
-
-/* ==================== MODAL ==================== */
-
+// ---- Modal ----
 const fTitle = document.getElementById('f-title');
 const fSub = document.getElementById('f-sub');
 const fEmojiGrid = document.getElementById('f-emoji-grid');
 const fColorGrid = document.getElementById('f-color-grid');
 
-// Build emoji & color pickers once
 (function buildPickers() {
-  EMOJIS.forEach(e => {
-    const opt = document.createElement('div'); opt.className='emoji-opt'; opt.textContent=e; opt.dataset.v=e;
-    opt.onclick = () => selectEmoji(opt);
+  EMOJIS.forEach(function(e) {
+    var opt = document.createElement('div'); opt.className='emoji-opt'; opt.textContent=e; opt.dataset.v=e;
+    opt.onclick = function() { selectEmoji(opt); };
     fEmojiGrid.appendChild(opt);
   });
-  COLORS.forEach(co => {
-    const opt = document.createElement('div'); opt.className='color-opt';
+  COLORS.forEach(function(co) {
+    var opt = document.createElement('div'); opt.className='color-opt';
     opt.style.background=co.b; opt.dataset.c=co.c; opt.dataset.b=co.b;
-    opt.onclick = () => selectColor(opt);
+    opt.onclick = function() { selectColor(opt); };
     fColorGrid.appendChild(opt);
   });
 })();
 
-let pickedEmoji = '⭐', pickedColorIdx = 0, pickedCat = 'evening';
+var pickedEmoji = '⭐', pickedColorIdx = 0, pickedCat = 'evening';
 
 function openAddModal(cat) {
   editingTaskId = null;
@@ -3507,71 +1009,58 @@ function openEditModal(taskId) {
   editingTaskId = taskId;
   document.getElementById('modal-title').textContent = '编辑计划';
   document.getElementById('btn-delete-task').style.display = '';
-  const t = TASKS.find(x => x.id === taskId);
+  var t = TASKS.find(function(x) { return x.id === taskId; });
   if (!t) return;
   fTitle.value = t.title; fSub.value = t.sub || '';
   pickedEmoji = t.emoji; pickedCat = t.cat;
-  // find color index
-  pickedColorIdx = COLORS.findIndex(c => c.c === t.color);
+  pickedColorIdx = COLORS.findIndex(function(c) { return c.c === t.color; });
   if (pickedColorIdx < 0) pickedColorIdx = 0;
   resetFormUI();
   showModal();
 }
 
 function resetFormUI() {
-  // emoji
-  document.querySelectorAll('.emoji-opt').forEach(e =>
-    e.classList.toggle('selected', e.dataset.v === pickedEmoji)
-  );
-  // color
-  document.querySelectorAll('.color-opt').forEach(c => {
-    const idx = Array.from(fColorGrid.children).indexOf(c);
+  document.querySelectorAll('.emoji-opt').forEach(function(e) {
+    e.classList.toggle('selected', e.dataset.v === pickedEmoji);
+  });
+  document.querySelectorAll('.color-opt').forEach(function(c, idx) {
     c.classList.toggle('selected', idx === pickedColorIdx);
   });
-  // cat
-  document.querySelectorAll('.cat-option').forEach(o =>
-    o.classList.toggle('selected', o.dataset.cat === pickedCat)
-  );
+  document.querySelectorAll('.cat-option').forEach(function(o) {
+    o.classList.toggle('selected', o.dataset.cat === pickedCat);
+  });
 }
 
 function closeModal() {
   document.getElementById('modal').classList.remove('show');
   editingTaskId = null;
 }
-
-function closeModalOnBg(e) {
-  if (e.target === document.getElementById('modal')) closeModal();
-}
-
+function closeModalOnBg(e) { if (e.target === document.getElementById('modal')) closeModal(); }
 function showModal() {
   document.getElementById('modal').classList.add('show');
-  setTimeout(() => fTitle.focus(), 300);
+  setTimeout(function() { fTitle.focus(); }, 300);
 }
-
 function selectCat(el) {
-  document.querySelectorAll('.cat-option').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.cat-option').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
   pickedCat = el.dataset.cat;
 }
-
 function selectEmoji(el) {
-  document.querySelectorAll('.emoji-opt').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.emoji-opt').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
   pickedEmoji = el.dataset.v;
 }
-
 function selectColor(el) {
-  document.querySelectorAll('.color-opt').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.color-opt').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
   pickedColorIdx = Array.from(fColorGrid.children).indexOf(el);
 }
 
 function saveTask() {
-  const title = fTitle.value.trim();
+  var title = fTitle.value.trim();
   if (!title) { fTitle.focus(); return; }
-
-  const co = COLORS[pickedColorIdx] || COLORS[0];
-  const data = {
+  var co = COLORS[pickedColorIdx] || COLORS[0];
+  var data = {
     id: editingTaskId || genId(),
     cat: pickedCat,
     emoji: pickedEmoji,
@@ -3580,225 +1069,94 @@ function saveTask() {
     sub: fSub.value.trim(),
     color: co.c,
   };
-
   if (editingTaskId) {
-    const idx = TASKS.findIndex(t => t.id === editingTaskId);
+    var idx = TASKS.findIndex(function(t) { return t.id === editingTaskId; });
     if (idx > -1) TASKS[idx] = data;
   } else {
     TASKS.push(data);
   }
-
   saveTasks(TASKS);
   closeModal();
   renderAll(); renderCalendar();
+  if (calCollapsed) renderCalWeekStrip();
 }
 
 function deleteCurrentTask() {
   if (!editingTaskId) return;
   if (!confirm('确定删除这个计划吗？')) return;
-  TASKS = TASKS.filter(t => t.id !== editingTaskId);
+  TASKS = TASKS.filter(function(t) { return t.id !== editingTaskId; });
   saveTasks(TASKS);
   delete state[editingTaskId];
   saveState();
   closeModal();
   renderAll(); renderCalendar();
+  if (calCollapsed) renderCalWeekStrip();
 }
 
-/* ---- Confetti ---- */
 function popEffect() {
-  const canvas = document.getElementById('confetti'), ctx = canvas.getContext('2d');
+  var canvas = document.getElementById('confetti'), ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-  const particles = Array.from({length:18},()=>({
-    x: Math.random()*canvas.width, y: canvas.height*0.4+Math.random()*60,
-    r: 4+Math.random()*5, dx:(Math.random()-.5)*5, dy:-(3+Math.random()*5),
-    color:['#7F77DD','#1D9E75','#D4537E','#378ADD','#BA7517'][Math.floor(Math.random()*5)],
-    alpha:1, life:60+Math.random()*30
-  }));
-  let frame=0;
+  var particles = Array.from({length:18}, function() {
+    return {
+      x: Math.random()*canvas.width, y: canvas.height*0.4+Math.random()*60,
+      r: 4+Math.random()*5, dx:(Math.random()-.5)*5, dy:-(3+Math.random()*5),
+      color:['#7F77DD','#1D9E75','#D4537E','#378ADD','#BA7517'][Math.floor(Math.random()*5)],
+      alpha:1, life:60+Math.random()*30
+    };
+  });
+  var frame=0;
   function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{ p.x+=p.dx;p.y+=p.dy;p.dy+=0.2;p.alpha-=1/p.life;
-      ctx.globalAlpha=Math.max(0,p.alpha);ctx.fillStyle=p.color;
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
-    if(++frame<80) requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);
-  }
-  draw();
-}
-function launchConfetti(){
-  const canvas=document.getElementById('confetti'),ctx=canvas.getContext('2d');
-  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
-  const particles=Array.from({length:60},()=>({
-    x:Math.random()*canvas.width,y:-10,r:4+Math.random()*5,
-    dx:(Math.random()-.5)*4,dy:2+Math.random()*4,
-    color:['#7F77DD','#1D9E75','#D4537E','#378ADD','#BA7517','#F0997B'][Math.floor(Math.random()*6)],
-    alpha:1,life:120}));
-  let frame=0;
-  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{
-    p.x+=p.dx;p.y+=p.dy;if(frame>60)p.alpha-=1/60;
-    ctx.globalAlpha=Math.max(0,p.alpha);ctx.fillStyle=p.color;
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
-    if(++frame<130)requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);}
-  draw();
-}
-
-/* ---- Init ---- */
-function setGreeting(){
-  try {
-    const h=new Date().getHours();
-    let g=h<6?'夜深了 🌙':h<10?'早上好 ☀️':h<13?'上午好 🌤️':h<18?'下午好 🍵':'晚上好 🌙';
-    const gt=document.getElementById('greeting-text');
-    if(gt) gt.textContent=g + ' · 汤汤 TangTang';
-    const d=new Date(), days=['日','一','二','三','四','五','六'];
-    const dt=document.getElementById('date-title');
-    if(dt) dt.textContent=`${d.getMonth()+1}月${d.getDate()}日 周${days[d.getDay()]}`;
-  } catch(e) { console.warn('setGreeting error:', e); }
-}
-
-/* ---- 每日数据总览 ---- */
-function renderDailySummary() {
-  try {
-    // 1. 打卡统计
-    var checkinValue = document.getElementById('ds-checkin-value');
-    var checkinDetail = document.getElementById('ds-checkin-detail');
-    if (checkinValue) {
-      var violinSessions = getTodaySessions('violin');
-      var fitnessSessions = getTodaySessions('fitness');
-      var totalCount = violinSessions.length + fitnessSessions.length;
-      var totalMin = getTodaySessionTotal('violin') + getTodaySessionTotal('fitness');
-      checkinValue.textContent = totalCount > 0 ? String(totalCount) : '—';
-      if (checkinDetail) {
-        if (totalCount > 0) {
-          var parts = [];
-          if (violinSessions.length > 0) parts.push('🎻' + formatDuration(getTodaySessionTotal('violin')));
-          if (fitnessSessions.length > 0) parts.push('💪' + formatDuration(getTodaySessionTotal('fitness')));
-          checkinDetail.textContent = parts.join(' / ');
-        } else {
-          checkinDetail.textContent = '';
-        }
-      }
-    }
-
-    // 2. 账单统计
-    var expenseValue = document.getElementById('ds-expense-value');
-    var expenseDetail = document.getElementById('ds-expense-detail');
-    if (expenseValue) {
-      var expenses = todayExpenses();
-      var totalExp = expenses.reduce(function(s, e) { return s + (e.amount || 0); }, 0);
-      expenseValue.textContent = '¥' + totalExp.toFixed(2);
-      if (expenseDetail) {
-        expenseDetail.textContent = expenses.length > 0 ? expenses.length + ' 笔' : '';
-      }
-    }
-
-    // 3. 学习统计
-    var studyValue = document.getElementById('ds-study-value');
-    var studyDetail = document.getElementById('ds-study-detail');
-    if (studyValue) {
-      var studyTotalMin = getTodayTotalMinutes();
-      studyValue.textContent = formatDuration(studyTotalMin);
-      if (studyDetail) {
-        var subjects = loadStudySubjects();
-        var activeSubjects = loadStudyRecords().filter(function(r) { return r.date === localDateStr(); });
-        var uniqueSubs = {};
-        activeSubjects.forEach(function(r) { uniqueSubs[r.subjectId] = true; });
-        var subNames = Object.keys(uniqueSubs).map(function(sid) {
-          var sub = subjects.find(function(s) { return s.id === sid; });
-          return sub ? sub.emoji : '📖';
-        });
-        studyDetail.textContent = subNames.length > 0 ? subNames.join(' ') : '';
-      }
-    }
-  } catch(e) { console.warn('renderDailySummary error:', e); }
-}
-
-function todayExpenses() {
-  var all = loadExpenses();
-  return all.filter(function(e) { return e.date === localDateStr(); });
-}
-
-/* ---- 页面加载时恢复所有状态 ---- */
-function restoreAllOnLoad() {
-  // 每步独立 try-catch，确保一步失败不阻塞其他步骤
-  try { setGreeting(); } catch(e) { console.warn('init greeting failed:', e); }
-  try { renderAll(); } catch(e) { console.warn('init renderAll failed:', e); }
-  try { renderCalendar(); } catch(e) { console.warn('init renderCalendar failed:', e); }
-  try { renderQuickCards(); } catch(e) { console.warn('init renderQuickCards failed:', e); }
-  try { restoreTimersOnLoad(); } catch(e) { console.warn('init restoreTimers failed:', e); }
-  try { renderExpenses(); } catch(e) { console.warn('init renderExpenses failed:', e); }
-  try { initStudyModule(); } catch(e) { console.warn('init study module failed:', e); }
-  try { renderDailySummary(); } catch(e) { console.warn('init daily summary failed:', e); }
-}
-
-/* Study 模块初始化 */
-function initStudyModule() {
-  // 构建 emoji 选择器
-  var emojiGrid = document.getElementById('study-emoji-grid');
-  if (emojiGrid && emojiGrid.children.length === 0) {
-    STUDY_EMOJIS.forEach(function(e) {
-      var opt = document.createElement('div');
-      opt.className = 'emoji-opt study-emoji-opt';
-      opt.textContent = e; opt.dataset.v = e;
-      opt.onclick = function() { selectStudyEmoji(this); };
-      emojiGrid.appendChild(opt);
+    particles.forEach(function(p) {
+      p.x+=p.dx; p.y+=p.dy; p.dy+=0.2; p.alpha-=1/p.life;
+      ctx.globalAlpha=Math.max(0,p.alpha); ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
     });
+    if(++frame<80) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
   }
-  renderStudySubjects();
+  draw();
 }
 
-/* ---- 后台计时器校正（切回前台时修正时间漂移）---- */
-document.addEventListener('visibilitychange', function() {
-  if (document.visibilityState !== 'visible') return;
-  try { correctTimerDrift(); } catch(e) { console.warn('visibility correct error:', e); }
-});
-
-function correctTimerDrift() {
-  var now = Date.now();
-
-  // 校正 Quick Check 计时器 (violin / fitness)
-  var qts = loadTimerState();
-  ['violin', 'fitness'].forEach(function(key) {
-    var t = qts[key];
-    if (!t || !t.running || !t.startTs) return;
-    var elapsed = Math.floor((now - t.startTs) / 1000);
-    if (elapsed <= 0) return; // clock skew, ignore
-    t.remainingSec = Math.max(0, t.targetSec - elapsed);
-    if (t.remainingSec <= 0) {
-      // Timer should have finished
-      delete qts[key]; saveTimerState(qts);
-      if (timerIntervals[key]) { clearInterval(timerIntervals[key]); delete timerIntervals[key]; }
-      document.getElementById('cd-time-' + key).textContent = '00:00';
-      autoCompleteTimer(key);
-    } else {
-      saveTimerState(qts);
-      document.getElementById('cd-time-' + key).textContent = formatTime(t.remainingSec);
-      // 重启 tick 以恢复正常倒数节奏
-      startTimerTick(key);
-    }
+function launchConfetti() {
+  var canvas=document.getElementById('confetti'),ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  var particles=Array.from({length:60}, function() {
+    return {
+      x:Math.random()*canvas.width,y:-10,r:4+Math.random()*5,
+      dx:(Math.random()-.5)*4,dy:2+Math.random()*4,
+      color:['#7F77DD','#1D9E75','#D4537E','#378ADD','#BA7517'][Math.floor(Math.random()*5)],
+      alpha:1,life:120
+    };
   });
-
-  // 校正 Study 计时器
-  var sts = loadStudyTimerState();
-  Object.keys(sts).forEach(function(sid) {
-    var t = sts[sid];
-    if (!t || !t.running || !t.startTs) return;
-    var elapsed = Math.floor((now - t.startTs) / 1000);
-    if (elapsed <= 0) return;
-    t.remainingSec = Math.max(0, t.targetSec - elapsed);
-    if (t.remainingSec <= 0) {
-      delete sts[sid]; saveStudyTimerState(sts);
-      if (studyTimerIntervals[sid]) { clearInterval(studyTimerIntervals[sid]); delete studyTimerIntervals[sid]; }
-      completeStudySession(sid, true);
-    } else {
-      saveStudyTimerState(sts);
-      var cdtEl = document.getElementById('study-cd-time-' + sid);
-      if (cdtEl) cdtEl.textContent = formatTime(t.remainingSec);
-      startStudyTimerTick(sid);
-    }
-  });
+  var frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(function(p) {
+      p.x+=p.dx; p.y+=p.dy;
+      if(frame>60) p.alpha-=1/60;
+      ctx.globalAlpha=Math.max(0,p.alpha); ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    });
+    if(++frame<130) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
 }
 
-// 启动
-restoreAllOnLoad();
+function setGreeting() {
+  var h=new Date().getHours();
+  var g=h<6?'夜深了 🌙':h<10?'早上好 ☀️':h<13?'上午好 🌤️':h<18?'下午好 🍵':'晚上好 🌙';
+  var gt=document.getElementById('greeting-text');
+  if(gt) gt.textContent=g + ' · 汤汤';
+  var d=new Date(), days=['日','一','二','三','四','五','六'];
+  var dt=document.getElementById('date-title');
+  if(dt) dt.textContent=d.getMonth()+1+'月'+d.getDate()+'日 周'+days[d.getDay()];
+}
+
+setGreeting();
+renderAll();
+renderCalendar();
 </script>
 </body>
 </html>
