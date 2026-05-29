@@ -193,89 +193,143 @@
   .day-info-chip.fest { background: #FAECE7; color: #D85A30; }
   .day-info-chip.holi { background: #EEEDFE; color: #7F77DD; }
 
-  /* 今日计划清单大卡片 */
-  .plan-section { padding: 16px 14px 0; }
+  /* 目标大卡片 */
+  .plan-section { padding: 18px 14px 0; }
   .plan-card {
     background: var(--card);
-    border-radius: var(--radius-card);
-    border: 0.5px solid var(--border);
-    box-shadow: 0 4px 20px rgba(127,119,221,0.08);
+    border-radius: 24px;
+    border: 0.5px solid rgba(127,119,221,0.15);
+    box-shadow: 0 8px 32px rgba(127,119,221,0.12);
     overflow: hidden;
   }
   .plan-card-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 16px 12px;
+    padding: 22px 20px 18px;
     border-bottom: 0.5px solid var(--border);
-    background: linear-gradient(165deg, #F8F7FF 0%, #FFFFFF 100%);
+    background: linear-gradient(165deg, #F5F3FF 0%, #FFFFFF 60%, #EEEDFE 100%);
   }
+  .plan-card-left {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .plan-card-icon {
+    width: 52px; height: 52px; border-radius: 16px;
+    background: linear-gradient(135deg, #EDE9FD, #DDD6FE);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 14px rgba(127,119,221,0.2);
+  }
+  .plan-card-title-wrap { display: flex; flex-direction: column; gap: 2px; }
   .plan-card-title {
-    font-size: 17px; font-weight: 600; color: var(--text-primary);
-    display: flex; align-items: center; gap: 8px;
+    font-size: 22px; font-weight: 700; color: var(--text-primary);
+    letter-spacing: -0.3px;
   }
+  .plan-card-sub { font-size: 13px; color: var(--text-secondary); }
+  .plan-card-right { display: flex; align-items: center; gap: 12px; }
+  .plan-card-ring { width: 44px; height: 44px; flex-shrink: 0; }
+  .plan-card-ring circle {
+    fill: none; stroke-width: 3.5; stroke-linecap: round;
+    transform: rotate(-90deg); transform-origin: 50% 50%;
+  }
+  .plan-card-ring .ring-bg { stroke: #E8E6E0; }
+  .plan-card-ring .ring-fg { stroke: var(--purple); stroke-dasharray: 88; transition: stroke-dashoffset .4s; }
+  .plan-card.all-done .plan-card-ring .ring-fg { stroke: var(--teal); }
   .plan-card-count {
-    font-size: 14px; font-weight: 600; color: var(--purple);
-    background: var(--purple-light);
-    padding: 4px 10px; border-radius: 99px;
+    font-size: 28px; font-weight: 800; color: var(--purple);
+    line-height: 1; letter-spacing: -0.5px;
   }
-  .plan-task-list { padding: 4px 0; }
-  .plan-cat-label {
-    font-size: 11px; font-weight: 600; color: var(--text-hint);
-    padding: 10px 16px 4px;
-    letter-spacing: 0.04em;
+  .plan-card-count small {
+    font-size: 16px; font-weight: 600; color: var(--text-hint);
   }
+  .plan-task-list { padding: 6px 0 2px; }
   .plan-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px; cursor: pointer;
+    padding: 16px 20px; cursor: pointer;
     transition: background 0.15s;
     position: relative;
   }
   .plan-item:not(:last-child)::after {
     content: '';
-    position: absolute; bottom: 0; left: 64px; right: 16px;
+    position: absolute; bottom: 0; left: 88px; right: 20px;
     height: 0.5px; background: var(--border);
   }
   .plan-item:active { background: var(--bg); }
   .plan-item.done .plan-title { text-decoration: line-through; color: var(--text-hint); }
+  .plan-item.done .plan-time { opacity: 0.5; }
+  .plan-time {
+    min-width: 62px; padding: 8px 6px;
+    background: var(--purple-light);
+    border-radius: 12px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    flex-shrink: 0;
+    letter-spacing: -0.3px;
+  }
+  .plan-time-range {
+    font-size: 12px; font-weight: 700; color: var(--purple);
+  }
+  .plan-time-dur {
+    font-size: 10px; font-weight: 600; color: var(--text-secondary);
+    margin-top: 3px;
+  }
+  .plan-time.empty {
+    background: var(--bg);
+    color: var(--text-hint);
+    font-weight: 500;
+    font-size: 11px;
+    padding: 10px 6px;
+  }
+  .plan-total-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    background: linear-gradient(90deg, #F8F7FF, #fff);
+    border-top: 0.5px solid var(--border);
+    font-size: 14px; color: var(--text-secondary);
+  }
+  .plan-total-bar strong {
+    font-size: 16px; font-weight: 700; color: var(--purple);
+  }
   .plan-icon {
-    width: 36px; height: 36px; border-radius: 10px;
+    width: 44px; height: 44px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0;
+    font-size: 22px; flex-shrink: 0;
   }
   .plan-info { flex: 1; min-width: 0; }
   .plan-title {
-    font-size: 15px; font-weight: 500; color: var(--text-primary);
+    font-size: 17px; font-weight: 600; color: var(--text-primary);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .plan-sub { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+  .plan-sub { font-size: 13px; color: var(--text-hint); margin-top: 3px; }
   .plan-check {
-    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-    border: 2px solid var(--border);
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    border: 2.5px solid var(--border);
     display: flex; align-items: center; justify-content: center;
     transition: all .25s cubic-bezier(.34,1.56,.64,1);
     position: relative;
   }
-  .plan-check::before { content: ''; position: absolute; inset: -7px; }
+  .plan-check::before { content: ''; position: absolute; inset: -8px; }
   .plan-check svg { opacity: 0; transform: scale(.5); transition: all .2s; }
   .plan-item.done .plan-check {
     border-color: transparent;
     background: linear-gradient(145deg, #7F77DD, #5B52B8);
-    box-shadow: 0 2px 10px rgba(127,119,221,0.4);
+    box-shadow: 0 3px 12px rgba(127,119,221,0.45);
   }
   .plan-item.done .plan-check svg { opacity: 1; transform: scale(1); }
   .plan-empty {
-    text-align: center; padding: 32px 16px;
-    font-size: 14px; color: var(--text-hint);
+    text-align: center; padding: 40px 20px;
+    font-size: 15px; color: var(--text-hint);
   }
   .plan-add-btn {
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; width: 100%; padding: 14px;
-    font-size: 14px; font-weight: 500; color: var(--purple);
-    background: none; border: none; cursor: pointer;
-    border-top: 0.5px dashed var(--border);
-    min-height: 48px; position: relative;
+    gap: 8px; width: 100%; padding: 18px;
+    font-size: 16px; font-weight: 600; color: var(--purple);
+    background: var(--purple-light);
+    border: none; cursor: pointer;
+    border-top: 0.5px dashed rgba(127,119,221,0.25);
+    min-height: 56px; position: relative;
   }
   .plan-add-btn::before { content: ''; position: absolute; inset: -5px; }
-  .plan-add-btn:active { background: var(--purple-light); }
+  .plan-add-btn:active { background: #DDD6FE; }
 
   .all-done-banner {
     margin: 14px 14px 0; padding: 14px 16px;
@@ -426,6 +480,22 @@
     background: var(--bg); outline: none; font-family: inherit;
   }
   .modal-input:focus { border-color: var(--purple); }
+  .modal-time-input {
+    font-variant-numeric: tabular-nums;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .time-range-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .time-range-row .modal-time-input { flex: 1; min-width: 0; }
+  .time-range-sep {
+    font-size: 13px; color: var(--text-hint); flex-shrink: 0;
+  }
+  .time-range-preview {
+    margin-top: 8px; font-size: 13px; color: var(--purple);
+    font-weight: 600; min-height: 18px;
+  }
   .modal-cat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .cat-option {
     padding: 12px 4px; border-radius: 12px;
@@ -473,9 +543,14 @@
     .header { padding: 44px 12px 18px; }
     .date-title { font-size: 20px; }
     .cal-day { height: 50px; font-size: 11px; }
-    .plan-section { padding: 14px 12px 0; }
-    .plan-card-header { padding: 14px 14px 10px; }
-    .plan-item { padding: 11px 14px; }
+    .plan-section { padding: 16px 12px 0; }
+    .plan-card-header { padding: 18px 16px 14px; }
+    .plan-card-icon { width: 46px; height: 46px; font-size: 22px; }
+    .plan-card-title { font-size: 20px; }
+    .plan-card-count { font-size: 24px; }
+    .plan-item { padding: 14px 16px; }
+    .plan-icon { width: 40px; height: 40px; font-size: 20px; }
+    .plan-title { font-size: 16px; }
   }
 </style>
 </head>
@@ -520,21 +595,37 @@
   </div>
 </div>
 
-<!-- 今日计划清单 -->
+<!-- 目标 -->
 <div class="plan-section">
   <div class="plan-card" id="plan-card">
     <div class="plan-card-header">
-      <div class="plan-card-title">📋 今日计划清单</div>
-      <div class="plan-card-count" id="plan-count">0/0</div>
+      <div class="plan-card-left">
+        <div class="plan-card-icon">⚡</div>
+        <div class="plan-card-title-wrap">
+          <div class="plan-card-title">目标</div>
+          <div class="plan-card-sub" id="plan-card-sub">今日最重要的事</div>
+        </div>
+      </div>
+      <div class="plan-card-right">
+        <svg class="plan-card-ring" viewBox="0 0 32 32" id="plan-ring">
+          <circle class="ring-bg" cx="16" cy="16" r="14"/>
+          <circle class="ring-fg" cx="16" cy="16" r="14" id="plan-ring-fg"/>
+        </svg>
+        <div class="plan-card-count" id="plan-count">0<small>/0</small></div>
+      </div>
     </div>
     <div class="plan-task-list" id="plan-task-list"></div>
-    <button class="plan-add-btn" onclick="openAddModal()">+ 添加计划</button>
+    <div class="plan-total-bar" id="plan-total-bar">
+      <span>⏱ 今日共时长</span>
+      <strong id="plan-total-duration">0 分钟</strong>
+    </div>
+    <button class="plan-add-btn" onclick="openAddModal()">+ 添加目标</button>
   </div>
 </div>
 
 <div class="all-done-banner" id="all-done-banner">
   <span>🎉</span>
-  <span>今日任务全部完成！</span>
+  <span>今日目标全部完成！</span>
 </div>
 
 <div class="bottom-actions">
@@ -568,6 +659,15 @@
       <label>备注（选填）</label>
       <input class="modal-input" id="f-sub" placeholder="简短描述" maxlength="30">
     </div>
+    <div class="modal-field">
+      <label>时间段（选填）</label>
+      <div class="time-range-row">
+        <input type="time" class="modal-input modal-time-input" id="f-time-start" onchange="updateDurationPreview()">
+        <span class="time-range-sep">至</span>
+        <input type="time" class="modal-input modal-time-input" id="f-time-end" onchange="updateDurationPreview()">
+      </div>
+      <div class="time-range-preview" id="f-duration-preview"></div>
+    </div>
     <div class="modal-field" id="f-cat-field" style="display:none;">
       <label>分类</label>
       <div class="modal-cat-row" id="f-cat-row">
@@ -596,10 +696,10 @@
 <script>
 const CAT_LABELS = { morning:'🌅 晨间', work:'💼 工作', health:'🏃 健康', evening:'🌙 晚间' };
 const DEFAULT_TASKS = [
-  { id: 'a1', cat: 'morning', emoji: '💧', bg: '#E6F1FB', title: '喝一杯水', sub: '起床后第一件事', color: '#378ADD' },
-  { id: 'a2', cat: 'morning', emoji: '🧘', bg: '#EEEDFE', title: '冥想 / 深呼吸', sub: '5分钟，清空大脑', color: '#7F77DD' },
-  { id: 'a3', cat: 'morning', emoji: '📓', bg: '#FAEEDA', title: '写今日计划', sub: '3件最重要的事', color: '#BA7517' },
-  { id: 'a4', cat: 'morning', emoji: '🪥', bg: '#FBEAF0', title: '洗漱 / 护肤', sub: '认真对待自己', color: '#D4537E' },
+  { id: 'a1', cat: 'morning', emoji: '💧', bg: '#E6F1FB', title: '喝一杯水', sub: '起床后第一件事', color: '#378ADD', timeStart: '07:00', timeEnd: '07:05' },
+  { id: 'a2', cat: 'morning', emoji: '🧘', bg: '#EEEDFE', title: '冥想 / 深呼吸', sub: '5分钟，清空大脑', color: '#7F77DD', timeStart: '07:05', timeEnd: '07:20' },
+  { id: 'a3', cat: 'morning', emoji: '📓', bg: '#FAEEDA', title: '写今日计划', sub: '3件最重要的事', color: '#BA7517', timeStart: '07:20', timeEnd: '07:35' },
+  { id: 'a4', cat: 'morning', emoji: '🪥', bg: '#FBEAF0', title: '洗漱 / 护肤', sub: '认真对待自己', color: '#D4537E', timeStart: '07:35', timeEnd: '08:00' },
   { id: 'b1', cat: 'work', emoji: '🎨', bg: '#EEEDFE', title: '完成设计稿', sub: '专注工作 90 分钟', color: '#7F77DD' },
   { id: 'b2', cat: 'work', emoji: '📬', bg: '#E6F1FB', title: '处理消息 / 邮件', sub: '集中处理，不打断', color: '#378ADD' },
   { id: 'b3', cat: 'work', emoji: '📎', bg: '#EAF3DE', title: '整理设计文件', sub: '及时归档，不堆积', color: '#3B6D11' },
@@ -641,7 +741,11 @@ let editingTaskId = null;
 function loadTasks() {
   const raw = localStorage.getItem(TASKS_KEY);
   if (!raw) { saveTasks(DEFAULT_TASKS); return [...DEFAULT_TASKS]; }
-  return JSON.parse(raw);
+  return JSON.parse(raw).map(normalizeTask);
+}
+function normalizeTask(task) {
+  if (task.time && !task.timeStart) task.timeStart = task.time;
+  return task;
 }
 function saveTasks(tasks) { localStorage.setItem(TASKS_KEY, JSON.stringify(tasks)); }
 let TASKS = loadTasks();
@@ -665,7 +769,7 @@ function calKey(y, m, d) {
 }
 function isDayPartial(y, m, d) {
   const s = JSON.parse(localStorage.getItem(calKey(y, m, d)) || '{}');
-  return TASKS.some(t => s[t.id]);
+  return getActiveTasks().some(t => s[t.id]);
 }
 
 const SOLAR_TERMS = {
@@ -812,8 +916,10 @@ function openDayDetail(y, m, d) {
   if (infoChips) html += '<div class="day-info-bar">' + infoChips + '</div>';
 
   var dayState = JSON.parse(localStorage.getItem(calKey(y, m, d)) || '{}');
-  var total = TASKS.length;
-  var done = TASKS.filter(function(t) { return !!dayState[t.id]; }).length;
+  var activeTasks = getActiveTasks();
+  var total = activeTasks.length;
+  var done = activeTasks.filter(function(t) { return !!dayState[t.id]; }).length;
+  var totalDur = getTotalDuration(activeTasks);
   var pct = total > 0 ? Math.round(done / total * 100) : 0;
   var offset = 113 - (113 * pct / 100);
 
@@ -824,30 +930,28 @@ function openDayDetail(y, m, d) {
     '</svg>' +
     '<div class="day-progress-text">' +
       '<div class="day-progress-pct">' + pct + '%</div>' +
-      '<div class="day-progress-sub">已完成 ' + done + ' / ' + total + ' 项</div>' +
+      '<div class="day-progress-sub">已完成 ' + done + ' / ' + total + ' 项' +
+        (totalDur > 0 ? ' · 共 ' + formatDuration(totalDur) : '') + '</div>' +
     '</div></div>';
 
-  if (TASKS.length === 0) {
-    html += '<div style="text-align:center;padding:24px 0;color:var(--text-hint);font-size:14px;">暂无任务</div>';
+  if (activeTasks.length === 0) {
+    html += '<div style="text-align:center;padding:24px 0;color:var(--text-hint);font-size:14px;">暂无目标</div>';
   } else {
-    var cats = ['morning','work','health','evening'];
-    cats.forEach(function(cat) {
-      var catTasks = TASKS.filter(function(t) { return t.cat === cat; });
-      if (catTasks.length === 0) return;
-      html += '<div style="font-size:12px;font-weight:600;color:var(--text-hint);padding:8px 0 4px;">' + (CAT_LABELS[cat]||cat) + '</div>';
-      catTasks.forEach(function(task) {
-        var isDone = !!dayState[task.id];
-        html += '<div class="detail-item' + (isDone ? ' done' : '') + '" style="pointer-events:none;">' +
-          '<div class="detail-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
-          '<div class="detail-info">' +
-            '<div class="detail-title">' + escapeHTML(task.title) + '</div>' +
-            '<div class="detail-sub">' + escapeHTML(task.sub || '') + '</div>' +
-          '</div>' +
-          '<div class="detail-check" style="' + (isDone ? '' : 'border-color:var(--border)') + '">' +
-            '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
-              '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '</svg></div></div>';
-      });
+    activeTasks.forEach(function(task) {
+      var isDone = !!dayState[task.id];
+      var timeHtml = formatTaskTimeRange(task);
+      var dur = getTaskDuration(task);
+      var durHtml = dur > 0 ? ' · ' + formatDuration(dur) : '';
+      html += '<div class="detail-item' + (isDone ? ' done' : '') + '" style="pointer-events:none;">' +
+        '<div class="detail-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
+        '<div class="detail-info">' +
+          '<div class="detail-title">' + (timeHtml ? '<span style="color:var(--purple);font-weight:600;margin-right:6px;">' + escapeHTML(timeHtml) + '</span>' : '') + escapeHTML(task.title) + '</div>' +
+          '<div class="detail-sub">' + escapeHTML(task.sub || '') + durHtml + '</div>' +
+        '</div>' +
+        '<div class="detail-check" style="' + (isDone ? '' : 'border-color:var(--border)') + '">' +
+          '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
+            '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg></div></div>';
     });
   }
 
@@ -858,57 +962,142 @@ function openDayDetail(y, m, d) {
 function closeDayDetail() { document.getElementById('day-detail').classList.remove('show'); }
 function closeDayDetailOnBg(e) { if (e.target === document.getElementById('day-detail')) closeDayDetail(); }
 
-// ---- 今日计划清单 ----
-const CAT_ORDER = ['morning', 'work', 'health', 'evening'];
+// ---- 目标卡片 ----
+const ACTIVE_CAT = 'morning';
+
+function getActiveTasks() {
+  return sortTasksByTime(TASKS.filter(function(t) { return t.cat === ACTIVE_CAT; }));
+}
+
+function sortTasksByTime(tasks) {
+  return tasks.slice().sort(function(a, b) {
+    var ta = getTaskSortKey(a);
+    var tb = getTaskSortKey(b);
+    return ta.localeCompare(tb);
+  });
+}
+
+function getTaskSortKey(task) {
+  return task.timeStart || task.time || '99:99';
+}
+
+function parseTimeToMinutes(t) {
+  if (!t) return null;
+  var parts = t.split(':');
+  if (parts.length < 2) return null;
+  var h = parseInt(parts[0], 10);
+  var m = parseInt(parts[1], 10);
+  if (isNaN(h) || isNaN(m)) return null;
+  return h * 60 + m;
+}
+
+function calcDurationMinutes(start, end) {
+  var s = parseTimeToMinutes(start);
+  var e = parseTimeToMinutes(end);
+  if (s === null || e === null) return 0;
+  if (e <= s) return 0;
+  return e - s;
+}
+
+function getTaskDuration(task) {
+  var start = task.timeStart || task.time || '';
+  return calcDurationMinutes(start, task.timeEnd);
+}
+
+function formatDuration(mins) {
+  if (!mins || mins <= 0) return '0 分钟';
+  if (mins < 60) return mins + ' 分钟';
+  var h = Math.floor(mins / 60);
+  var m = mins % 60;
+  return m > 0 ? h + ' 小时 ' + m + ' 分' : h + ' 小时';
+}
+
+function formatTaskTimeRange(task) {
+  var start = task.timeStart || task.time || '';
+  var end = task.timeEnd || '';
+  if (start && end) return start + ' - ' + end;
+  if (start) return start;
+  if (end) return '至 ' + end;
+  return '';
+}
+
+function getTotalDuration(tasks) {
+  return tasks.reduce(function(sum, t) { return sum + getTaskDuration(t); }, 0);
+}
+
+function renderTaskTimeHtml(task) {
+  var range = formatTaskTimeRange(task);
+  var dur = getTaskDuration(task);
+  if (!range) {
+    return '<div class="plan-time empty">待定</div>';
+  }
+  var html = '<div class="plan-time-range">' + escapeHTML(range) + '</div>';
+  if (dur > 0) html += '<div class="plan-time-dur">' + dur + '分</div>';
+  return '<div class="plan-time">' + html + '</div>';
+}
+
+function updatePlanTotalDuration(tasks) {
+  var totalMins = getTotalDuration(tasks);
+  var el = document.getElementById('plan-total-duration');
+  var sub = document.getElementById('plan-card-sub');
+  if (el) el.textContent = formatDuration(totalMins);
+  if (sub) {
+    sub.textContent = totalMins > 0
+      ? '今日共 ' + formatDuration(totalMins)
+      : '今日最重要的事';
+  }
+}
+
+function updatePlanHeader(done, total) {
+  var countEl = document.getElementById('plan-count');
+  var ringFg = document.getElementById('plan-ring-fg');
+  var card = document.getElementById('plan-card');
+  if (countEl) countEl.innerHTML = done + '<small>/' + total + '</small>';
+  var pct = total > 0 ? done / total : 0;
+  if (ringFg) ringFg.style.strokeDashoffset = 88 - (88 * pct);
+  if (card) card.classList.toggle('all-done', total > 0 && done === total);
+}
 
 function renderPlanList() {
   var list = document.getElementById('plan-task-list');
-  var countEl = document.getElementById('plan-count');
   if (!list) return;
 
-  var total = TASKS.length;
-  var done = TASKS.filter(function(t) { return !!state[t.id]; }).length;
-  if (countEl) countEl.textContent = done + '/' + total;
+  var tasks = getActiveTasks();
+  var total = tasks.length;
+  var done = tasks.filter(function(t) { return !!state[t.id]; }).length;
+  updatePlanHeader(done, total);
+  updatePlanTotalDuration(tasks);
 
   if (total === 0) {
-    list.innerHTML = '<div class="plan-empty">还没有计划，点击下方添加吧</div>';
+    list.innerHTML = '<div class="plan-empty">还没有目标，点击下方添加吧</div>';
     return;
   }
 
   list.innerHTML = '';
-  CAT_ORDER.forEach(function(cat) {
-    var catTasks = TASKS.filter(function(t) { return t.cat === cat; });
-    if (catTasks.length === 0) return;
+  tasks.forEach(function(task) {
+    var item = document.createElement('div');
+    item.className = 'plan-item' + (state[task.id] ? ' done' : '');
+    item.dataset.id = task.id;
+    item.innerHTML =
+      renderTaskTimeHtml(task) +
+      '<div class="plan-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
+      '<div class="plan-info">' +
+        '<div class="plan-title">' + escapeHTML(task.title) + '</div>' +
+        (task.sub ? '<div class="plan-sub">' + escapeHTML(task.sub) + '</div>' : '') +
+      '</div>' +
+      '<div class="plan-check">' +
+        '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
+          '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg></div>';
 
-    var label = document.createElement('div');
-    label.className = 'plan-cat-label';
-    label.textContent = CAT_LABELS[cat] || cat;
-    list.appendChild(label);
-
-    catTasks.forEach(function(task) {
-      var item = document.createElement('div');
-      item.className = 'plan-item' + (state[task.id] ? ' done' : '');
-      item.dataset.id = task.id;
-      item.innerHTML =
-        '<div class="plan-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
-        '<div class="plan-info">' +
-          '<div class="plan-title">' + escapeHTML(task.title) + '</div>' +
-          (task.sub ? '<div class="plan-sub">' + escapeHTML(task.sub) + '</div>' : '') +
-        '</div>' +
-        '<div class="plan-check">' +
-          '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
-            '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '</svg></div>';
-
-      item.onclick = function() { toggle(task.id); };
-      var timer;
-      item.addEventListener('touchstart', function() {
-        timer = setTimeout(function() { openEditModal(task.id); }, 500);
-      }, { passive: true });
-      item.addEventListener('touchend', function() { clearTimeout(timer); });
-      item.addEventListener('touchmove', function() { clearTimeout(timer); });
-      list.appendChild(item);
-    });
+    item.onclick = function() { toggle(task.id); };
+    var timer;
+    item.addEventListener('touchstart', function() {
+      timer = setTimeout(function() { openEditModal(task.id); }, 500);
+    }, { passive: true });
+    item.addEventListener('touchend', function() { clearTimeout(timer); });
+    item.addEventListener('touchmove', function() { clearTimeout(timer); });
+    list.appendChild(item);
   });
 }
 
@@ -922,10 +1111,10 @@ function toggle(id) {
   saveState();
   var item = document.querySelector('.plan-item[data-id="' + id + '"]');
   if (item) item.classList.toggle('done', !!state[id]);
-  var total = TASKS.length;
-  var done = TASKS.filter(function(t) { return !!state[t.id]; }).length;
-  var countEl = document.getElementById('plan-count');
-  if (countEl) countEl.textContent = done + '/' + total;
+  var tasks = getActiveTasks();
+  var done = tasks.filter(function(t) { return !!state[t.id]; }).length;
+  updatePlanHeader(done, tasks.length);
+  updatePlanTotalDuration(tasks);
   updateProgress();
   if (state[id]) popEffect();
   renderCalendar();
@@ -933,8 +1122,9 @@ function toggle(id) {
 }
 
 function updateProgress() {
-  var total = TASKS.length;
-  var done = TASKS.filter(function(t) { return !!state[t.id]; }).length;
+  var tasks = getActiveTasks();
+  var total = tasks.length;
+  var done = tasks.filter(function(t) { return !!state[t.id]; }).length;
   var pct = total > 0 ? Math.round(done / total * 100) : 0;
   var pf = document.getElementById('progress-fill');
   var pt = document.getElementById('progress-text');
@@ -951,7 +1141,7 @@ function updateProgress() {
 }
 
 function resetAll() {
-  if (!confirm('确定要重置今日所有打卡吗？')) return;
+  if (!confirm('确定要重置今日目标打卡吗？')) return;
   state = {}; saveState(); renderAll(); renderCalendar();
   if (calCollapsed) renderCalWeekStrip();
 }
@@ -959,6 +1149,9 @@ function resetAll() {
 // ---- Modal ----
 const fTitle = document.getElementById('f-title');
 const fSub = document.getElementById('f-sub');
+const fTimeStart = document.getElementById('f-time-start');
+const fTimeEnd = document.getElementById('f-time-end');
+const fDurationPreview = document.getElementById('f-duration-preview');
 const fEmojiGrid = document.getElementById('f-emoji-grid');
 const fColorGrid = document.getElementById('f-color-grid');
 
@@ -980,21 +1173,27 @@ var pickedEmoji = '⭐', pickedColorIdx = 0, pickedCat = 'evening';
 
 function openAddModal(cat) {
   editingTaskId = null;
-  document.getElementById('modal-title').textContent = '添加计划';
+  document.getElementById('modal-title').textContent = '添加目标';
   document.getElementById('btn-delete-task').style.display = 'none';
   fTitle.value = ''; fSub.value = '';
-  pickedEmoji = '⭐'; pickedColorIdx = 0; pickedCat = cat || 'morning';
+  if (fTimeStart) fTimeStart.value = '';
+  if (fTimeEnd) fTimeEnd.value = '';
+  updateDurationPreview();
+  pickedEmoji = '⭐'; pickedColorIdx = 0; pickedCat = ACTIVE_CAT;
   resetFormUI();
   showModal();
 }
 
 function openEditModal(taskId) {
   editingTaskId = taskId;
-  document.getElementById('modal-title').textContent = '编辑计划';
+  document.getElementById('modal-title').textContent = '编辑目标';
   document.getElementById('btn-delete-task').style.display = '';
   var t = TASKS.find(function(x) { return x.id === taskId; });
   if (!t) return;
   fTitle.value = t.title; fSub.value = t.sub || '';
+  if (fTimeStart) fTimeStart.value = t.timeStart || t.time || '';
+  if (fTimeEnd) fTimeEnd.value = t.timeEnd || '';
+  updateDurationPreview();
   pickedEmoji = t.emoji; pickedCat = t.cat;
   pickedColorIdx = COLORS.findIndex(function(c) { return c.c === t.color; });
   if (pickedColorIdx < 0) pickedColorIdx = 0;
@@ -1039,17 +1238,42 @@ function selectColor(el) {
   pickedColorIdx = Array.from(fColorGrid.children).indexOf(el);
 }
 
+function updateDurationPreview() {
+  if (!fDurationPreview) return;
+  var start = fTimeStart ? fTimeStart.value : '';
+  var end = fTimeEnd ? fTimeEnd.value : '';
+  var dur = calcDurationMinutes(start, end);
+  if (start && end && dur > 0) {
+    fDurationPreview.textContent = '时长：' + formatDuration(dur);
+  } else if (start && end && dur <= 0) {
+    fDurationPreview.textContent = '结束时间需晚于开始时间';
+    fDurationPreview.style.color = 'var(--coral)';
+  } else {
+    fDurationPreview.textContent = '';
+    fDurationPreview.style.color = 'var(--purple)';
+  }
+}
+
 function saveTask() {
   var title = fTitle.value.trim();
   if (!title) { fTitle.focus(); return; }
+  var start = fTimeStart ? fTimeStart.value : '';
+  var end = fTimeEnd ? fTimeEnd.value : '';
+  if (start && end && calcDurationMinutes(start, end) <= 0) {
+    alert('结束时间需晚于开始时间');
+    if (fTimeEnd) fTimeEnd.focus();
+    return;
+  }
   var co = COLORS[pickedColorIdx] || COLORS[0];
   var data = {
     id: editingTaskId || genId(),
-    cat: pickedCat,
+    cat: ACTIVE_CAT,
     emoji: pickedEmoji,
     bg: co.b,
     title: title,
     sub: fSub.value.trim(),
+    timeStart: start,
+    timeEnd: end,
     color: co.c,
   };
   if (editingTaskId) {
