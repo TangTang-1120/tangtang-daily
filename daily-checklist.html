@@ -193,45 +193,89 @@
   .day-info-chip.fest { background: #FAECE7; color: #D85A30; }
   .day-info-chip.holi { background: #EEEDFE; color: #7F77DD; }
 
-  /* 任务卡片网格 */
-  .cards-section { padding: 16px 14px 0; }
-  .section-label {
-    font-size: 13px; font-weight: 600; color: var(--text-primary);
-    margin-bottom: 10px; padding: 0 2px;
-  }
-  .cards-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-  }
-  .cat-card {
-    background: var(--card); border-radius: var(--radius-card);
-    padding: 12px 8px 10px; cursor: pointer;
+  /* 今日计划清单大卡片 */
+  .plan-section { padding: 16px 14px 0; }
+  .plan-card {
+    background: var(--card);
+    border-radius: var(--radius-card);
     border: 0.5px solid var(--border);
-    box-shadow: 0 2px 10px rgba(0,0,0,.04);
-    transition: transform .15s;
+    box-shadow: 0 4px 20px rgba(127,119,221,0.08);
+    overflow: hidden;
+  }
+  .plan-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 16px 12px;
+    border-bottom: 0.5px solid var(--border);
+    background: linear-gradient(165deg, #F8F7FF 0%, #FFFFFF 100%);
+  }
+  .plan-card-title {
+    font-size: 17px; font-weight: 600; color: var(--text-primary);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .plan-card-count {
+    font-size: 14px; font-weight: 600; color: var(--purple);
+    background: var(--purple-light);
+    padding: 4px 10px; border-radius: 99px;
+  }
+  .plan-task-list { padding: 4px 0; }
+  .plan-cat-label {
+    font-size: 11px; font-weight: 600; color: var(--text-hint);
+    padding: 10px 16px 4px;
+    letter-spacing: 0.04em;
+  }
+  .plan-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; cursor: pointer;
+    transition: background 0.15s;
     position: relative;
   }
-  .cat-card:active { transform: scale(.97); }
-  .cat-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .cat-card-left { display: flex; align-items: center; gap: 4px; min-width: 0; }
-  .cat-card-icon {
-    width: 24px; height: 24px; border-radius: 7px;
-    display: flex; align-items: center; justify-content: center; font-size: 12px;
+  .plan-item:not(:last-child)::after {
+    content: '';
+    position: absolute; bottom: 0; left: 64px; right: 16px;
+    height: 0.5px; background: var(--border);
   }
-  .cat-card-name { font-size: 11px; font-weight: 600; color: var(--text-primary); }
-  .cat-card-ring { width: 28px; height: 28px; flex-shrink: 0; }
-  .cat-card-ring circle { fill: none; stroke-width: 3; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
-  .cat-card-ring .ring-bg { stroke: #E8E6E0; }
-  .cat-card-ring .ring-fg { stroke-dasharray: 72; transition: stroke .3s; }
-  .cat-card-value { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.1; }
-  .cat-card-value small { font-size: 12px; font-weight: 500; color: var(--text-hint); }
-  .cat-card-done-badge {
-    position: absolute; top: 6px; right: 6px;
-    width: 18px; height: 18px; border-radius: 50%;
-    background: var(--teal); display: flex; align-items: center; justify-content: center;
-    opacity: 0; transform: scale(0.5); transition: all .25s;
+  .plan-item:active { background: var(--bg); }
+  .plan-item.done .plan-title { text-decoration: line-through; color: var(--text-hint); }
+  .plan-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
   }
-  .cat-card.all-done .cat-card-done-badge { opacity: 1; transform: scale(1); }
-  .cat-card.all-done .cat-card-ring .ring-fg { stroke: var(--teal); }
+  .plan-info { flex: 1; min-width: 0; }
+  .plan-title {
+    font-size: 15px; font-weight: 500; color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .plan-sub { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+  .plan-check {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    transition: all .25s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+  }
+  .plan-check::before { content: ''; position: absolute; inset: -7px; }
+  .plan-check svg { opacity: 0; transform: scale(.5); transition: all .2s; }
+  .plan-item.done .plan-check {
+    border-color: transparent;
+    background: linear-gradient(145deg, #7F77DD, #5B52B8);
+    box-shadow: 0 2px 10px rgba(127,119,221,0.4);
+  }
+  .plan-item.done .plan-check svg { opacity: 1; transform: scale(1); }
+  .plan-empty {
+    text-align: center; padding: 32px 16px;
+    font-size: 14px; color: var(--text-hint);
+  }
+  .plan-add-btn {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; width: 100%; padding: 14px;
+    font-size: 14px; font-weight: 500; color: var(--purple);
+    background: none; border: none; cursor: pointer;
+    border-top: 0.5px dashed var(--border);
+    min-height: 48px; position: relative;
+  }
+  .plan-add-btn::before { content: ''; position: absolute; inset: -5px; }
+  .plan-add-btn:active { background: var(--purple-light); }
 
   .all-done-banner {
     margin: 14px 14px 0; padding: 14px 16px;
@@ -429,10 +473,9 @@
     .header { padding: 44px 12px 18px; }
     .date-title { font-size: 20px; }
     .cal-day { height: 50px; font-size: 11px; }
-    .cards-section { padding: 14px 12px 0; }
-    .cards-grid { gap: 6px; }
-    .cat-card { padding: 10px 6px 8px; }
-    .cat-card-value { font-size: 18px; }
+    .plan-section { padding: 14px 12px 0; }
+    .plan-card-header { padding: 14px 14px 10px; }
+    .plan-item { padding: 11px 14px; }
   }
 </style>
 </head>
@@ -477,10 +520,16 @@
   </div>
 </div>
 
-<!-- 每日任务清单 -->
-<div class="cards-section">
-  <div class="section-label">今日任务</div>
-  <div class="cards-grid" id="cards-grid"></div>
+<!-- 今日计划清单 -->
+<div class="plan-section">
+  <div class="plan-card" id="plan-card">
+    <div class="plan-card-header">
+      <div class="plan-card-title">📋 今日计划清单</div>
+      <div class="plan-card-count" id="plan-count">0/0</div>
+    </div>
+    <div class="plan-task-list" id="plan-task-list"></div>
+    <button class="plan-add-btn" onclick="openAddModal()">+ 添加计划</button>
+  </div>
 </div>
 
 <div class="all-done-banner" id="all-done-banner">
@@ -506,18 +555,6 @@
   </div>
 </div>
 
-<!-- 分类任务详情 -->
-<div class="cat-detail-overlay" id="cat-detail" onclick="closeCatDetailOnBg(event)">
-  <div class="cat-detail-sheet">
-    <div class="cat-detail-handle"></div>
-    <div class="cat-detail-header">
-      <div class="cat-detail-title" id="detail-cat-title">🌅 晨间</div>
-      <button class="cat-detail-close" onclick="closeCatDetail()">✕</button>
-    </div>
-    <div class="detail-task-list" id="detail-task-list"></div>
-  </div>
-</div>
-
 <!-- 添加/编辑任务 -->
 <div class="modal-overlay" id="modal" onclick="closeModalOnBg(event)">
   <div class="modal-sheet">
@@ -531,7 +568,7 @@
       <label>备注（选填）</label>
       <input class="modal-input" id="f-sub" placeholder="简短描述" maxlength="30">
     </div>
-    <div class="modal-field">
+    <div class="modal-field" id="f-cat-field" style="display:none;">
       <label>分类</label>
       <div class="modal-cat-row" id="f-cat-row">
         <div class="cat-option" data-cat="morning" onclick="selectCat(this)"><span>🌅</span>晨间</div>
@@ -821,129 +858,75 @@ function openDayDetail(y, m, d) {
 function closeDayDetail() { document.getElementById('day-detail').classList.remove('show'); }
 function closeDayDetailOnBg(e) { if (e.target === document.getElementById('day-detail')) closeDayDetail(); }
 
-// ---- Task cards ----
-const CAT_META = [
-  { key: 'morning', icon: '⚡', name: '目标', color: '#7F77DD', bg: '#EEEDFE' },
-  { key: 'evening', icon: '🌙', name: '睡眠', color: '#534AB7', bg: '#EEEDFE' },
-  { key: 'work',    icon: '💼', name: '工作', color: '#378ADD', bg: '#E6F1FB' },
-  { key: 'health',  icon: '🏃', name: '健康', color: '#1D9E75', bg: '#E1F5EE' },
-];
+// ---- 今日计划清单 ----
+const CAT_ORDER = ['morning', 'work', 'health', 'evening'];
 
-function renderCardsGrid() {
-  var grid = document.getElementById('cards-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  CAT_META.forEach(function(meta) {
-    var tasks = TASKS.filter(function(t) { return t.cat === meta.key; });
-    var done = tasks.filter(function(t) { return !!state[t.id]; }).length;
-    var total = tasks.length;
-    var pct = total > 0 ? Math.round(done / total * 100) : 0;
-    var allDone = total > 0 && done === total;
-    var offset = 72 - (72 * pct / 100);
+function renderPlanList() {
+  var list = document.getElementById('plan-task-list');
+  var countEl = document.getElementById('plan-count');
+  if (!list) return;
 
-    var card = document.createElement('div');
-    card.className = 'cat-card' + (allDone ? ' all-done' : '');
-    card.dataset.cat = meta.key;
-    card.innerHTML =
-      '<div class="cat-card-done-badge">' +
-        '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
-          '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '</svg></div>' +
-      '<div class="cat-card-header">' +
-        '<div class="cat-card-left">' +
-          '<div class="cat-card-icon" style="background:' + meta.bg + '">' + meta.icon + '</div>' +
-          '<div class="cat-card-name">' + meta.name + '</div>' +
-        '</div>' +
-        '<svg class="cat-card-ring" viewBox="0 0 28 28">' +
-          '<circle class="ring-bg" cx="14" cy="14" r="11.45"/>' +
-          '<circle class="ring-fg" cx="14" cy="14" r="11.45" style="stroke:' + meta.color + ';stroke-dashoffset:' + offset + '"/>' +
-        '</svg></div>' +
-      '<div class="cat-card-value">' + done + '<small>/' + total + '</small></div>';
-    card.onclick = function() { openCatDetail(meta); };
-    grid.appendChild(card);
-  });
-}
+  var total = TASKS.length;
+  var done = TASKS.filter(function(t) { return !!state[t.id]; }).length;
+  if (countEl) countEl.textContent = done + '/' + total;
 
-function openCatDetail(meta) {
-  var overlay = document.getElementById('cat-detail');
-  document.getElementById('detail-cat-title').textContent = meta.icon + ' ' + meta.name;
-  var list = document.getElementById('detail-task-list');
+  if (total === 0) {
+    list.innerHTML = '<div class="plan-empty">还没有计划，点击下方添加吧</div>';
+    return;
+  }
+
   list.innerHTML = '';
+  CAT_ORDER.forEach(function(cat) {
+    var catTasks = TASKS.filter(function(t) { return t.cat === cat; });
+    if (catTasks.length === 0) return;
 
-  var tasks = TASKS.filter(function(t) { return t.cat === meta.key; });
-  if (tasks.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-hint);font-size:14px;">暂无计划，点击下方按钮添加</div>';
-  } else {
-    tasks.forEach(function(task) {
-      var done = !!state[task.id];
+    var label = document.createElement('div');
+    label.className = 'plan-cat-label';
+    label.textContent = CAT_LABELS[cat] || cat;
+    list.appendChild(label);
+
+    catTasks.forEach(function(task) {
       var item = document.createElement('div');
-      item.className = 'detail-item' + (done ? ' done' : '');
+      item.className = 'plan-item' + (state[task.id] ? ' done' : '');
+      item.dataset.id = task.id;
       item.innerHTML =
-        '<div class="detail-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
-        '<div class="detail-info">' +
-          '<div class="detail-title">' + escapeHTML(task.title) + '</div>' +
-          '<div class="detail-sub">' + escapeHTML(task.sub || '') + '</div>' +
+        '<div class="plan-icon" style="background:' + task.bg + '">' + task.emoji + '</div>' +
+        '<div class="plan-info">' +
+          '<div class="plan-title">' + escapeHTML(task.title) + '</div>' +
+          (task.sub ? '<div class="plan-sub">' + escapeHTML(task.sub) + '</div>' : '') +
         '</div>' +
-        '<div class="detail-check">' +
+        '<div class="plan-check">' +
           '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">' +
             '<path d="M1.5 5L5 8.5L11.5 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
           '</svg></div>';
+
       item.onclick = function() { toggle(task.id); };
       var timer;
-      item.addEventListener('touchstart', function() { timer = setTimeout(function() { openEditModal(task.id); }, 500); }, { passive: true });
+      item.addEventListener('touchstart', function() {
+        timer = setTimeout(function() { openEditModal(task.id); }, 500);
+      }, { passive: true });
       item.addEventListener('touchend', function() { clearTimeout(timer); });
       item.addEventListener('touchmove', function() { clearTimeout(timer); });
       list.appendChild(item);
     });
-  }
-
-  var addBtn = document.createElement('button');
-  addBtn.className = 'add-btn';
-  addBtn.innerHTML = '<span>+</span> 添加新计划';
-  addBtn.onclick = function(e) { e.stopPropagation(); closeCatDetail(); openAddModal(meta.key); };
-  list.appendChild(addBtn);
-  overlay.classList.add('show');
+  });
 }
 
-function closeCatDetail() { document.getElementById('cat-detail').classList.remove('show'); }
-function closeCatDetailOnBg(e) { if (e.target === document.getElementById('cat-detail')) closeCatDetail(); }
-
 function renderAll() {
-  renderCardsGrid();
+  renderPlanList();
   updateProgress();
 }
 
 function toggle(id) {
   state[id] = !state[id];
   saveState();
-  var task = TASKS.find(function(t) { return t.id === id; });
-  if (task) {
-    var catCard = document.querySelector('.cat-card[data-cat="' + task.cat + '"]');
-    if (catCard) {
-      var catTasks = TASKS.filter(function(t) { return t.cat === task.cat; });
-      var catDone = catTasks.filter(function(t) { return state[t.id]; }).length;
-      var catTotal = catTasks.length;
-      var allDone = catTotal > 0 && catDone === catTotal;
-      var valEl = catCard.querySelector('.cat-card-value');
-      if (valEl) valEl.innerHTML = catDone + '<small>/' + catTotal + '</small>';
-      var ringFg = catCard.querySelector('.ring-fg');
-      if (ringFg) {
-        var pct = catTotal > 0 ? Math.round(catDone / catTotal * 100) : 0;
-        ringFg.style.strokeDashoffset = 72 - (72 * pct / 100);
-      }
-      catCard.classList.toggle('all-done', allDone);
-    }
-  }
+  var item = document.querySelector('.plan-item[data-id="' + id + '"]');
+  if (item) item.classList.toggle('done', !!state[id]);
+  var total = TASKS.length;
+  var done = TASKS.filter(function(t) { return !!state[t.id]; }).length;
+  var countEl = document.getElementById('plan-count');
+  if (countEl) countEl.textContent = done + '/' + total;
   updateProgress();
-  var detailList = document.getElementById('detail-task-list');
-  if (detailList) {
-    Array.from(detailList.querySelectorAll('.detail-item')).forEach(function(el) {
-      var titleEl = el.querySelector('.detail-title');
-      if (!titleEl) return;
-      var t = TASKS.find(function(x) { return x.title === titleEl.textContent; });
-      if (t && t.id === id) el.classList.toggle('done', !!state[id]);
-    });
-  }
   if (state[id]) popEffect();
   renderCalendar();
   if (calCollapsed) renderCalWeekStrip();
@@ -997,10 +980,10 @@ var pickedEmoji = '⭐', pickedColorIdx = 0, pickedCat = 'evening';
 
 function openAddModal(cat) {
   editingTaskId = null;
-  document.getElementById('modal-title').textContent = '添加新计划';
+  document.getElementById('modal-title').textContent = '添加计划';
   document.getElementById('btn-delete-task').style.display = 'none';
   fTitle.value = ''; fSub.value = '';
-  pickedEmoji = '⭐'; pickedColorIdx = 0; pickedCat = cat || 'evening';
+  pickedEmoji = '⭐'; pickedColorIdx = 0; pickedCat = cat || 'morning';
   resetFormUI();
   showModal();
 }
