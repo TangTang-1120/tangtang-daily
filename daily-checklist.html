@@ -86,19 +86,23 @@
     overflow: hidden;
     position: relative;
   }
-  .cal-card.cal-collapsed .cal-nav { display: none; }
+  .cal-card.cal-collapsed .cal-nav-btn,
+  .cal-card.cal-collapsed .cal-month-label { display: none; }
+  .cal-card.cal-collapsed .cal-nav {
+    justify-content: flex-end;
+    margin-bottom: 4px;
+  }
   .cal-card.cal-collapsed .cal-weekdays { display: none; }
   .cal-card.cal-collapsed .cal-grid { display: none; }
   .cal-card.cal-collapsed .cal-week-strip { display: grid; }
   .cal-card:not(.cal-collapsed) .cal-week-strip { display: none; }
 
-  .cal-toggle-wrap { position: absolute; top: 8px; right: 8px; z-index: 5; }
   .cal-toggle-btn {
     background: none; border: none; cursor: pointer;
     width: 32px; height: 32px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     color: var(--text-hint); font-size: 13px; transition: all 0.15s;
-    position: relative;
+    position: relative; flex-shrink: 0;
   }
   .cal-toggle-btn::before { content: ''; position: absolute; inset: -6px; }
   .cal-toggle-btn:active { background: var(--bg); }
@@ -127,10 +131,18 @@
   .cal-strip-day.past-empty:not(.is-today) .cal-strip-num { color: var(--text-hint); opacity: 0.45; }
 
   .cal-nav {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 6px; padding: 0 2px;
+    display: flex; align-items: center; gap: 4px;
+    margin-bottom: 6px; padding: 0 4px;
   }
-  .cal-month-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .cal-month-label {
+    flex: 1; min-width: 0;
+    font-size: 13px; font-weight: 600; color: var(--text-primary);
+    text-align: center;
+  }
+  .cal-nav-end {
+    display: flex; align-items: center; gap: 2px;
+    flex-shrink: 0;
+  }
   .cal-nav-btn {
     background: none; border: none; cursor: pointer;
     width: 32px; height: 32px; border-radius: 8px;
@@ -741,12 +753,12 @@
   <div class="cal-section">
     <div class="cal-card">
       <div class="cal-nav">
-        <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+        <button type="button" class="cal-nav-btn" onclick="calPrev()" aria-label="上一個月">‹</button>
         <div class="cal-month-label" id="cal-month-label"></div>
-        <button class="cal-nav-btn" onclick="calNext()">›</button>
-      </div>
-      <div class="cal-toggle-wrap">
-        <button class="cal-toggle-btn" onclick="toggleCalCollapse()" id="cal-toggle" title="收起日历">▲</button>
+        <div class="cal-nav-end">
+          <button type="button" class="cal-toggle-btn" onclick="toggleCalCollapse()" id="cal-toggle" title="收起日历" aria-label="收起日历">▲</button>
+          <button type="button" class="cal-nav-btn" onclick="calNext()" aria-label="下一個月">›</button>
+        </div>
       </div>
       <div class="cal-body">
         <div class="cal-weekdays" id="cal-weekdays">
