@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="build" content="2026-06-01-cal-nav">
+<meta name="build" content="2026-06-01-day-delete">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="TangTang">
@@ -1022,6 +1022,16 @@ function genId() {
 
 function saveState() { localStorage.setItem(TODAY_KEY, JSON.stringify(state)); }
 
+function getStateHidden(raw) {
+  if (!raw || !Array.isArray(raw._hidden)) return [];
+  return raw._hidden;
+}
+
+function loadDayState(dayKey) {
+  try { return JSON.parse(localStorage.getItem(dayKey) || '{}'); }
+  catch (e) { return {}; }
+}
+
 // ---- Calendar ----
 let calYear = TODAY.getFullYear(), calMonth = TODAY.getMonth();
 
@@ -1029,8 +1039,9 @@ function calKey(y, m, d) {
   return 'checklist_' + y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
 }
 function isDayPartial(y, m, d) {
-  const s = JSON.parse(localStorage.getItem(calKey(y, m, d)) || '{}');
-  return getActiveTasks().some(t => s[t.id]);
+  var key = calKey(y, m, d);
+  var s = loadDayState(key);
+  return getActiveTasks(key).some(function(t) { return !!s[t.id]; });
 }
 
 const SOLAR_TERMS = {
@@ -1176,8 +1187,9 @@ function openDayDetail(y, m, d) {
   if (di.holiday) infoChips += '<span class="day-info-chip holi">🏖 ' + di.holiday + '</span>';
   if (infoChips) html += '<div class="day-info-bar">' + infoChips + '</div>';
 
-  var dayState = JSON.parse(localStorage.getItem(calKey(y, m, d)) || '{}');
-  var activeTasks = getActiveTasks();
+  var dayKey = calKey(y, m, d);
+  var dayState = loadDayState(dayKey);
+  var activeTasks = getActiveTasks(dayKey);
   var total = activeTasks.length;
   var done = activeTasks.filter(function(t) { return !!dayState[t.id]; }).length;
   var totalDur = getTotalDuration(activeTasks);
@@ -1226,8 +1238,16 @@ function closeDayDetailOnBg(e) { if (e.target === document.getElementById('day-d
 // ---- 目标卡片 ----
 const ACTIVE_CAT = 'morning';
 
-function getActiveTasks() {
-  return sortTasksByTime(TASKS.filter(function(t) { return t.cat === ACTIVE_CAT; }));
+function getActiveTasks(dayKey) {
+  dayKey = dayKey || TODAY_KEY;
+  var dayStr = dayKey.replace('checklist_', '');
+  var hidden = getStateHidden(loadDayState(dayKey));
+  return sortTasksByTime(TASKS.filter(function(t) {
+    if (t.cat !== ACTIVE_CAT) return false;
+    if (hidden.indexOf(t.id) >= 0) return false;
+    if (t.createdAt && t.createdAt > dayStr) return false;
+    return true;
+  }));
 }
 
 function sortTasksByTime(tasks) {
@@ -1663,10 +1683,14 @@ function saveTask() {
     timeStart: start,
     timeEnd: end,
     color: co.c,
+    createdAt: localDateStr(),
   };
   if (editingTaskId) {
     var idx = TASKS.findIndex(function(t) { return t.id === editingTaskId; });
-    if (idx > -1) TASKS[idx] = data;
+    if (idx > -1) {
+      data.createdAt = TASKS[idx].createdAt || localDateStr();
+      TASKS[idx] = data;
+    }
   } else {
     TASKS.push(data);
   }
@@ -1677,8 +1701,8 @@ function saveTask() {
 }
 
 function removeTaskById(id) {
-  TASKS = TASKS.filter(function(t) { return t.id !== id; });
-  saveTasks(TASKS);
+  if (!Array.isArray(state._hidden)) state._hidden = [];
+  if (state._hidden.indexOf(id) < 0) state._hidden.push(id);
   delete state[id];
   saveState();
   renderAll(); renderCalendar();
@@ -1687,13 +1711,13 @@ function removeTaskById(id) {
 
 function deleteTask(id, e) {
   if (e) e.stopPropagation();
-  if (!confirm('确定删除这个目标吗？')) return;
+  if (!confirm('确定从今日清单移除此目标？\n历史日期的记录会保留。')) return;
   removeTaskById(id);
 }
 
 function deleteCurrentTask() {
   if (!editingTaskId) return;
-  if (!confirm('确定删除这个目标吗？')) return;
+  if (!confirm('确定从今日清单移除此目标？\n历史日期的记录会保留。')) return;
   removeTaskById(editingTaskId);
   closeModal();
 }
