@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="大提琴一把位流行乐谱个人收藏库｜新手免换把专用，支持检索、分类筛选、乐谱预览与 PDF 下载" />
+  <title>大提琴一把位流行乐谱个人收藏库</title>
+  <!-- Tailwind CSS v3 官方 CDN，仅此一个第三方依赖 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4A5568',
+            accent: '#ECC94B',
+            cream: '#FAF7F2',
+            warm: '#F5EFE6',
+          },
+          fontFamily: {
+            serif: ['"Noto Serif TC"', 'Georgia', 'serif'],
+            sans: ['"Noto Sans TC"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <!-- Google Fonts 仅用于排版美化，离线时自动回退系统字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* 禁止横向滚动，全局护眼浅米色背景 */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    body {
+      background-color: #FAF7F2;
+      color: #4A5568;
+    }
+    /* 卡片悬浮上浮交互 */
+    .score-card {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .score-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(74, 85, 104, 0.15);
+    }
+    /* 筛选按钮选中高亮 */
+    .filter-btn.active {
+      background-color: #4A5568;
+      color: #FAF7F2;
+      border-color: #4A5568;
+    }
+    .filter-btn.active:hover {
+      background-color: #3D4654;
+    }
+    /* 弹窗遮罩半透明虚化 */
+    .modal-backdrop {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    /* 乐谱预览图占位样式 */
+    .score-preview-img {
+      background: linear-gradient(135deg, #F5EFE6 0%, #EDE4D8 100%);
+    }
+    /* 自定义滚动条（弹窗内容区） */
+    .modal-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .modal-scroll::-webkit-scrollbar-thumb {
+      background: #CBD5E0;
+      border-radius: 3px;
+    }
+    /* 页脚教程折叠动画 */
+    .tutorial-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .tutorial-content.open {
+      max-height: 2000px;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased">
+
+  <!-- ==================== 顶部导航栏 ==================== -->
+  <header class="sticky top-0 z-40 bg-cream/95 border-b border-primary/10 shadow-sm backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <!-- 网站标题 -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h1 class="font-serif text-xl sm:text-2xl font-bold text-primary tracking-wide">
+          🎻 大提琴一把位流行乐谱库
+        </h1>
+        <p id="result-count" class="text-sm text-primary/60">共 0 首曲目</p>
+      </div>
+
+      <!-- 全局搜索框：支持歌名、调式、曲风模糊搜索 -->
+      <div class="relative mb-4">
+        <input
+          type="search"
+          id="search-input"
+          placeholder="搜索歌名、调式、曲风…"
+          class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-primary/20 bg-white/80 text-primary placeholder-primary/40 focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition"
+          autocomplete="off"
+        />
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+
+      <!-- 分类筛选按钮 -->
+      <div class="space-y-2">
+        <p class="text-xs font-medium text-primary/50 uppercase tracking-wider">调式分类</p>
+        <div id="key-filters" class="flex flex-wrap gap-2"></div>
+        <p class="text-xs font-medium text-primary/50 uppercase tracking-wider mt-3">曲风分类</p>
+        <div id="genre-filters" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ==================== 首页横幅 ==================== -->
+    <section class="mb-10 rounded-2xl bg-gradient-to-br from-warm to-cream border border-primary/10 p-6 sm:p-10 text-center shadow-sm">
+      <h2 class="font-serif text-2xl sm:text-3xl font-bold text-primary mb-3">
+        大提琴一把位流行乐谱库
+      </h2>
+      <p class="text-lg text-primary/70 mb-2">｜新手免换把专用｜</p>
+      <p class="text-sm sm:text-base text-primary/60 max-w-2xl mx-auto leading-relaxed">
+        收录流行、影视、迪士尼等经典曲目的大提琴一把位改编乐谱。全程第一把位演奏，无需换把，适合零基础入门与日常练习。
+        点击卡片查看指法要点与练习建议，支持乐谱预览与 PDF 下载。
+      </p>
+    </section>
+
+    <!-- ==================== 乐谱卡片列表（流式自适应布局） ==================== -->
+    <!-- 移动端 1 列、平板 2 列、PC 3 列 -->
+    <section id="score-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"></section>
+
+    <!-- 无结果提示 -->
+    <div id="empty-state" class="hidden text-center py-16">
+      <p class="text-4xl mb-4">🎵</p>
+      <p class="text-primary/60 text-lg">未找到匹配的乐谱</p>
+      <p class="text-primary/40 text-sm mt-2">试试调整搜索关键词或筛选条件</p>
+      <button id="reset-filters" class="mt-4 px-5 py-2 rounded-lg bg-accent text-primary font-medium hover:bg-accent/80 transition">
+        清除全部筛选
+      </button>
+    </div>
+  </main>
+
+  <!-- ==================== 详情弹窗 ==================== -->
+  <div id="modal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+    <div class="modal-backdrop absolute inset-0 bg-primary/40" data-close-modal></div>
+    <div class="relative flex items-center justify-center min-h-full p-4 sm:p-6">
+      <div class="relative bg-cream rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-primary/10" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <!-- 关闭按钮 -->
+        <button id="modal-close" class="absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition" aria-label="关闭弹窗">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="modal-scroll overflow-y-auto p-6 sm:p-8">
+          <h3 id="modal-title" class="font-serif text-xl sm:text-2xl font-bold text-primary pr-10 mb-3"></h3>
+          <div id="modal-tags" class="flex flex-wrap gap-2 mb-5"></div>
+
+          <!-- 指法要点 -->
+          <div class="mb-5 p-4 rounded-xl bg-warm/80 border border-primary/5">
+            <h4 class="font-semibold text-primary mb-2 flex items-center gap-2">
+              <span class="text-accent">✦</span> 指法要点
+            </h4>
+            <p id="modal-finger-tip" class="text-sm text-primary/80 leading-relaxed"></p>
+          </div>
+
+          <!-- 练习建议 -->
+          <div class="mb-5 p-4 rounded-xl bg-warm/80 border border-primary/5">
+            <h4 class="font-semibold text-primary mb-2 flex items-center gap-2">
+              <span class="text-accent">✦</span> 练习建议
+            </h4>
+            <p id="modal-practice-tip" class="text-sm text-primary/80 leading-relaxed"></p>
+          </div>
+
+          <!-- 乐谱预览图 -->
+          <div class="mb-5">
+            <h4 class="font-semibold text-primary mb-2">乐谱预览</h4>
+            <div class="rounded-xl overflow-hidden border border-primary/10 score-preview-img">
+              <img id="modal-score-img" src="" alt="乐谱预览" class="w-full h-auto object-contain max-h-80" onerror="this.src=''; this.alt='预览图尚未上传，请将图片放入 score-img 文件夹'; this.classList.add('p-8','text-center'); this.outerHTML='<div class=\'p-8 text-center text-primary/50 text-sm\'>📄 预览图尚未上传<br>请将乐谱图片放入 <code class=\'bg-white/60 px-1 rounded\'>score-img/</code> 文件夹</div>';" />
+            </div>
+          </div>
+
+          <!-- PDF 下载按钮 -->
+          <a id="modal-download" href="#" download class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-accent text-primary font-semibold hover:bg-accent/85 transition shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            下载 PDF 乐谱
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 页脚 ==================== -->
+  <footer class="bg-warm border-t border-primary/10 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <p class="text-center text-sm text-primary/60 mb-6">
+        © 2025 大提琴一把位流行乐谱个人收藏库 · 仅供学习交流使用
+      </p>
+
+      <!--
+        ============================================================
+        【素材存放目录规范 — 务必遵守】
+        ============================================================
+        1. 在项目根目录新建两个文件夹：
+           - score-img/  → 存放乐谱预览图片（.jpg / .png）
+           - score-pdf/  → 存放乐谱 PDF 文件（.pdf）
+        2. 图片路径统一使用相对路径：score-img/歌曲名.png
+        3. PDF 下载路径统一使用相对路径：score-pdf/歌曲名.pdf
+        4. 所有素材与 index.html 一起上传至 GitHub 仓库，线上即可正常加载预览与下载
+        ============================================================
+      -->
+
+      <!-- GitHub Pages 部署教程 -->
+      <div class="mb-4 rounded-xl border border-primary/10 bg-cream overflow-hidden">
+        <button class="tutorial-toggle w-full flex items-center justify-between px-5 py-4 text-left font-semibold text-primary hover:bg-warm/50 transition" data-target="deploy-tutorial">
+          <span>📦 GitHub Pages 部署详细步骤</span>
+          <svg class="w-5 h-5 transition-transform tutorial-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="deploy-tutorial" class="tutorial-content">
+          <div class="px-5 pb-5 text-sm text-primary/75 leading-relaxed space-y-3 border-t border-primary/5 pt-4">
+            <p><strong>第一步：</strong>登录 GitHub，点击右上角 <code class="bg-white px-1.5 py-0.5 rounded text-xs">+</code> → <strong>New repository</strong>，创建一个新的<strong>公开（Public）</strong>仓库，例如命名为 <code class="bg-white px-1.5 py-0.5 rounded text-xs">cello-score-library</code>。</p>
+            <p><strong>第二步：</strong>将以下文件上传至仓库根目录：</p>
+            <ul class="list-disc list-inside ml-2 space-y-1">
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">index.html</code>（本页面）</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">score-img/</code> 文件夹（内含所有乐谱预览图）</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">score-pdf/</code> 文件夹（内含所有乐谱 PDF）</li>
+            </ul>
+            <p><strong>第三步：</strong>进入仓库 → <strong>Settings</strong> → 左侧 <strong>Pages</strong>。</p>
+            <p><strong>第四步：</strong>在 <strong>Build and deployment</strong> → <strong>Source</strong> 中选择 <strong>Deploy from a branch</strong>，Branch 选 <code class="bg-white px-1.5 py-0.5 rounded text-xs">main</code>，文件夹选 <code class="bg-white px-1.5 py-0.5 rounded text-xs">/ (root)</code>，点击 Save。</p>
+            <p><strong>第五步：</strong>等待 1～3 分钟，Pages 页面会显示公开访问链接，格式为：<br />
+              <code class="bg-white px-1.5 py-0.5 rounded text-xs break-all">https://你的用户名.github.io/cello-score-library/</code>
+            </p>
+            <p class="text-primary/50">💡 提示：后续更新素材或代码后，重新 push 到 main 分支即可自动刷新线上版本。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 乐谱库扩容教程 -->
+      <div class="rounded-xl border border-primary/10 bg-cream overflow-hidden">
+        <button class="tutorial-toggle w-full flex items-center justify-between px-5 py-4 text-left font-semibold text-primary hover:bg-warm/50 transition" data-target="expand-tutorial">
+          <span>🎼 乐谱库扩容与素材维护教程</span>
+          <svg class="w-5 h-5 transition-transform tutorial-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="expand-tutorial" class="tutorial-content">
+          <div class="px-5 pb-5 text-sm text-primary/75 leading-relaxed space-y-3 border-t border-primary/5 pt-4">
+            <p><strong>一、新增曲目（修改 JS 数据数组）</strong></p>
+            <p>打开 <code class="bg-white px-1.5 py-0.5 rounded text-xs">index.html</code>，找到 <code class="bg-white px-1.5 py-0.5 rounded text-xs">const scores = [...]</code> 数组，在末尾添加新对象：</p>
+            <pre class="bg-primary/5 p-3 rounded-lg text-xs overflow-x-auto"><code>{
+  id: 59,                              // 唯一数字序号，递增即可
+  title: "新歌名",
+  key: "C大调",                         // 所属调式
+  difficulty: "入门",                   // 入门 或 简单
+  fingerTip: "一把位指法要点说明…",
+  practiceTip: "弓法节奏练习建议…",
+  scoreImg: "score-img/新歌名.png",     // 预览图相对路径
+  downloadUrl: "score-pdf/新歌名.pdf",  // PDF 相对路径
+  tags: ["C大调", "国风流行"]           // [调式标签, 曲风标签]
+}</code></pre>
+            <p><strong>二、上传乐谱预览图片</strong></p>
+            <p>将乐谱截图或扫描图保存为 PNG/JPG，放入 <code class="bg-white px-1.5 py-0.5 rounded text-xs">score-img/</code> 文件夹，文件名与 <code class="bg-white px-1.5 py-0.5 rounded text-xs">scoreImg</code> 字段一致，例如 <code class="bg-white px-1.5 py-0.5 rounded text-xs">score-img/新歌名.png</code>。</p>
+            <p><strong>三、上传乐谱 PDF 文件</strong></p>
+            <p>将制谱导出的 PDF 放入 <code class="bg-white px-1.5 py-0.5 rounded text-xs">score-pdf/</code> 文件夹，文件名与 <code class="bg-white px-1.5 py-0.5 rounded text-xs">downloadUrl</code> 字段一致，例如 <code class="bg-white px-1.5 py-0.5 rounded text-xs">score-pdf/新歌名.pdf</code>。</p>
+            <p><strong>四、替换已有素材</strong></p>
+            <p>直接用同名文件覆盖 <code class="bg-white px-1.5 py-0.5 rounded text-xs">score-img/</code> 或 <code class="bg-white px-1.5 py-0.5 rounded text-xs">score-pdf/</code> 中的旧文件即可，无需修改代码（前提是文件名不变）。若改名，需同步修改 JS 数组中对应的路径字段。</p>
+            <p><strong>五、本地测试</strong></p>
+            <p>双击 <code class="bg-white px-1.5 py-0.5 rounded text-xs">index.html</code> 即可在浏览器离线打开测试。确认无误后 push 到 GitHub，Pages 自动更新。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================================
+    // 【素材存放目录规范】
+    // score-img/  → 乐谱预览图片（jpg/png），路径：score-img/歌曲名.png
+    // score-pdf/  → 乐谱 PDF 文件，路径：score-pdf/歌曲名.pdf
+    // 与 index.html 同目录，一起上传 GitHub 即可线上访问
+    // ============================================================
+
+    // ---------- 分类常量 ----------
+    const KEY_CATEGORIES = ['C大调', 'G大调', 'F大调', 'D大调'];
+    const GENRE_CATEGORIES = [
+      '国风流行', '影视OST', '日系治愈', '欧美金曲',
+      '经典怀旧', '校园抒情', '迪士尼动画金曲',
+    ];
+
+    // ---------- 内置全部曲目数据 ----------
+    // 每条曲目固定字段：id, title, key, difficulty, fingerTip, practiceTip, scoreImg, downloadUrl, tags
+    const scores = [
+      // ===== C大调（零基础无升降）=====
+      {
+        id: 1, title: '天空之城', key: 'C大调', difficulty: '入门',
+        fingerTip: '主旋律集中在 D 弦与 G 弦第一把位，注意空弦与一、二指的自然连接，全曲无需换把。长音段落保持左手手型稳定，避免手指抬起过高。',
+        practiceTip: '先用长弓慢练主题旋律，熟悉音准后再加入揉弦。注意乐句呼吸感，副歌部分可适当加大运弓力度，营造空灵感。',
+        scoreImg: 'score-img/天空之城.png', downloadUrl: 'score-pdf/天空之城.pdf',
+        tags: ['C大调', '影视OST', '日系治愈'],
+      },
+      {
+        id: 2, title: '大鱼', key: 'C大调', difficulty: '入门',
+        fingerTip: '以 C 大调音阶为主，多使用开放弦 C、G、D。旋律起伏较大时注意三指与四指的按压力度均匀，保持音准稳定。',
+        practiceTip: '从中板速度开始，重点练习跨弦运弓的平滑过渡。情感表达上由弱渐强，尾音可加入轻微揉弦增添意境。',
+        scoreImg: 'score-img/大鱼.png', downloadUrl: 'score-pdf/大鱼.pdf',
+        tags: ['C大调', '影视OST'],
+      },
+      {
+        id: 3, title: '小幸运', key: 'C大调', difficulty: '入门',
+        fingerTip: '节奏明快，以四分音符和八分音符为主。左手注意二指与三指在半音连接处的音准，全部在第一把位完成。',
+        practiceTip: '配合节拍器从 72 BPM 练起，先分句练习再串联。副歌部分运弓可稍轻快，营造青春活泼的氛围。',
+        scoreImg: 'score-img/小幸运.png', downloadUrl: 'score-pdf/小幸运.pdf',
+        tags: ['C大调', '校园抒情'],
+      },
+      {
+        id: 4, title: '南山南', key: 'C大调', difficulty: '入门',
+        fingerTip: '民谣风格旋律舒缓，左手手型保持自然弧形。注意 G 弦低把位与 D 弦高音区的音准衔接，不换把。',
+        practiceTip: '以长弓慢练为主，每句结尾留足余韵。可尝试在乐句中间加入轻微力度变化，增强叙事感。',
+        scoreImg: 'score-img/南山南.png', downloadUrl: 'score-pdf/南山南.pdf',
+        tags: ['C大调'],
+      },
+      {
+        id: 5, title: '但愿人长久', key: 'C大调', difficulty: '入门',
+        fingerTip: '古典诗词韵律感强，旋律线条婉转。注意 D 弦上二指与三指的半音关系，以及跨弦时左手的提前准备。',
+        practiceTip: '慢速练习每个装饰音，确保音准后再提速。运弓力求圆润连贯，模仿人声吟唱的气韵。',
+        scoreImg: 'score-img/但愿人长久.png', downloadUrl: 'score-pdf/但愿人长久.pdf',
+        tags: ['C大调'],
+      },
+      {
+        id: 6, title: '萱草花', key: 'C大调', difficulty: '入门',
+        fingerTip: '温暖抒情旋律，主要在第一把位 D 弦与 G 弦演奏。注意四指按弦时手腕不要僵硬，保持放松。',
+        practiceTip: '从中速开始练习，重点打磨长音的音准与音色。可在高潮乐句加入揉弦，表达温情。',
+        scoreImg: 'score-img/萱草花.png', downloadUrl: 'score-pdf/萱草花.pdf',
+        tags: ['C大调', '影视OST'],
+      },
+      {
+        id: 7, title: '茉莉花', key: 'C大调', difficulty: '入门',
+        fingerTip: '经典民歌旋律简单优美，适合零基础。以开放弦和一、二指为主，注意民族风格的滑音处理（小幅度，不越把）。',
+        practiceTip: '先熟悉旋律线条，再加入轻微的揉弦和力度变化。节奏自由舒展，不必过于机械。',
+        scoreImg: 'score-img/茉莉花.png', downloadUrl: 'score-pdf/茉莉花.pdf',
+        tags: ['C大调', '国风流行'],
+      },
+      {
+        id: 8, title: '送别', key: 'C大调', difficulty: '入门',
+        fingerTip: '旋律极简，几乎全部由开放弦与第一把位自然指法构成。非常适合第一天练习音准与运弓。',
+        practiceTip: '用全弓慢练，感受每个音的共鸣。注意乐句的呼吸停顿，营造离别惆怅的意境。',
+        scoreImg: 'score-img/送别.png', downloadUrl: 'score-pdf/送别.pdf',
+        tags: ['C大调', '经典怀旧'],
+      },
+      {
+        id: 9, title: '鸿雁', key: 'C大调', difficulty: '入门',
+        fingerTip: '蒙古族风格旋律悠扬，音域跨度适中。注意 G 弦低音到 D 弦高音的跨弦左手预备，全程第一把位。',
+        practiceTip: '长弓运弓练习为主，模仿马头琴的苍凉质感。乐句可加入由弱到强的力度渐变。',
+        scoreImg: 'score-img/鸿雁.png', downloadUrl: 'score-pdf/鸿雁.pdf',
+        tags: ['C大调', '国风流行'],
+      },
+      {
+        id: 10, title: '宁夏', key: 'C大调', difficulty: '入门',
+        fingerTip: '轻快民谣风格，节奏规整。左手以基本把位指法为主，注意八分音符的清晰颗粒感。',
+        practiceTip: '配合节拍器 96 BPM 练习，运弓短促有弹性。副歌部分可适当加快，保持节奏稳定。',
+        scoreImg: 'score-img/宁夏.png', downloadUrl: 'score-pdf/宁夏.pdf',
+        tags: ['C大调', '校园抒情'],
+      },
+      {
+        id: 11, title: '月亮代表我的心', key: 'C大调', difficulty: '入门',
+        fingerTip: '经典抒情老歌，旋律舒缓宽广。注意 D 弦上手指的横向移动要平行于指板，避免音准偏差。',
+        practiceTip: '极慢速练习，每个长音保持 4 拍以上。加入揉弦时注意频率均匀，不宜过快。',
+        scoreImg: 'score-img/月亮代表我的心.png', downloadUrl: 'score-pdf/月亮代表我的心.pdf',
+        tags: ['C大调', '经典怀旧'],
+      },
+      {
+        id: 12, title: '卡农极简版', key: 'C大调', difficulty: '入门',
+        fingerTip: '简化版卡农循环和弦音型，以第一把位开放弦和基本指法为主。注意保持每个和弦音的时值均匀。',
+        practiceTip: '从 60 BPM 循环练习和弦进行，熟悉后再加入旋律线。运弓保持平稳，避免突兀的力度变化。',
+        scoreImg: 'score-img/卡农极简版.png', downloadUrl: 'score-pdf/卡农极简版.pdf',
+        tags: ['C大调'],
+      },
+      {
+        id: 13, title: '雪绒花', key: 'C大调', difficulty: '入门',
+        fingerTip: '三拍子华尔兹节奏，旋律纯净。注意第一拍重音的运弓力度，左手手型保持圆润。',
+        practiceTip: '按 3/4 拍练习，强-弱-弱的运弓分配。速度放慢，感受每小节的旋转韵律感。',
+        scoreImg: 'score-img/雪绒花.png', downloadUrl: 'score-pdf/雪绒花.pdf',
+        tags: ['C大调', '经典怀旧'],
+      },
+      {
+        id: 14, title: '永远同在', key: 'C大调', difficulty: '入门',
+        fingerTip: '《千与千寻》主题曲，旋律温暖治愈。D 弦与 G 弦交替演奏，注意音与音之间的连贯性，不换把。',
+        practiceTip: '慢练主题动机，反复打磨跨弦衔接。可在乐句高点加入揉弦，增强情感张力。',
+        scoreImg: 'score-img/永远同在.png', downloadUrl: 'score-pdf/永远同在.pdf',
+        tags: ['C大调', '影视OST', '日系治愈'],
+      },
+      {
+        id: 15, title: 'Let It Go（冰雪奇缘）', key: 'C大调', difficulty: '简单',
+        fingerTip: '迪士尼经典，副歌音域稍宽但仍在一把位内。注意四指扩展按弦时的手型舒展，避免紧张。',
+        practiceTip: '分段练习：主歌轻柔、副歌有力。副歌运弓可加大弓速，配合情感爆发，但保持音准。',
+        scoreImg: 'score-img/Let It Go（冰雪奇缘）.png', downloadUrl: 'score-pdf/Let It Go（冰雪奇缘）.pdf',
+        tags: ['C大调', '迪士尼动画金曲'],
+      },
+      {
+        id: 16, title: 'Can You Feel The Love Tonight（狮子王）', key: 'C大调', difficulty: '简单',
+        fingerTip: '抒情慢歌，音域适中。注意三指与四指在 D 弦上的音准，以及乐句间的呼吸换气（弓法）。',
+        practiceTip: '以长弓连奏为主，乐句之间留短暂停顿。可尝试不同揉弦速度表达情感层次。',
+        scoreImg: 'score-img/Can You Feel The Love Tonight（狮子王）.png', downloadUrl: 'score-pdf/Can You Feel The Love Tonight（狮子王）.pdf',
+        tags: ['C大调', '迪士尼动画金曲', '欧美金曲'],
+      },
+      {
+        id: 17, title: 'When You Wish Upon A Star（匹诺曹）', key: 'C大调', difficulty: '入门',
+        fingerTip: '旋律简单梦幻，适合初学者。以开放弦和基本指法为主，注意高音区不要挤压琴弓。',
+        practiceTip: '极慢速练习，想象星空下的宁静氛围。每个音保持充足时值，运弓平稳连贯。',
+        scoreImg: 'score-img/When You Wish Upon A Star（匹诺曹）.png', downloadUrl: 'score-pdf/When You Wish Upon A Star（匹诺曹）.pdf',
+        tags: ['C大调', '迪士尼动画金曲'],
+      },
+      {
+        id: 54, title: 'Let It Be', key: 'C大调', difficulty: '入门',
+        fingerTip: '披头士经典，和弦音型简单。第一把位开放弦与基本指法即可演奏主旋律，注意节奏的稳定。',
+        practiceTip: '跟随原曲速度练习，重点保持运弓的平稳与节奏的精准。适合作为日常热身曲目。',
+        scoreImg: 'score-img/Let It Be.png', downloadUrl: 'score-pdf/Let It Be.pdf',
+        tags: ['C大调', '欧美金曲'],
+      },
+      {
+        id: 57, title: 'Lemon Tree', key: 'C大调', difficulty: '入门',
+        fingerTip: '轻快流行曲风，节奏感强。左手基本把位指法，注意重拍与弱拍的运弓分配。',
+        practiceTip: '配合节拍器练习，先熟悉节奏型再加入旋律。保持运弓轻快有弹性，营造阳光氛围。',
+        scoreImg: 'score-img/Lemon Tree.png', downloadUrl: 'score-pdf/Lemon Tree.pdf',
+        tags: ['C大调', '欧美金曲'],
+      },
+      {
+        id: 58, title: 'All of Me', key: 'C大调', difficulty: '简单',
+        fingerTip: '流行抒情曲，旋律跨度适中。注意 D 弦高音区四指的按压力度，保持音准不偏高。',
+        practiceTip: '慢速练习每个乐句，熟悉后加入原曲速度。副歌部分运弓可稍加力度，表达深情。',
+        scoreImg: 'score-img/All of Me.png', downloadUrl: 'score-pdf/All of Me.pdf',
+        tags: ['C大调', '欧美金曲'],
+      },
+
+      // ===== G大调（1个升号）=====
+      {
+        id: 18, title: '青花瓷', key: 'G大调', difficulty: '简单',
+        fingerTip: 'G 大调一个升号（F#），注意 D 弦与 A 弦上 F# 的音准。旋律婉转，左手换指要提前做好预备。',
+        practiceTip: '先单独练习 F# 的音准，熟悉后再串联旋律。运弓模仿水墨晕染的柔和质感。',
+        scoreImg: 'score-img/青花瓷.png', downloadUrl: 'score-pdf/青花瓷.pdf',
+        tags: ['G大调', '国风流行'],
+      },
+      {
+        id: 19, title: '蒲公英的约定', key: 'G大调', difficulty: '简单',
+        fingerTip: '校园青春风格，G 大调音阶为主。注意升 F 音与开放弦的连接，保持手型稳定不换把。',
+        practiceTip: '中速练习，重点打磨乐句的连贯性。可在回忆段落加入轻柔揉弦，增添怀旧感。',
+        scoreImg: 'score-img/蒲公英的约定.png', downloadUrl: 'score-pdf/蒲公英的约定.pdf',
+        tags: ['G大调', '校园抒情'],
+      },
+      {
+        id: 20, title: '追光者', key: 'G大调', difficulty: '简单',
+        fingerTip: '旋律抒情上行，注意 G 大调中 F# 的音准。四指按弦时手腕保持自然下垂，不越把。',
+        practiceTip: '从副歌高潮句开始慢练，熟悉音程后再完整演奏。运弓由弱渐强，表达追逐梦想的感觉。',
+        scoreImg: 'score-img/追光者.png', downloadUrl: 'score-pdf/追光者.pdf',
+        tags: ['G大调'],
+      },
+      {
+        id: 21, title: '这世界那么多人', key: 'G大调', difficulty: '简单',
+        fingerTip: '电影主题曲，旋律深情。G 大调把位内注意跨弦时左肘的位置调整，保证音准。',
+        practiceTip: '极慢速练习，每个长音保持弓的平稳运行。乐句呼吸感是关键，不要赶拍。',
+        scoreImg: 'score-img/这世界那么多人.png', downloadUrl: 'score-pdf/这世界那么多人.pdf',
+        tags: ['G大调'],
+      },
+      {
+        id: 22, title: '菊花台', key: 'G大调', difficulty: '简单',
+        fingerTip: '中国风经典，旋律古朴典雅。注意 G 大调音阶中 F# 的准确按弦，以及装饰音的小幅度处理。',
+        practiceTip: '模仿古筝的韵味，运弓轻柔绵长。节奏可适当自由，不必过于刻板。',
+        scoreImg: 'score-img/菊花台.png', downloadUrl: 'score-pdf/菊花台.pdf',
+        tags: ['G大调', '国风流行'],
+      },
+      {
+        id: 23, title: '花海', key: 'G大调', difficulty: '简单',
+        fingerTip: '日式流行风格，旋律清新。G 大调第一把位演奏，注意快速音符的清晰度和音准。',
+        practiceTip: '配合节拍器从慢速开始，逐步提速至原速。保持运弓轻快，营造春日花海意境。',
+        scoreImg: 'score-img/花海.png', downloadUrl: 'score-pdf/花海.pdf',
+        tags: ['G大调'],
+      },
+      {
+        id: 24, title: '兰亭序', key: 'G大调', difficulty: '简单',
+        fingerTip: '书法意境浓厚，旋律起伏有致。注意 F# 音准与跨弦衔接，全程第一把位内完成。',
+        practiceTip: '慢练每个乐句的线条感，运弓如毛笔挥毫般流畅。可在转折处加入细微的力度变化。',
+        scoreImg: 'score-img/兰亭序.png', downloadUrl: 'score-pdf/兰亭序.pdf',
+        tags: ['G大调', '国风流行'],
+      },
+      {
+        id: 25, title: '红豆', key: 'G大调', difficulty: '简单',
+        fingerTip: '经典情歌，旋律舒缓。G 大调基本指法，注意二指与三指在升号环境下的音准。',
+        practiceTip: '以长弓慢练为主，表达相思之情。揉弦频率适中，不宜过于激烈。',
+        scoreImg: 'score-img/红豆.png', downloadUrl: 'score-pdf/红豆.pdf',
+        tags: ['G大调', '经典怀旧'],
+      },
+      {
+        id: 26, title: '匆匆那年', key: 'G大调', difficulty: '简单',
+        fingerTip: '青春怀旧题材，旋律简单上口。第一把位基本指法，注意乐句的情绪递进。',
+        practiceTip: '中速练习，主歌轻柔、副歌略带激动。运弓力度随情感起伏自然变化。',
+        scoreImg: 'score-img/匆匆那年.png', downloadUrl: 'score-pdf/匆匆那年.pdf',
+        tags: ['G大调'],
+      },
+      {
+        id: 27, title: '如愿', key: 'G大调', difficulty: '简单',
+        fingerTip: '电影主题曲，情感充沛。G 大调音域内注意高音区四指扩展，保持手型不僵硬。',
+        practiceTip: '分段练习情感层次：叙述—回忆—升华。高潮乐句运弓加大，但音准不可牺牲。',
+        scoreImg: 'score-img/如愿.png', downloadUrl: 'score-pdf/如愿.pdf',
+        tags: ['G大调'],
+      },
+      {
+        id: 28, title: '在水一方', key: 'G大调', difficulty: '简单',
+        fingerTip: '古典诗词改编，旋律悠远。注意 G 大调 F# 音准与长音的保持，不换把。',
+        practiceTip: '极慢速练习，模仿古典诗词的吟诵韵律。运弓绵长连贯，营造水天一色意境。',
+        scoreImg: 'score-img/在水一方.png', downloadUrl: 'score-pdf/在水一方.pdf',
+        tags: ['G大调', '国风流行'],
+      },
+      {
+        id: 29, title: '又见炊烟', key: 'G大调', difficulty: '简单',
+        fingerTip: '怀旧民歌风格，旋律亲切温暖。基本把位指法，以开放弦和简单按弦为主。',
+        practiceTip: '慢速练习，感受乡村黄昏的宁静。运弓轻柔，每个乐句自然呼吸。',
+        scoreImg: 'score-img/又见炊烟.png', downloadUrl: 'score-pdf/又见炊烟.pdf',
+        tags: ['G大调', '经典怀旧'],
+      },
+      {
+        id: 30, title: 'River Flows In You', key: 'G大调', difficulty: '简单',
+        fingerTip: 'Yiruma 经典钢琴曲改编，旋律流动感强。G 大调第一把位，注意音符之间的连贯衔接。',
+        practiceTip: '想象水流般连贯的运弓，避免断弓过多。从中速开始，逐步加入原曲的流动韵律。',
+        scoreImg: 'score-img/River Flows In You.png', downloadUrl: 'score-pdf/River Flows In You.pdf',
+        tags: ['G大调', '日系治愈'],
+      },
+      {
+        id: 31, title: 'Remember（寻梦环游记）', key: 'G大调', difficulty: '简单',
+        fingerTip: '迪士尼温情曲目，旋律温暖。G 大调把位内注意情感乐句的音准稳定。',
+        practiceTip: '慢练主题旋律，熟悉后加入揉弦。结尾乐句可逐渐减弱，营造回忆远去的氛围。',
+        scoreImg: 'score-img/Remember（寻梦环游记）.png', downloadUrl: 'score-pdf/Remember（寻梦环游记）.pdf',
+        tags: ['G大调', '迪士尼动画金曲'],
+      },
+      {
+        id: 32, title: "How Far I'll Go（海洋奇缘）", key: 'G大调', difficulty: '简单',
+        fingerTip: '励志迪士尼曲目，副歌音域稍宽。注意 G 大调高音区四指按弦，全程不换把。',
+        practiceTip: '主歌轻柔叙述，副歌加大运弓力度。练习时注意节奏的精准与情感的爆发平衡。',
+        scoreImg: "score-img/How Far I'll Go（海洋奇缘）.png", downloadUrl: "score-pdf/How Far I'll Go（海洋奇缘）.pdf",
+        tags: ['G大调', '迪士尼动画金曲'],
+      },
+      {
+        id: 55, title: 'You Raise Me Up', key: 'G大调', difficulty: '简单',
+        fingerTip: '经典欧美抒情曲，旋律宽广。G 大调第一把位，注意长音的音准与弓的平稳运行。',
+        practiceTip: '从慢速开始，每个长音保持 4 拍。逐步加入揉弦和力度变化，表达被托举的感动。',
+        scoreImg: 'score-img/You Raise Me Up.png', downloadUrl: 'score-pdf/You Raise Me Up.pdf',
+        tags: ['G大调', '欧美金曲'],
+      },
+
+      // ===== F大调（1个降号）=====
+      {
+        id: 33, title: '声声慢', key: 'F大调', difficulty: '简单',
+        fingerTip: 'F 大调一个降号（Bb），注意 Bb 音的准确按弦。古风旋律婉转，左手手型保持自然。',
+        practiceTip: '慢速练习，模仿古诗词吟诵的韵律。运弓轻柔，在乐句转折处加入细微揉弦。',
+        scoreImg: 'score-img/声声慢.png', downloadUrl: 'score-pdf/声声慢.pdf',
+        tags: ['F大调', '国风流行'],
+      },
+      {
+        id: 34, title: '慢慢喜欢你', key: 'F大调', difficulty: '简单',
+        fingerTip: '甜蜜抒情曲，F 大调音阶为主。注意降 B 音与相邻音符的连接，保持音准。',
+        practiceTip: '中慢速练习，营造温馨浪漫氛围。运弓平稳连贯，长音可加入轻柔揉弦。',
+        scoreImg: 'score-img/慢慢喜欢你.png', downloadUrl: 'score-pdf/慢慢喜欢你.pdf',
+        tags: ['F大调'],
+      },
+      {
+        id: 35, title: '雪落下的声音', key: 'F大调', difficulty: '简单',
+        fingerTip: '影视插曲，旋律清冷唯美。F 大调第一把位，注意 Bb 音准与跨弦的平滑过渡。',
+        practiceTip: '极慢速练习，想象雪花飘落的轻盈。运弓轻触弦面，音色要纯净透明。',
+        scoreImg: 'score-img/雪落下的声音.png', downloadUrl: 'score-pdf/雪落下的声音.pdf',
+        tags: ['F大调', '影视OST'],
+      },
+      {
+        id: 36, title: '小城故事', key: 'F大调', difficulty: '简单',
+        fingerTip: '邓丽君经典，旋律亲切简单。F 大调基本指法，适合巩固降号音准。',
+        practiceTip: '慢速练习，感受小城生活的恬淡。运弓柔和，节奏舒缓自然。',
+        scoreImg: 'score-img/小城故事.png', downloadUrl: 'score-pdf/小城故事.pdf',
+        tags: ['F大调', '经典怀旧'],
+      },
+      {
+        id: 37, title: '偏偏喜欢你', key: 'F大调', difficulty: '简单',
+        fingerTip: '粤语经典情歌，旋律优美。注意 F 大调 Bb 音在旋律中的准确呈现，不换把。',
+        practiceTip: '中速练习，表达深情而不做作。可在高潮乐句加大运弓力度。',
+        scoreImg: 'score-img/偏偏喜欢你.png', downloadUrl: 'score-pdf/偏偏喜欢你.pdf',
+        tags: ['F大调', '经典怀旧'],
+      },
+      {
+        id: 38, title: '女人花', key: 'F大调', difficulty: '简单',
+        fingerTip: '经典抒情老歌，旋律典雅。F 大调把位内注意手指的横向移动与 Bb 音准。',
+        practiceTip: '慢练每个乐句，加入适度揉弦。运弓如花瓣飘落般轻柔细腻。',
+        scoreImg: 'score-img/女人花.png', downloadUrl: 'score-pdf/女人花.pdf',
+        tags: ['F大调'],
+      },
+      {
+        id: 39, title: '青城山下白素贞', key: 'F大调', difficulty: '简单',
+        fingerTip: '经典影视插曲，旋律耳熟能详。F 大调第一把位，注意戏曲风格的节奏韵味。',
+        practiceTip: '模仿戏曲唱腔的抑扬顿挫，运弓可加入轻微的力度变化。节奏可适当自由。',
+        scoreImg: 'score-img/青城山下白素贞.png', downloadUrl: 'score-pdf/青城山下白素贞.pdf',
+        tags: ['F大调', '国风流行'],
+      },
+      {
+        id: 40, title: '斯卡布罗集市', key: 'F大调', difficulty: '简单',
+        fingerTip: '英国民谣，旋律古老神秘。F 大调音阶，注意降 B 音准与三拍子的韵律感。',
+        practiceTip: '按 3/4 拍练习，强-弱-弱的运弓分配。速度放慢，营造中世纪集市氛围。',
+        scoreImg: 'score-img/斯卡布罗集市.png', downloadUrl: 'score-pdf/斯卡布罗集市.pdf',
+        tags: ['F大调', '欧美金曲'],
+      },
+      {
+        id: 41, title: '城南花已开', key: 'F大调', difficulty: '简单',
+        fingerTip: '治愈系纯音乐，旋律温暖。F 大调第一把位，音符之间连接要圆润连贯。',
+        practiceTip: '慢速练习，感受春日花开的美好。运弓平稳，可加入轻柔揉弦增添温度。',
+        scoreImg: 'score-img/城南花已开.png', downloadUrl: 'score-pdf/城南花已开.pdf',
+        tags: ['F大调', '日系治愈'],
+      },
+      {
+        id: 42, title: 'A Whole New World（阿拉丁）', key: 'F大调', difficulty: '简单',
+        fingerTip: '迪士尼浪漫对唱曲，旋律优美。F 大调把位内注意高音区的音准与情感表达。',
+        practiceTip: '分段练习主歌与副歌，副歌运弓可更加开阔有力。保持节奏的流畅感。',
+        scoreImg: 'score-img/A Whole New World（阿拉丁）.png', downloadUrl: 'score-pdf/A Whole New World（阿拉丁）.pdf',
+        tags: ['F大调', '迪士尼动画金曲'],
+      },
+      {
+        id: 43, title: 'Do You Want To Build A Snowman（冰雪奇缘）', key: 'F大调', difficulty: '简单',
+        fingerTip: '迪士尼可爱曲目，旋律活泼。F 大调基本指法，注意节奏的变化与趣味性。',
+        practiceTip: '中速练习，运弓轻快跳跃。可尝试不同乐段的速度对比，增添童趣。',
+        scoreImg: 'score-img/Do You Want To Build A Snowman（冰雪奇缘）.png', downloadUrl: 'score-pdf/Do You Want To Build A Snowman（冰雪奇缘）.pdf',
+        tags: ['F大调', '迪士尼动画金曲'],
+      },
+
+      // ===== D大调（2个升号）=====
+      {
+        id: 44, title: '凤凰花开的路口', key: 'D大调', difficulty: '简单',
+        fingerTip: 'D 大调两个升号（F#、C#），注意升 C 和升 F 的音准。毕业离别主题，旋律感人。',
+        practiceTip: '慢速练习，重点打磨升号音准。乐句由弱渐强，表达离别不舍之情。',
+        scoreImg: 'score-img/凤凰花开的路口.png', downloadUrl: 'score-pdf/凤凰花开的路口.pdf',
+        tags: ['D大调', '校园抒情', '影视OST'],
+      },
+      {
+        id: 45, title: '画心', key: 'D大调', difficulty: '简单',
+        fingerTip: '电影主题曲，旋律空灵神秘。D 大调第一把位，注意两个升号的音准稳定。',
+        practiceTip: '极慢速练习，营造虚幻飘渺的氛围。运弓轻缓，长音加入飘渺揉弦。',
+        scoreImg: 'score-img/画心.png', downloadUrl: 'score-pdf/画心.pdf',
+        tags: ['D大调', '影视OST'],
+      },
+      {
+        id: 46, title: '一路生花', key: 'D大调', difficulty: '简单',
+        fingerTip: '励志流行曲，旋律昂扬。D 大调音阶，注意快速段落中升号的音准不丢失。',
+        practiceTip: '中速练习，运弓有力而稳定。副歌部分可加大弓速，表达一路前行的力量感。',
+        scoreImg: 'score-img/一路生花.png', downloadUrl: 'score-pdf/一路生花.pdf',
+        tags: ['D大调'],
+      },
+      {
+        id: 47, title: '稻香', key: 'D大调', difficulty: '简单',
+        fingerTip: '周杰伦经典，旋律清新田园。D 大调第一把位，节奏明快，注意升号音准。',
+        practiceTip: '配合节拍器 88 BPM 练习，运弓轻快有弹性。感受稻田乡间的惬意氛围。',
+        scoreImg: 'score-img/稻香.png', downloadUrl: 'score-pdf/稻香.pdf',
+        tags: ['D大调', '校园抒情'],
+      },
+      {
+        id: 48, title: '秋意浓', key: 'D大调', difficulty: '简单',
+        fingerTip: '经典影视插曲，旋律深情忧郁。D 大调把位内注意情感乐句的音准与连贯。',
+        practiceTip: '慢速练习，运弓如秋叶飘落般绵长。加入揉弦表达思念与惆怅。',
+        scoreImg: 'score-img/秋意浓.png', downloadUrl: 'score-pdf/秋意浓.pdf',
+        tags: ['D大调'],
+      },
+      {
+        id: 49, title: '殇', key: 'D大调', difficulty: '简单',
+        fingerTip: '《大长今》主题曲，旋律凄美。D 大调第一把位，注意长音的音准保持与情感张力。',
+        practiceTip: '极慢速练习，每个乐句充分呼吸。运弓由弱到强再渐弱，表达悲壮情感。',
+        scoreImg: 'score-img/殇.png', downloadUrl: 'score-pdf/殇.pdf',
+        tags: ['D大调', '影视OST'],
+      },
+      {
+        id: 50, title: '第二圆舞曲', key: 'D大调', difficulty: '简单',
+        fingerTip: '肖斯塔科维奇经典，三拍子圆舞曲。D 大调把位，注意强拍与弱拍的运弓分配。',
+        practiceTip: '按 3/4 拍练习，第一拍重音明确。速度稳定后，可加入轻微的力度起伏。',
+        scoreImg: 'score-img/第二圆舞曲.png', downloadUrl: 'score-pdf/第二圆舞曲.pdf',
+        tags: ['D大调', '影视OST'],
+      },
+      {
+        id: 51, title: '彩云追月', key: 'D大调', difficulty: '简单',
+        fingerTip: '广东音乐经典，旋律优美流畅。D 大调第一把位，具有中国民族风格的滑音处理。',
+        practiceTip: '慢速练习旋律线条，模仿彩云追月的飘逸。运弓连贯，节奏可适当自由。',
+        scoreImg: 'score-img/彩云追月.png', downloadUrl: 'score-pdf/彩云追月.pdf',
+        tags: ['D大调', '国风流行'],
+      },
+      {
+        id: 52, title: 'Colors Of The Wind（风中奇缘）', key: 'D大调', difficulty: '简单',
+        fingerTip: '迪士尼经典，旋律自由奔放。D 大调音域内注意两个升号音准，不换把。',
+        practiceTip: '分段练习不同情绪的乐段，运弓开阔有力。可尝试模仿风的流动感。',
+        scoreImg: 'score-img/Colors Of The Wind（风中奇缘）.png', downloadUrl: 'score-pdf/Colors Of The Wind（风中奇缘）.pdf',
+        tags: ['D大调', '迪士尼动画金曲'],
+      },
+      {
+        id: 53, title: 'Beauty And The Beast（美女与野兽）', key: 'D大调', difficulty: '简单',
+        fingerTip: '迪士尼浪漫舞曲，三拍子。D 大调第一把位，注意圆舞曲韵律与升号音准。',
+        practiceTip: '按 3/4 拍练习，运弓旋转感要强。主歌轻柔、副歌深情，对比鲜明。',
+        scoreImg: 'score-img/Beauty And The Beast（美女与野兽）.png', downloadUrl: 'score-pdf/Beauty And The Beast（美女与野兽）.pdf',
+        tags: ['D大调', '迪士尼动画金曲'],
+      },
+      {
+        id: 56, title: 'Viva La Vida', key: 'D大调', difficulty: '简单',
+        fingerTip: 'Coldplay 经典，旋律庄严宏大。D 大调第一把位，注意节奏的稳定与音准。',
+        practiceTip: '中速练习，运弓庄重有力。重点保持节奏的精准，营造史诗般的氛围。',
+        scoreImg: 'score-img/Viva La Vida.png', downloadUrl: 'score-pdf/Viva La Vida.pdf',
+        tags: ['D大调', '欧美金曲'],
+      },
+    ];
+
+    // 按 id 排序，保证列表顺序稳定
+    scores.sort((a, b) => a.id - b.id);
+
+    // ---------- 应用状态 ----------
+    let activeKeyFilter = null;    // 当前选中的调式筛选
+    let activeGenreFilter = null;  // 当前选中的曲风筛选
+    let searchQuery = '';          // 搜索关键词
+
+    // ---------- DOM 元素引用 ----------
+    const scoreGrid = document.getElementById('score-grid');
+    const emptyState = document.getElementById('empty-state');
+    const resultCount = document.getElementById('result-count');
+    const searchInput = document.getElementById('search-input');
+    const keyFiltersEl = document.getElementById('key-filters');
+    const genreFiltersEl = document.getElementById('genre-filters');
+    const modal = document.getElementById('modal');
+    const modalClose = document.getElementById('modal-close');
+    const resetFiltersBtn = document.getElementById('reset-filters');
+
+    // ---------- 渲染筛选按钮 ----------
+    function createFilterButton(label, type) {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn px-3 py-1.5 text-sm rounded-lg border border-primary/20 text-primary/80 hover:bg-warm transition';
+      btn.textContent = label;
+      btn.dataset.filter = label;
+      btn.dataset.type = type;
+      btn.addEventListener('click', () => {
+        if (type === 'key') {
+          activeKeyFilter = activeKeyFilter === label ? null : label;
+          activeGenreFilter = null;
+        } else {
+          activeGenreFilter = activeGenreFilter === label ? null : label;
+          activeKeyFilter = null;
+        }
+        updateFilterButtons();
+        renderScores();
+      });
+      return btn;
+    }
+
+    function initFilters() {
+      // 「全部」按钮
+      const allBtn = createFilterButton('全部', 'all');
+      allBtn.addEventListener('click', () => {
+        activeKeyFilter = null;
+        activeGenreFilter = null;
+        searchQuery = '';
+        searchInput.value = '';
+        updateFilterButtons();
+        renderScores();
+      });
+      keyFiltersEl.appendChild(allBtn);
+
+      KEY_CATEGORIES.forEach((key) => {
+        keyFiltersEl.appendChild(createFilterButton(key, 'key'));
+      });
+      GENRE_CATEGORIES.forEach((genre) => {
+        genreFiltersEl.appendChild(createFilterButton(genre, 'genre'));
+      });
+    }
+
+    function updateFilterButtons() {
+      document.querySelectorAll('.filter-btn').forEach((btn) => {
+        const { filter, type } = btn.dataset;
+        const isActive =
+          (type === 'key' && filter === activeKeyFilter) ||
+          (type === 'genre' && filter === activeGenreFilter) ||
+          (type === 'all' && !activeKeyFilter && !activeGenreFilter && !searchQuery);
+        btn.classList.toggle('active', isActive);
+      });
+    }
+
+    // ---------- 筛选与搜索逻辑 ----------
+    function getFilteredScores() {
+      return scores.filter((score) => {
+        // 调式筛选
+        if (activeKeyFilter && score.key !== activeKeyFilter) return false;
+        // 曲风筛选（tags 数组中包含该曲风标签）
+        if (activeGenreFilter && !score.tags.includes(activeGenreFilter)) return false;
+        // 模糊搜索：歌名、调式、曲风标签
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const searchable = [
+            score.title,
+            score.key,
+            ...score.tags,
+            score.difficulty,
+          ].join(' ').toLowerCase();
+          if (!searchable.includes(q)) return false;
+        }
+        return true;
+      });
+    }
+
+    // ---------- 渲染乐谱卡片列表 ----------
+    function renderScores() {
+      const filtered = getFilteredScores();
+      resultCount.textContent = `共 ${filtered.length} 首曲目`;
+      scoreGrid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        scoreGrid.classList.add('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      scoreGrid.classList.remove('hidden');
+
+      filtered.forEach((score) => {
+        const card = document.createElement('article');
+        card.className = 'score-card bg-white/80 rounded-2xl border border-primary/10 p-5 cursor-pointer shadow-sm';
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `查看 ${score.title} 详情`);
+
+        // 难度标签颜色
+        const diffColor = score.difficulty === '入门'
+          ? 'bg-green-100 text-green-700'
+          : 'bg-amber-100 text-amber-700';
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2 mb-3">
+            <h3 class="font-serif text-lg font-bold text-primary leading-snug">${escapeHtml(score.title)}</h3>
+            <span class="shrink-0 px-2 py-0.5 text-xs rounded-full ${diffColor}">${escapeHtml(score.difficulty)}</span>
+          </div>
+          <p class="text-sm text-primary/60 mb-3">🎵 ${escapeHtml(score.key)}</p>
+          <div class="flex flex-wrap gap-1.5">
+            ${score.tags.map((tag) => `
+              <span class="px-2 py-0.5 text-xs rounded-full bg-warm text-primary/70 border border-primary/5">${escapeHtml(tag)}</span>
+            `).join('')}
+          </div>
+        `;
+
+        // 点击卡片打开详情弹窗
+        card.addEventListener('click', () => openModal(score));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(score);
+          }
+        });
+
+        scoreGrid.appendChild(card);
+      });
+    }
+
+    // ---------- 详情弹窗 ----------
+    function openModal(score) {
+      document.getElementById('modal-title').textContent = score.title;
+      document.getElementById('modal-finger-tip').textContent = score.fingerTip;
+      document.getElementById('modal-practice-tip').textContent = score.practiceTip;
+
+      const imgEl = document.getElementById('modal-score-img');
+      imgEl.src = score.scoreImg;
+      imgEl.alt = `${score.title} 乐谱预览`;
+
+      const downloadEl = document.getElementById('modal-download');
+      downloadEl.href = score.downloadUrl;
+      downloadEl.setAttribute('download', `${score.title}.pdf`);
+
+      const tagsEl = document.getElementById('modal-tags');
+      tagsEl.innerHTML = `
+        <span class="px-2.5 py-1 text-xs rounded-full bg-primary/10 text-primary font-medium">${escapeHtml(score.key)}</span>
+        <span class="px-2.5 py-1 text-xs rounded-full ${score.difficulty === '入门' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">${escapeHtml(score.difficulty)}</span>
+        ${score.tags.map((tag) => `<span class="px-2.5 py-1 text-xs rounded-full bg-warm text-primary/70">${escapeHtml(tag)}</span>`).join('')}
+      `;
+
+      modal.classList.remove('hidden');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    modal.querySelector('[data-close-modal]').addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+    });
+
+    // ---------- 搜索事件（实时模糊搜索） ----------
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      updateFilterButtons();
+      renderScores();
+    });
+
+    // ---------- 清除筛选 ----------
+    resetFiltersBtn.addEventListener('click', () => {
+      activeKeyFilter = null;
+      activeGenreFilter = null;
+      searchQuery = '';
+      searchInput.value = '';
+      updateFilterButtons();
+      renderScores();
+    });
+
+    // ---------- 页脚教程折叠 ----------
+    document.querySelectorAll('.tutorial-toggle').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.target;
+        const content = document.getElementById(targetId);
+        const isOpen = content.classList.toggle('open');
+        btn.querySelector('.tutorial-arrow').style.transform = isOpen ? 'rotate(180deg)' : '';
+      });
+    });
+
+    // ---------- 工具函数：防 XSS ----------
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ---------- 初始化 ----------
+    initFilters();
+    renderScores();
+  </script>
+</body>
+</html>
