@@ -9,22 +9,24 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
 endobj
 4 0 obj
-<< /Length 214 >>
+<< /Length 246 >>
 stream
 BT
-/F1 20 Tf
+/F1 18 Tf
 50 750 Td
 (Let It Be) Tj
-0 -28 Td
+0 -24 Td
 (C?? / ??) Tj
-0 -28 Td
-(Cello First Position) Tj
-0 -28 Td
+0 -24 Td
+(Cello First Position - Reference Only) Tj
+0 -24 Td
 () Tj
-0 -28 Td
-(This is a placeholder score PDF.) Tj
-0 -28 Td
-(Replace with your engraved sheet music.) Tj
+0 -24 Td
+(This is NOT a performance score.) Tj
+0 -24 Td
+(Replace with your engraved PDF.) Tj
+0 -24 Td
+(Key: ???) Tj
 ET
 endstream
 endobj
@@ -38,9 +40,9 @@ xref
 0000000058 00000 n 
 0000000115 00000 n 
 0000000241 00000 n 
-0000000506 00000 n 
+0000000538 00000 n 
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-576
+608
 %%EOF

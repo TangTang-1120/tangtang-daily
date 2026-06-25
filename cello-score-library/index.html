@@ -99,6 +99,10 @@
     .text-primary\/80 { color: rgba(74,85,104,0.8); }
     .text-green-700 { color: #15803d; }
     .text-amber-700 { color: #b45309; }
+    .text-amber-800 { color: #92400e; }
+    .bg-amber-50 { background-color: #fffbeb; }
+    .border-amber-200 { border-color: #fde68a; }
+    strong { font-weight: 700; }
     .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
     .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
     .text-2xl { font-size: 1.5rem; line-height: 2rem; }
@@ -283,6 +287,9 @@
         收录流行、影视、迪士尼等经典曲目的大提琴一把位改编乐谱。全程第一把位演奏，无需换把，适合零基础入门与日常练习。
         点击卡片查看指法要点与练习建议，支持乐谱预览与 PDF 下载。
       </p>
+      <p class="mt-3 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 max-w-2xl mx-auto">
+        ⚠ 当前预览图为<strong>一把位把位参考示意</strong>，非正式旋律演奏谱。请用 MuseScore 等制谱后，替换 <code class="bg-white/80 px-1 rounded">score-img</code> / <code class="bg-white/80 px-1 rounded">score-pdf</code> 中的文件。
+      </p>
     </section>
 
     <!-- ==================== 乐谱卡片列表（流式自适应布局） ==================== -->
@@ -334,7 +341,7 @@
 
           <!-- 乐谱预览图 -->
           <div class="mb-5">
-            <h4 class="font-semibold text-primary mb-2">乐谱预览</h4>
+            <h4 class="font-semibold text-primary mb-2">乐谱预览 <span class="text-xs font-normal text-amber-700">（把位示意参考）</span></h4>
             <div class="rounded-xl overflow-hidden border border-primary/10 score-preview-img">
               <img id="modal-score-img" src="" alt="乐谱预览" class="w-full h-auto object-contain max-h-80" />
               <div id="modal-score-error" class="hidden p-8 text-center text-primary/50 text-sm">📄 预览图加载失败，请检查网络或稍后重试</div>
