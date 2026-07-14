@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="build" content="2026-06-01-day-delete">
+<meta name="build" content="2026-07-14-daily-plan-rollover">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="TangTang">
@@ -988,15 +988,16 @@ if (savedMotives && Array.isArray(savedMotives)) {
 }
 
 const TASKS_KEY = 'my_tasks_v2';
-const TODAY = new Date();
+const PLAN_DATE_KEY = 'last_plan_date_v1';
+let TODAY = new Date();
 
 function localDateStr(date) {
   const d = date || new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
-const TODAY_KEY = 'checklist_' + localDateStr();
-let state = JSON.parse(localStorage.getItem(TODAY_KEY) || '{}');
+let TODAY_KEY = 'checklist_' + localDateStr();
+let state = {};
 let editingTaskId = null;
 
 function loadTasks() {
@@ -1008,7 +1009,10 @@ function normalizeTask(task) {
   if (task.time && !task.timeStart) task.timeStart = task.time;
   return task;
 }
-function saveTasks(tasks) { localStorage.setItem(TASKS_KEY, JSON.stringify(tasks)); }
+function saveTasks(tasks) {
+  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+  syncTodayPlanSnapshot();
+}
 let TASKS = loadTasks();
 
 function escapeHTML(s) {
@@ -1020,7 +1024,10 @@ function genId() {
   return 't' + Date.now() + Math.floor(Math.random()*999);
 }
 
-function saveState() { localStorage.setItem(TODAY_KEY, JSON.stringify(state)); }
+function saveState() {
+  localStorage.setItem(TODAY_KEY, JSON.stringify(state));
+  syncTodayPlanSnapshot();
+}
 
 function getStateHidden(raw) {
   if (!raw || !Array.isArray(raw._hidden)) return [];
@@ -1031,6 +1038,120 @@ function loadDayState(dayKey) {
   try { return JSON.parse(localStorage.getItem(dayKey) || '{}'); }
   catch (e) { return {}; }
 }
+
+function clonePlanTasks(tasks) {
+  return tasks.map(function(t) {
+    return {
+      id: t.id,
+      cat: t.cat,
+      emoji: t.emoji,
+      bg: t.bg,
+      title: t.title,
+      sub: t.sub || '',
+      timeStart: t.timeStart || t.time || '',
+      timeEnd: t.timeEnd || '',
+      time: t.time || '',
+      color: t.color,
+      createdAt: t.createdAt || ''
+    };
+  });
+}
+
+/** 用当下任务列表快照某天计划（含规划时间），供历史回看 */
+function snapshotDayPlanFromLiveTasks(dayStr) {
+  if (!dayStr) return;
+  var dayKey = 'checklist_' + dayStr;
+  var dayState = loadDayState(dayKey);
+  var hidden = getStateHidden(dayState);
+  var planCat = (typeof ACTIVE_CAT !== 'undefined') ? ACTIVE_CAT : 'morning';
+  var plan = TASKS.filter(function(t) {
+    if (t.cat !== planCat) return false;
+    if (hidden.indexOf(t.id) >= 0) return false;
+    if (t.createdAt && t.createdAt > dayStr) return false;
+    return true;
+  });
+  dayState._plan = clonePlanTasks(typeof sortTasksByTime === 'function' ? sortTasksByTime(plan) : plan);
+  localStorage.setItem(dayKey, JSON.stringify(dayState));
+  if (dayKey === TODAY_KEY) state = dayState;
+}
+
+function syncTodayPlanSnapshot() {
+  snapshotDayPlanFromLiveTasks(localDateStr());
+}
+
+function clearAllTaskSchedules() {
+  TASKS = TASKS.map(function(t) {
+    var copy = Object.assign({}, t);
+    delete copy.timeStart;
+    delete copy.timeEnd;
+    delete copy.time;
+    return copy;
+  });
+  localStorage.setItem(TASKS_KEY, JSON.stringify(TASKS));
+}
+
+/** 跨日：保留前一天完整记录，清空规划时间，今日清单重新开始 */
+function rolloverDailyPlanIfNeeded() {
+  var today = localDateStr();
+  var last = localStorage.getItem(PLAN_DATE_KEY);
+
+  // 手机等设备首次升级到此版本：只登记日期，绝不清空既有任务/打卡记录
+  if (!last) {
+    TODAY_KEY = 'checklist_' + today;
+    state = loadDayState(TODAY_KEY);
+    localStorage.setItem(PLAN_DATE_KEY, today);
+    syncTodayPlanSnapshot();
+    return false;
+  }
+
+  if (last === today) return false;
+
+  if (last < today) {
+    // 先把前一天的计划（含时间）固化进历史
+    snapshotDayPlanFromLiveTasks(last);
+    // 新的一天：不残留规划时间，并从空清单开始新建
+    clearAllTaskSchedules();
+    TODAY_KEY = 'checklist_' + today;
+    state = loadDayState(TODAY_KEY);
+    if (!Array.isArray(state._hidden)) state._hidden = [];
+    var planCat = (typeof ACTIVE_CAT !== 'undefined') ? ACTIVE_CAT : 'morning';
+    TASKS.forEach(function(t) {
+      if (t.cat === planCat && state._hidden.indexOf(t.id) < 0) {
+        state._hidden.push(t.id);
+      }
+    });
+    localStorage.setItem(TODAY_KEY, JSON.stringify(state));
+  } else {
+    // last > today（改系统时间等）：不破坏数据，仅对齐今日 key
+    TODAY_KEY = 'checklist_' + today;
+    state = loadDayState(TODAY_KEY);
+  }
+
+  localStorage.setItem(PLAN_DATE_KEY, today);
+  syncTodayPlanSnapshot();
+  return true;
+}
+
+function refreshDateContextIfNeeded() {
+  var today = localDateStr();
+  var todayKey = 'checklist_' + today;
+  if (todayKey === TODAY_KEY && localStorage.getItem(PLAN_DATE_KEY) === today) return;
+  TODAY = new Date();
+  rolloverDailyPlanIfNeeded();
+  TODAY_KEY = todayKey;
+  state = loadDayState(TODAY_KEY);
+  calYear = TODAY.getFullYear();
+  calMonth = TODAY.getMonth();
+  setGreeting();
+  renderAll();
+  renderCalendar();
+  if (typeof calCollapsed !== 'undefined' && calCollapsed) renderCalWeekStrip();
+}
+
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') refreshDateContextIfNeeded();
+});
+window.addEventListener('focus', refreshDateContextIfNeeded);
 
 // ---- Calendar ----
 let calYear = TODAY.getFullYear(), calMonth = TODAY.getMonth();
@@ -1241,7 +1362,19 @@ const ACTIVE_CAT = 'morning';
 function getActiveTasks(dayKey) {
   dayKey = dayKey || TODAY_KEY;
   var dayStr = dayKey.replace('checklist_', '');
-  var hidden = getStateHidden(loadDayState(dayKey));
+  var dayState = loadDayState(dayKey);
+  var hidden = getStateHidden(dayState);
+  var todayStr = localDateStr();
+
+  // 历史日优先用当天固化的计划快照（含当时的规划时间）
+  if (dayStr < todayStr && Array.isArray(dayState._plan)) {
+    return sortTasksByTime(dayState._plan.filter(function(t) {
+      if (t.cat !== ACTIVE_CAT) return false;
+      if (hidden.indexOf(t.id) >= 0) return false;
+      return true;
+    }).map(normalizeTask));
+  }
+
   return sortTasksByTime(TASKS.filter(function(t) {
     if (t.cat !== ACTIVE_CAT) return false;
     if (hidden.indexOf(t.id) >= 0) return false;
@@ -1784,6 +1917,13 @@ function setGreeting() {
 }
 
 setGreeting();
+rolloverDailyPlanIfNeeded();
+TODAY_KEY = 'checklist_' + localDateStr();
+state = loadDayState(TODAY_KEY);
+if (!localStorage.getItem(PLAN_DATE_KEY)) {
+  localStorage.setItem(PLAN_DATE_KEY, localDateStr());
+}
+syncTodayPlanSnapshot();
 renderAll();
 renderCalendar();
 </script>
